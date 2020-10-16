@@ -1,7 +1,7 @@
 /**
 * @file scanner.h
-* @author xabram00, xzhuko01
-* @date 10.11.2019
+* @author xproko40
+* @date 16.10.2020
 * @brief The header file for scanner.c
 */
 
@@ -11,38 +11,40 @@
 #include <stdio.h>
 
 #include "dynamicStr.h"
+//#include "stackIndent.h"
+
+//StackIndent IStack;
 
 /* Scaner states */
 typedef enum
 {
     /* FINAL STATES */
-    STATE_START,                 // DONE IN SCANNER // Starting state every new token processing starts here and initializes other states
-    STATE_INTEGER,               // DONE IN SCANNER // Start of number processing, accepts numbers, e/E and . | Can return integer number
-    STATE_DOUBLE,                // DONE IN SCANNER // The last symbol was number | Can return double number
-    STATE_DOUBLE_EXPONENT,       // DONE IN SCANNER // Returns double number with exponent
-    STATE_IDENTIFIER_OR_KEYWORD, // DONE IN SCANNER // Starts with letter or _, if next symbols are alphanumeric or _, add them to string, which is later compared with reserved words | Returns either keyword or string as ID
-    STATE_STRING,                // DONE IN SCANNER // Sequence ' was read, ends with ' | Returns string
-    STATE_LESS,                  // DONE IN SCANNER // Starts with < | Returns < or <=
-    STATE_MORE,                  // DONE IN SCANNER // Starts with > | Returns > or >=
-    STATE_EOL,                   // DONE IN SCANNER // End of line
-    STATE_SCREAMER,              // DONE IN SCANNER // "!" can return token !=
-    STATE_ASSIGN,                // DONE IN SCANNER // Starts with = | Returns = or ==
-    STATE_DIV,                   // DONE IN SCANNER // Starts with \ | Returns / or //
+    STATE_START,                 //  IN SCANNER // Starting state every new token processing starts here and initializes other states
+    STATE_INTEGER,               //  IN SCANNER // Start of number processing, accepts numbers, e/E and . | Can return integer number
+    STATE_DOUBLE,                //  IN SCANNER // The last symbol was number | Can return double number
+    STATE_DOUBLE_EXPONENT,       //  IN SCANNER // Returns double number with exponent
+    STATE_IDENTIFIER_OR_KEYWORD, //  IN SCANNER // Starts with letter or _, if next symbols are alphanumeric or _, add them to string, which is later compared with reserved words | Returns either keyword or string as ID
+    STATE_STRING,                //  IN SCANNER // Sequence " was read, ends with " | Returns string
+    STATE_LESS,                  //  IN SCANNER // Starts with < | Returns < or <=
+    STATE_HIGHER,                //  IN SCANNER // Starts with > | Returns > or >=
+    STATE_EOL,                   //  IN SCANNER // End of line
+    STATE_ASSIGN,                //  IN SCANNER // Starts with = | Returns = or ==
+    STATE_DIV,                   //  IN SCANNER // Starts with / / Returns /
+
 
     /* SATES */
-    STATE_DASH_COMMENTARY,         // DONE IN SCANNER // Line commentary, ignores every symbol, ends with EOL
-    STATE_BLOCK_COMMENTARY1,       // DONE IN SCANNER // Starts with " except second " (")
-    STATE_BLOCK_COMMENTARY2,       // DONE IN SCANNER // except third " ("")
-    STATE_BLOCK_COMMENTARY3,       // DONE IN SCANNER // except third " (""") and ignores every symbol except " - this might be the starting end of block comment
-    STATE_BLOCK_COMMENTARY_LEAVE1, // DONE IN SCANNER // Starts with " except second " (")
-    STATE_BLOCK_COMMENTARY_LEAVE2, // DONE IN SCANNER // except third " ("") next " -> go to start
-    STATE_NUMBER_POINT,            // DONE IN SCANNER // If symbol was ., the number has type double
-    STATE_NUMBER_EXPONENT,         // DONE IN SCANNER // The last symbol was e or E, the number has type double, continues with optional symbols +/- or number
-    STATE_NUMBER_EXPONENT_SIGN,    // DONE IN SCANNER // Optional symbol was read, continue with numbers only
-    STATE_STRING_START,            // DONE IN SCANNER // String starts with '
-    STATE_STRING_ESCAPE,           // DONE IN SCANNER // If symbol \ was loaded, can replace char with escape sequence symbols
-    STATE_STRING_DIGIT_xX,         // DONE IN SCANNER // first decimal beginning xA
-    STATE_STRING_DIGIT_xXX,        // DONE IN SCANNER // decimal xAF
+    STATE_SCREAMER,                //  IN SCANNER // "!" can return token !=
+    STATE_COLON,                   //  IN SCANNER // ":" can return token :=
+    STATE_STRING_COMMENTARY,       //  IN SCANNER // Line commentary, ignores every symbol, ends with EOL
+    STATE_BLOCK_COMMENTARY,        //  IN SCANNER // Starts with / except * and ignores every symbol except * - this might be the starting end of block comment
+    STATE_BLOCK_COMMENTARY_LEAVE,  //  IN SCANNER // Starts with * except / next  -> go to start
+    STATE_NUMBER_POINT,            //  IN SCANNER // If symbol was ., the number has type double
+    STATE_NUMBER_EXPONENT,         //  IN SCANNER // The last symbol was e or E, the number has type double, continues with optional symbols +/- or number
+    STATE_NUMBER_EXPONENT_SIGN,    //  IN SCANNER // Optional symbol was read, continue with numbers only
+    STATE_STRING_START,            //  IN SCANNER // String starts with "
+    STATE_STRING_ESCAPE,           //  IN SCANNER // If symbol \ was loaded, can replace char with escape sequence symbols
+    STATE_STRING_DIGIT_xX,         //  IN SCANNER // first decimal beginning xA
+    STATE_STRING_DIGIT_xXX,        //  IN SCANNER // decimal xAF
 
 } STATES;
 
@@ -50,70 +52,76 @@ typedef enum
 typedef enum
 {
     /* Main task */
-    KEYWORD_DEF,    // def
     KEYWORD_ELSE,   // else
-    KEYWORD_IF,     // if
-    KEYWORD_NONE,   // None
-    KEYWORD_PASS,   // pass
+    KEYWORD_FLOAT64,     // float64
+    KEYWORD_FOR,   // for
+    KEYWORD_FUNC,   // func
+    KEYWORD_IF, // if
+    KEYWORD_INT,  // int
+    KEYWORD_PACKAGE, // package
     KEYWORD_RETURN, // return
-    KEYWORD_WHILE,  // while
-
-    /* Additional tasks */
-
-    /* Boolop */
+    KEYWORD_STRING, // string
+/**
+    * Additional tasks *
+    * Boolop *
     KEYWORD_TRUE,  //true
     KEYWORD_FALSE, // false
     KEYWORD_NOT,   // not
     KEYWORD_AND,   // and
     KEYWORD_OR,    // or
 
-    /* Base ??? */
+    * Base ??? *
 
-    /* Cycles */
+    * Cycles *
     KEYWORD_FOR,      // for
     KEYWORD_BREAK,    // break
     KEYWORD_CONTINUE, // continue
 
-    /* Funexp ??? */
+    * Funexp ??? *
 
-    /* Ifthen */
+    * Ifthen *
     KEYWORD_ELIF, // elif
-
+    KEYWORD_IN,   // in
+*/
 } KEYWORDS;
 
 typedef enum
 {
-    TOKEN_EOF,        /// EOL // DONE IN SCANNER
-    TOKEN_EOL,        /// EOF // DONE IN SCANNER
-    TOKEN_EMPTY,      /// Empty // DONE IN SCANNER
+    TOKEN_EOF,        /// EOL //  IN SCANNER
+    TOKEN_EOL,        /// EOF //  IN SCANNER
     TOKEN_IDENTIFIER, /// Identifier
     TOKEN_KEYWORD,    /// Keyword
 
-    TOKEN_INT,    /// Integer number // DONE IN SCANNER
-    TOKEN_DOUBLE, /// Double number // DONE IN SCANNER
+
+    TOKEN_INT,    /// Integer number //  IN SCANNER
+    TOKEN_DOUBLE, /// Double number //  IN SCANNER
     TOKEN_STRING, /// String
 
+
     /* Operations */
-    TOKEN_ASSIGN, // = // DONE IN SCANNER
-    TOKEN_PLUS,   // + // DONE IN SCANNER
-    TOKEN_MINUS,  // - // DONE IN SCANNER
-    TOKEN_MUL,    // * // DONE IN SCANNER
-    TOKEN_DIV,    // \ // DONE IN SCANNER
-    TOKEN_IDIV,   // \\ // DONE IN SCANNER
+    TOKEN_ASSIGN, // = //  IN SCANNER
+    TOKEN_PLUS,   // + //  IN SCANNER
+    TOKEN_MINUS,  // - //  IN SCANNER
+    TOKEN_MUL,    // * //  IN SCANNER
+    TOKEN_DIV,    // / //  IN SCANNER
 
     /* Comparison */
-    TOKEN_EQUALS,          // == // DONE IN SCANNER
-    TOKEN_HIGHER_OR_EQUAL, // >= // DONE IN SCANNER
-    TOKEN_HIGHER,          // > // DONE IN SCANNER
-    TOKEN_LESS_OR_EUQAL,   // <= // DONE IN SCANNER
-    TOKEN_LESS,            // < // DONE IN SCANNER
-    TOKEN_NOT_EQUAL,       // != // DONE IN SCANNER
+    TOKEN_EQUALS,          // == //  IN SCANNER
+    TOKEN_HIGHER_OR_EQUAL, // >= //  IN SCANNER
+    TOKEN_HIGHER,          // > //  IN SCANNER
+    TOKEN_LESS_OR_EQUAL,   // <= //  IN SCANNER
+    TOKEN_LESS,            // < //  IN SCANNER
+    TOKEN_NOT_EQUAL,       // != //  IN SCANNER
+    TOKEN_DEFINITION,      // := //
 
     /* */
-    TOKEN_LEFT_BRACKET,  // ( // DONE IN SCANNER
-    TOKEN_RIGHT_BRACKET, // ) // DONE IN SCANNER
-    TOKEN_COLON,         // : // DONE IN SCANNER
-    TOKEN_COMMA          // , // DONE IN SCANNER
+    TOKEN_LEFT_BRACKET,  // ( //  IN SCANNER
+    TOKEN_RIGHT_BRACKET, // ) //  IN SCANNER
+    TOKEN_COLON,         // : //  IN SCANNER
+    TOKEN_COMMA,         // , //  IN SCANNER
+    TOKEN_LCURLY_BRACKET,// { //
+    TOKEN_RCURLY_BRACKET,// } //
+
 
 } TOKENS;
 
@@ -130,6 +138,9 @@ typedef struct
     tAttribute attribute;
     char *id;
 } tToken;
+
+tToken token; // Global variable
+
 /**
 * Sets source file to be scanned.
 *
