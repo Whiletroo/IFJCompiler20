@@ -6,7 +6,7 @@
 #include "scanner.h"
 #include "symtable.h"
 
-#define MAX_ST_SIZE 5 // size of hash table
+#define MAX_ST_SIZE 1000 // size of hash table
 
 // ALMOST READY ALMOST READY ALMOST READY
 // ALMOST READY ALMOST READY ALMOST READY
@@ -175,31 +175,6 @@ void symTableCopy();
 
 
 
-/*
-* Frees allocated memory for symbol table
-*/
-void symTableDestoy(TSymTable *symtab) {
-
-	if (symtab != NULL) {
-
-		TListItem *tmpitem, *nextitem;
-		for( unsigned long int index = 0; index < MAX_ST_SIZE; index++) {
-
-			for(tmpitem = symtab->items[index] ; tmpitem != NULL; tmpitem = nextitem){
-
-				nextitem = tmpitem->nextItem;
-				free(tmpitem->data);
-				free(tmpitem);
-				tmpitem = nextitem;
-			}
-		}
-		free(symtab->items);
-		free(symtab);
-	}
-}
-
-
-
 void symTableDump(TSymTable *symtab) {
     
 	for (int i = 0; i < MAX_ST_SIZE; ++i) {
@@ -228,6 +203,32 @@ void symTableDump(TSymTable *symtab) {
 
 
 
+/*
+* Frees allocated memory for symbol table
+*/
+void symTableDestoy(TSymTable *symtab) {
+
+	if (symtab != NULL) {
+		
+		TListItem *tmpitem ,*nextitem;
+
+		for( unsigned long int index = 0; index < MAX_ST_SIZE; index++) {
+
+			for( tmpitem = symtab->items[index]; tmpitem != NULL; tmpitem = nextitem) {
+
+				nextitem = tmpitem->nextItem;
+				free(tmpitem->data);
+				free(tmpitem);
+			}
+		}
+		
+		free(symtab->items);
+		free(symtab);
+	}
+}
+
+
+
 int main() {
 
 	TSymTable *symtab = symTableInit();
@@ -239,19 +240,13 @@ int main() {
 	TData *data5 = malloc(sizeof(TData));
 	TData *data6 = malloc(sizeof(TData));
 
-	char *key1 = "Identifier_1";
-	char *key2 = "Identifier_2";
-	char *key3 = "Identifier_3";
-	char *key4 = "Identifier_4";
-	char *key5 = "Identifier_5";
-	char *key6 = "Identifier_6";
 
-	data1->dataType = TOKEN_INT;
-	data2->dataType = TOKEN_DOUBLE;
-	data3->dataType = TOKEN_STRING;
-	data4->dataType = TOKEN_IDENTIFIER;
-	data5->dataType = TOKEN_KEYWORD;
-	data6->dataType = TOKEN_MINUS;
+	char *key1 = "guyb";
+	char *key2 = "llplj8";
+	char *key3 = "mnkb4";
+	char *key4 = "ppoqa";
+	char *key5 = "ttkjnh";
+	char *key6 = "Identifier_6";
 
 	symTableInsert(symtab, key1, data1);
 	symTableInsert(symtab, key2, data2);
@@ -266,3 +261,13 @@ int main() {
 
 	return 0;
 }
+
+
+
+//	data1->dataType = TOKEN_INT;
+//	data2->dataType = TOKEN_DOUBLE;
+//	data3->dataType = TOKEN_STRING;
+//	data4->dataType = TOKEN_IDENTIFIER;
+//	data5->dataType = TOKEN_KEYWORD;
+//	data6->dataType = TOKEN_MINUS;
+
