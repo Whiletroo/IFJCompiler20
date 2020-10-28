@@ -5,8 +5,8 @@
  * @brief The dynamic string
 */
 
-#ifndef _DYN_STR_H
-#define _DYN_STR_H
+#ifndef _DYNAMIC_STR_H
+#define _DYNAMIC_STR_H
 
 typedef struct
 {
@@ -72,7 +72,7 @@ int dynamicStrCopyStringChar(DYN_STRING *ds1, char *string);
  * @param ds2
  * @return 0 => equal
  */
-int dynamicStrCompareString(DYN_STRING *ds1, DYNAMIC_STRING *ds2);
+int dynamicStrCompareString(DYN_STRING *ds1, DYN_STRING *ds2);
 
 /**
  * Compare Dynamic String with some string

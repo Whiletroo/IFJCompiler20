@@ -77,7 +77,7 @@ int dynamicStrAddStr(DYN_STRING *ds, char *str)
         {
             return DYN_STRING_ERROR;
         }
-        ds->allocSize = newSize - 1;
+        ds->allocSize = newSize;
     }
 
     ds->length += strSize;

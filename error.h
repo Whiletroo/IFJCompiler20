@@ -2,7 +2,7 @@
  * @file error.h
  * @author xkrukh00
  * @date 08.10.2020
- * @brief 
+ * @brief
 */
 
 //TODO!!!!!!!!!

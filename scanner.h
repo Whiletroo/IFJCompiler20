@@ -125,7 +125,7 @@ typedef enum
 } TOKENS;
 
 typedef union {
-    DYNAMIC_STRING *value_string;
+    DYN_STRING *value_string;
     int value_int;
     double value_double;
     KEYWORDS keyword;
@@ -152,7 +152,7 @@ void setSourceFile(FILE *file);
 *
 * @param string Pointer to dynamic string.
 */
-void dynamicStrSet(DYNAMIC_STRING *str);
+void dynamicStrSet(DYN_STRING *str);
 
 /**
  * Translates the enumeration value into a string
