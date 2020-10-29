@@ -33,9 +33,9 @@ typedef enum
     /* SATES */
     STATE_SCREAMER,                //  DONE IN SCANNER // "!" can return token !=
     STATE_COLON,                   //  DONE IN SCANNER // ":" can return token :=
-    STATE_STRING_COMMENTARY,       //  IN SCANNER // Line commentary, ignores every symbol, ends with EOL
-    STATE_BLOCK_COMMENTARY,        //  IN SCANNER // Starts with / except * and ignores every symbol except * - this might be the starting end of block comment
-    STATE_BLOCK_COMMENTARY_LEAVE,  //  IN SCANNER // Starts with * except / next  -> go to start
+    STATE_STRING_COMMENTARY,       //  DONE IN SCANNER // Line commentary, ignores every symbol, ends with EOL
+    STATE_BLOCK_COMMENTARY,        //  DONE IN SCANNER // Starts with / except * and ignores every symbol except * - this might be the starting end of block comment
+    STATE_BLOCK_COMMENTARY_LEAVE,  //  DONE IN SCANNER // Starts with * except / next  -> go to start
     STATE_NUMBER_POINT,            //  DONE IN SCANNER // If symbol was ., the number has type double
     STATE_NUMBER_EXPONENT,         //  DONE IN SCANNER // The last symbol was e or E, the number has type double, continues with optional symbols +/- or number
     STATE_NUMBER_EXPONENT_SIGN,    //  DONE IN SCANNER // Optional symbol was read, continue with numbers only
@@ -125,7 +125,7 @@ typedef enum
 } TOKENS;
 
 typedef union {
-    DYN_STRING *value_string;
+    DYNAMIC_STRING *value_string;
     int value_int;
     double value_double;
     KEYWORDS keyword;
@@ -152,7 +152,7 @@ void setSourceFile(FILE *file);
 *
 * @param string Pointer to dynamic string.
 */
-void dynamicStrSet(DYN_STRING *str);
+void dynamicStrSet(DYNAMIC_STRING *str);
 
 /**
  * Translates the enumeration value into a string

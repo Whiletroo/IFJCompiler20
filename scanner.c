@@ -15,13 +15,8 @@
 
 
 FILE *source;             // Source file that will be scanned
-DYN_STRING *d_string; // Dynamic string that will be written into
+DYNAMIC_STRING *d_string; // Dynamic string that will be written into
 
-/**
-int SpaceCounter = 1;     // Global variable to count spaces
-int FirstSymbolOnRow = 1; // Global variable to control first symbol in line (used in indent/dedent)
-int StackInit = 0;        // Global variable to control StackIndent inicialization
-*/
 int DocToString = 0;      // Global variable to contro transformation of Documentary string to ordinary string
 
 char sEOL[] = "\\012";
@@ -35,7 +30,7 @@ char sSPC[] = "\\032";
 * @param str Dynamic string to be freed.
 * @return Given exit code.
 */
-static int freeResources(int exit_code, DYN_STRING *str)
+static int freeResources(int exit_code, DYNAMIC_STRING *str)
 {
     dynamicStrFree(str);
     return exit_code;
@@ -56,7 +51,7 @@ void setSourceFile(FILE *file)
 *
 * @param string Pointer to dynamic string.
 */
-void dynamicStrSet(DYN_STRING *str)
+void dynamicStrSet(DYNAMIC_STRING *str)
 {
     d_string = str;
 }
@@ -68,7 +63,7 @@ void dynamicStrSet(DYN_STRING *str)
 * @param token pointer on token
 * @return Given exit code.
 */
-static int processInteger(DYN_STRING *str, tToken *token)
+static int processInteger(DYNAMIC_STRING *str, tToken *token)
 {
     char *endptr;
 
@@ -90,7 +85,7 @@ static int processInteger(DYN_STRING *str, tToken *token)
 * @param token pointer on token
 * @return Given exit code.
 */
-static int processDecimal(DYN_STRING *str, tToken *token)
+static int processDecimal(DYNAMIC_STRING *str, tToken *token)
 {
     char *endptr;
 
@@ -113,7 +108,7 @@ static int processDecimal(DYN_STRING *str, tToken *token)
 * @param token pointer on token
 * @return Given exit code.
 */
-int processIdentifier(DYN_STRING *str, tToken *token)
+int processIdentifier(DYNAMIC_STRING *str, tToken *token)
 {
     /* main sequence of conditions to verify the dynamic string on keywords in it */
     if (!dynamicStrCompareConstString(str, "else"))
@@ -306,8 +301,8 @@ int getToken(tToken *token)
 
     token->attribute.value_string = d_string;
 
-    DYN_STRING string;
-    DYN_STRING *str = &string;
+    DYNAMIC_STRING string;
+    DYNAMIC_STRING *str = &string;
 
     /* DynamicString inicialization */
     if (!dynamicStrInit(str))
@@ -411,13 +406,13 @@ int getToken(tToken *token)
                     token->token_type = TOKEN_LCURLY_BRACKET;
                     return freeResources(OK, str);
                 }
-
+                
                 else if (c == '}')
                 {
                     token->token_type = TOKEN_RCURLY_BRACKET;
                     return freeResources(OK, str);
                 }
-
+                
                     /* If first symbol is LEFT_BRACKET:        */
                     /*   1) send TOKEN - LEFT_BRACKET          */
                     /*   2) check next symbol in case of "     */
@@ -457,85 +452,7 @@ int getToken(tToken *token)
                     token->token_type = TOKEN_EOF;
                     return freeResources(OK, str);
                 }
-                    /* If first symbol is ":                                                 */
-                    /*   1) change state to STATE_BLOCK_COMMENTARY1 and analize the sequence */
-                else if (c == '"')   //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                {
-                    state = STATE_BLOCK_COMMENTARY;
-                }
-                    /* If first symbol is letter or _:                                            */
-                    /*    If it is not first symbol:                                              */
-                    /*       1) add symbol to dynamic string                                      */
-                    /*       2) change state to IDENTIFIER_OR_KEYWORD and analize the sequence    */
-                    /*    If it is first symbol:                                                  */
-                    /*       If intend value = 0:                                                 */
-                    /*          1) Set first symbol variable to 0                                 */
-                    /*          2) add symbol to dynamic string                                   */
-                    /*          3) change state to IDENTIFIER_OR_KEYWORD and analize the sequence */
-                    /*       If intend value > 0:                                                 */
-                    /*          1) Decrease intend value to the 0                                 */
-                    /*          2) send TOKEN - DEDENT                                            */
-                    /*          3) UNGET symbol and start cycle again                             */
-                    /*       If intend value < 0:                                                 */
-                    /*          1) return ERROR with function freeResources                       */
-                else if (isalpha(c) || c == '_')
-                {
-                    if (FirstSymbolOnRow == 1)
-                    {
-                        while (1)
-                        {
-                            if (0 == stackIndentValue(IndentStack))
-                            {
-                                FirstSymbolOnRow = 0;
-                                break;
-                            }
-                            if (0 < stackIndentValue(IndentStack))
-                            {
-                                if (stackIndentEmpty(IndentStack))
-                                {
-                                    return freeResources(SYNTAX_ERR, str);
-                                }
-                                stackIndentPop(IndentStack);
-                                if (0 == stackIndentValue(IndentStack))
-                                {
-                                    FirstSymbolOnRow = 0;
-                                    token->token_type = TOKEN_DEDENT;
-                                    ungetc(c, source);
-                                    return freeResources(OK, str);
-                                }
-                            }
-                        }
-                    }
-                    if (!dynamicStrAddChar(str, c))
-                    {
-                        return freeResources(ERR_INTERNAL, str);
-                    }
-                    state = STATE_IDENTIFIER_OR_KEYWORD;
-                }
-                    /* If first symbol is digit                              */
-                    /*   1) add symbol to dynamic string                     */
-                    /*   2) change state to INTEGER and analize the sequence */
-                else if (isdigit(c))
-                {
-                    if (!dynamicStrAddChar(str, c))
-                    {
-                        return freeResources(ERR_INTERNAL, str);
-                    }
-                    state = STATE_INTEGER;
-                }
-                    /* If first symbol is "                                       */
-                    /*   1) change state to STRING_START and analize the sequence */
-                else if (c == '\"')
-                {
-                    state = STATE_STRING_START;
-                }
-                    /* All other transition lead to an error state */
-                else
-                {
-                    return freeResources(LEX_ERROR, str);
-                }
-                break;
-                ///<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<TODO!!!!!!!!!!!!
+
                 /*              STATE_DIV               */
                 /* '/' sequence, div and commentary analysis  */
             case (STATE_DIV):
@@ -545,12 +462,12 @@ int getToken(tToken *token)
                 {
                     state = STATE_STRING_COMMENTARY;
                 }
-                  if (c == '\n' || c == EOF)
-                    {
-                        state = STATE_START;
-                        (c == EOF)
-                        ungetc(c, source);
-                    }
+                /* If next symbol is *
+                /*  1) change state to STATE_BLOCK_COMMENTARY and analize the sequence */
+                if (c == '*')
+                {
+                    state = STATE_BLOCK_COMMENTARY;
+                }
                     /* All other transition lead to div and next iteration */
                     /*   1) send TOKEN - TOKEN_DIV                         */
                     /*   2) unget symbol                                   */
@@ -562,179 +479,9 @@ int getToken(tToken *token)
                 }
                 return freeResources(OK, str);
 
-                /*   STATE_BLOCK_COMMENTARY1    */
-                /* analyse the sequence of ""   */
-            case (STATE_BLOCK_COMMENTARY1):
-                /* If next symbol is ":                                                  */
-                /*   1) change state to STATE_BLOCK_COMMENTARY2 and analize the sequence */
-                if (c == '"')
-                {
-                    state = STATE_BLOCK_COMMENTARY2;
-                }
-                    /* All other transition lead to error */
-                else
-                {
-                    return freeResources(LEX_ERROR, str);
-                }
-                break;
-
-                /*   STATE_BLOCK_COMMENTARY2    */
-                /* analyse the sequence of """  */
-            case (STATE_BLOCK_COMMENTARY2):
-                /* If next symbol is ":                                                  */
-                /*   1) change state to STATE_BLOCK_COMMENTARY3 and analize the sequence */
-                if (c == '"')
-                {
-                    state = STATE_BLOCK_COMMENTARY3;
-                }
-                    /* All other transition lead to error */
-                else
-                {
-                    return freeResources(LEX_ERROR, str);
-                }
-                break;
-
-                /*     STATE_BLOCK_COMMENTARY3     */
-                /* analyse the sequence of """...  */
-            case (STATE_BLOCK_COMMENTARY3):
-                /* If next symbol is ":                                                  */
-                /*   1) change state to BLOCK_COMMENTARY_LEAVE1 and analize the sequence */
-
-                if (c == '"')
-                {
-                    state = STATE_BLOCK_COMMENTARY_LEAVE1;
-                }
-                    /* If next symbol is EOF:        */
-                    /*   1) Return with error status */
-                else if (c == EOF)
-                {
-                    return freeResources(LEX_ERROR, str);
-                }
-                    /* All other transition will be analyzied and added to string if DocToString = 1 */
-                    /*   if DocToString = 0                                                          */
-                    /*      1) Analize next symbol                                                   */
-                    /*   if DocToString = 1                                                          */
-                    /*      1) Check escape sequence \" to add " to dynamic string                   */
-                    /*      2) add symbol to dynamic string                                          */
-                else
-                {
-                    if (c == '\\')
-                    {
-                        c = (char)getc(source);
-                        if (c == '"')
-                        {
-                            if (DocToString == 1)
-                            {
-                                if (!dynamicStrAddChar(str, '"'))
-                                {
-                                    return freeResources(ERR_INTERNAL, str);
-                                }
-                            }
-                        }
-                        else if (c == EOF)
-                        {
-                            return freeResources(LEX_ERROR, str);
-                        }
-                        else
-                        {
-                            if (DocToString == 1)
-                            {
-                                if (!dynamicStrAddChar(str, '\\'))
-                                {
-                                    return freeResources(ERR_INTERNAL, str);
-                                }
-                                ungetc(c, source);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (DocToString == 1)
-                        {
-                            if (c == '\t')
-                            {
-                                if (!dynamicStrAddStr(str, sTAB))
-                                {
-                                    return freeResources(ERR_INTERNAL, str);
-                                }
-                            }
-                            else if (c == '\n')
-                            {
-                                if (!dynamicStrAddStr(str, sEOL))
-                                {
-                                    return freeResources(ERR_INTERNAL, str);
-                                }
-                            }
-                            else if (c == ' ')
-                            {
-                                if (!dynamicStrAddStr(str, sSPC))
-                                {
-                                    return freeResources(ERR_INTERNAL, str);
-                                }
-                            }
-                            else if (!dynamicStrAddChar(str, c))
-                            {
-                                return freeResources(ERR_INTERNAL, str);
-                            }
-                        }
-                    }
-                    state = STATE_BLOCK_COMMENTARY3;
-                }
-                break;
-
-                /*  STATE_BLOCK_COMMENTARY_LEAVE1   */
-                /* analyse the sequence of """..."  */
-            case (STATE_BLOCK_COMMENTARY_LEAVE1):
-                /* If next symbol is ":                                                        */
-                /*   1) change state to STATE_BLOCK_COMMENTARY_LEAVE2 and analize the sequence */
-                if (c == '"')
-                {
-                    state = STATE_BLOCK_COMMENTARY_LEAVE2;
-                }
-                    /* All other transition lead to error */
-                else
-                {
-                    return freeResources(LEX_ERROR, str);
-                }
-                break;
-
-                /*  STATE_BLOCK_COMMENTARY_LEAVE2    */
-                /* analyse the sequence of """...""  */
-            case (STATE_BLOCK_COMMENTARY_LEAVE2):
-                /* If next symbol is ":                                              */
-                /*    If DocToString == 0:                                           */
-                /*      1) change state to STATE_START and analize the next sequence */
-                /*    If DocToString == 1:                                           */
-                /*      1) Save dynamic string to token attribute string value       */
-                /*      2) Send TOKEN_STRING                                         */
-                /*      3) Return with function freeResources                        */
-                if (c == '"')
-                {
-                    if (DocToString == 1)
-                    {
-                        if (!dynamicStrCopyString(token->attribute.value_string, str))
-                        {
-                            return freeResources(ERR_INTERNAL, str);
-                        }
-                        token->token_type = TOKEN_STRING;
-                        DocToString = 0;
-                        return freeResources(OK, str);
-                    }
-                    else
-                    {
-                        state = STATE_START;
-                    }
-                }
-                    /* All other transition lead to error */
-                else
-                {
-                    return freeResources(LEX_ERROR, str);
-                }
-                break;
-
-                /*  STATE_DASH_COMMENTARY    */
+                /*  STATE_STRING_COMMENTARY    */
                 /* analyse sequence          */
-            case (STATE_DASH_COMMENTARY):
+            case (STATE_STRING_COMMENTARY):
                 /* If next symbol is EOL:                 */
                 /*    If DocToString == 0:                */
                 /*      1) set state on start             */
@@ -744,11 +491,24 @@ int getToken(tToken *token)
                     state = STATE_START;
                     if (c == EOF)
                         ungetc(c, source);
-                    else
-                    {
-                        FirstSymbolOnRow = 1;
+                }
+                break;
+
+            case (STATE_BLOCK_COMMENTARY):
+                if (c == '*')
+                {
+                    state = STATE_BLOCK_COMMENTARY_LEAVE;
+                    if (c == EOF)
                         ungetc(c, source);
-                    }
+                }
+
+
+            case (STATE_BLOCK_COMMENTARY_LEAVE):
+                if (c == '/')
+                {
+                    state = STATE_START;
+                    if (c == EOF)
+                        ungetc(c, source);                    
                 }
                 break;
 
@@ -777,7 +537,7 @@ int getToken(tToken *token)
                 /*   2) return with freeResources */
                 if (c == '=')
                 {
-                    token->token_type = TOKEN_LESS_OR_EUQAL;
+                    token->token_type = TOKEN_LESS_OR_EQUAL;
                 }
                     /* If next symbol is OTHERS:      */
                     /*   1) send token TOKEN_LESS     */
@@ -831,7 +591,7 @@ int getToken(tToken *token)
                     token->token_type = TOKEN_ASSIGN;
                 }
                 return freeResources(OK, str);
-
+                
             case (STATE_COLON):
                 if (c == '=')
                 {
