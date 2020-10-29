@@ -15,7 +15,7 @@
 
 
 FILE *source;             // Source file that will be scanned
-DYNAMIC_STRING *d_string; // Dynamic string that will be written into
+DYN_STRING *d_string; // Dynamic string that will be written into
 
 int DocToString = 0;      // Global variable to contro transformation of Documentary string to ordinary string
 
@@ -30,7 +30,7 @@ char sSPC[] = "\\032";
 * @param str Dynamic string to be freed.
 * @return Given exit code.
 */
-static int freeResources(int exit_code, DYNAMIC_STRING *str)
+static int freeResources(int exit_code, DYN_STRING *str)
 {
     dynamicStrFree(str);
     return exit_code;
@@ -51,7 +51,7 @@ void setSourceFile(FILE *file)
 *
 * @param string Pointer to dynamic string.
 */
-void dynamicStrSet(DYNAMIC_STRING *str)
+void dynamicStrSet(DYN_STRING *str)
 {
     d_string = str;
 }
@@ -63,7 +63,7 @@ void dynamicStrSet(DYNAMIC_STRING *str)
 * @param token pointer on token
 * @return Given exit code.
 */
-static int processInteger(DYNAMIC_STRING *str, tToken *token)
+static int processInteger(DYN_STRING *str, tToken *token)
 {
     char *endptr;
 
@@ -85,7 +85,7 @@ static int processInteger(DYNAMIC_STRING *str, tToken *token)
 * @param token pointer on token
 * @return Given exit code.
 */
-static int processDecimal(DYNAMIC_STRING *str, tToken *token)
+static int processDecimal(DYN_STRING *str, tToken *token)
 {
     char *endptr;
 
@@ -108,7 +108,7 @@ static int processDecimal(DYNAMIC_STRING *str, tToken *token)
 * @param token pointer on token
 * @return Given exit code.
 */
-int processIdentifier(DYNAMIC_STRING *str, tToken *token)
+int processIdentifier(DYN_STRING *str, tToken *token)
 {
     /* main sequence of conditions to verify the dynamic string on keywords in it */
     if (!dynamicStrCompareConstString(str, "else"))
@@ -301,8 +301,8 @@ int getToken(tToken *token)
 
     token->attribute.value_string = d_string;
 
-    DYNAMIC_STRING string;
-    DYNAMIC_STRING *str = &string;
+    DYN_STRING string;
+    DYN_STRING *str = &string;
 
     /* DynamicString inicialization */
     if (!dynamicStrInit(str))
@@ -406,13 +406,13 @@ int getToken(tToken *token)
                     token->token_type = TOKEN_LCURLY_BRACKET;
                     return freeResources(OK, str);
                 }
-                
+
                 else if (c == '}')
                 {
                     token->token_type = TOKEN_RCURLY_BRACKET;
                     return freeResources(OK, str);
                 }
-                
+
                     /* If first symbol is LEFT_BRACKET:        */
                     /*   1) send TOKEN - LEFT_BRACKET          */
                     /*   2) check next symbol in case of "     */
@@ -508,7 +508,7 @@ int getToken(tToken *token)
                 {
                     state = STATE_START;
                     if (c == EOF)
-                        ungetc(c, source);                    
+                        ungetc(c, source);
                 }
                 break;
 
@@ -591,7 +591,7 @@ int getToken(tToken *token)
                     token->token_type = TOKEN_ASSIGN;
                 }
                 return freeResources(OK, str);
-                
+
             case (STATE_COLON):
                 if (c == '=')
                 {
@@ -600,7 +600,7 @@ int getToken(tToken *token)
                 else
                 {
                     ungetc(c, source);
-                    state = STATE_START
+                    state = STATE_START;
                 }
                 return freeResources(OK, str);
 
