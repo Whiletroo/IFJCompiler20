@@ -20,7 +20,7 @@ typedef enum { variable, function, label } TIdType;
 */
 typedef struct {
 
-	char *key;			    // name of identifier
+	char *id;
 	TIdType iDtype;			// type of id: variable, function, label(for jumps)
     TOKENS dataType;        // type of data
 	void *valuePtr;			// for variables
@@ -57,7 +57,7 @@ bool symTableSearch(TSymTable *symtable, char *key);
 
 void symTabDeleteItem(TSymTable *symtab, char *key);
 
-void symTableCopy();
+TData *symTableGetItem(TSymTable *symtab, char *key);
 
 void symTableDestoy(TSymTable *symtab);
 
