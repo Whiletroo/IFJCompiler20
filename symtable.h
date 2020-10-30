@@ -11,13 +11,9 @@
 #include "scanner.h"
 
 
-/* Identifier types*/
 typedef enum { variable, function, label } TIdType;
 
 
-/* 
-* Type for containing data about identifier
-*/
 typedef struct {
 
 	char *id;
@@ -30,9 +26,8 @@ typedef struct {
 
 } TData;
 
-/*
-* 
-*/
+
+
 typedef struct symtabitem {
 	char *key;
 	TData *data;
@@ -40,12 +35,11 @@ typedef struct symtabitem {
 } TListItem;
 
 
-/* Hash table type
-* pointer to array of po
-*/
 typedef struct {
 	TListItem **items;
 } TSymTable;
+
+
 
 unsigned long int hashf(const char *key);
 
