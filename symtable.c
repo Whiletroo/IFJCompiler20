@@ -183,13 +183,12 @@ TData *symTableGetItem(TSymTable *symtab, char *key) {
 		TListItem* tmpitem = symtab->items[index];
 
 		if (tmpitem != NULL) {
-			while( tmpitem->nextItem != NULL)  {
+			while( tmpitem->nextItem != NULL && strcmp(tmpitem->key, key))  {
 				tmpitem = tmpitem->nextItem;
 			}
 		}
 
 		data = tmpitem->data;
-		printf("symTableGetItem : data = %p\n", (void *)data);
 		return data;
 	}
 }
