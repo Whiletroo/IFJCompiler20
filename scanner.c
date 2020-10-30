@@ -12,7 +12,7 @@
 
 #include "scanner.h"
 #include "error.h"
-
+#include "dynamicStr.h"
 
 FILE *source;             // Source file that will be scanned
 DYN_STRING *d_string; // Dynamic string that will be written into
@@ -334,34 +334,30 @@ int getToken(tToken *token)
                     return freeResources(OK, str);
                 }
 
-                else if (isspace(c))
-                {
-                        state = STATE_START;
-                }
                 else if (c == '!')
                 {
                     state = STATE_SCREAMER;
                 }
                     /* If first symbol is LESS:                                   */
-                    /*    1) change state to STATE_LESS and analize less sequence */
+                    /*    1) change state to STATE_LESS and analyze less sequence */
                 else if (c == '<')
                 {
                     state = STATE_LESS;
                 }
                     /* If first symbol is MORE:                                   */
-                    /*    1) change state to STATE_MORE and analize more sequence */
+                    /*    1) change state to STATE_MORE and analyze more sequence */
                 else if (c == '>')
                 {
                     state = STATE_HIGHER;
                 }
                     /* If first symbol is ASSIGN:                                     */
-                    /*    1) change state to STATE_ASSIGN and analize assign sequence */
+                    /*    1) change state to STATE_ASSIGN and analyze assign sequence */
                 else if (c == '=')
                 {
                     state = STATE_ASSIGN;
                 }
                     /* If first symbol is COLON */
-                    /*  1) change state to STATE_COLON and analize colon sequence*/
+                    /*  1) change state to STATE_COLON and analyze colon sequence*/
                 else if (c == ':')
                 {
                     state = STATE_COLON;
@@ -452,6 +448,7 @@ int getToken(tToken *token)
                     token->token_type = TOKEN_EOF;
                     return freeResources(OK, str);
                 }
+                break;
 
                 /*              STATE_DIV               */
                 /* '/' sequence, div and commentary analysis  */
@@ -462,7 +459,7 @@ int getToken(tToken *token)
                 {
                     state = STATE_STRING_COMMENTARY;
                 }
-                /* If next symbol is *
+                /* If next symbol is */
                 /*  1) change state to STATE_BLOCK_COMMENTARY and analize the sequence */
                 if (c == '*')
                 {
@@ -480,7 +477,7 @@ int getToken(tToken *token)
                 return freeResources(OK, str);
 
                 /*  STATE_STRING_COMMENTARY    */
-                /* analyse sequence          */
+                /* analyse sequence           */
             case (STATE_STRING_COMMENTARY):
                 /* If next symbol is EOL:                 */
                 /*    If DocToString == 0:                */
@@ -501,7 +498,7 @@ int getToken(tToken *token)
                     if (c == EOF)
                         ungetc(c, source);
                 }
-
+                break;
 
             case (STATE_BLOCK_COMMENTARY_LEAVE):
                 if (c == '/')
@@ -1008,4 +1005,7 @@ int getToken(tToken *token)
                 break;
         }
     }
+}
+int main(){
+    return 0;
 }
