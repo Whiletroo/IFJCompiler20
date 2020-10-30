@@ -6,24 +6,16 @@
 #include "scanner.h"
 #include "symtable.h"
 
-#define MAX_ST_SIZE 1000 // size of hash table
+#define MAX_ST_SIZE 100 // size of hash table
 
-// ALMOST READY ALMOST READY ALMOST READY
-// ALMOST READY ALMOST READY ALMOST READY
-// ALMOST READY ALMOST READY ALMOST READY
-// ALMOST READY ALMOST READY ALMOST READY
-// ALMOST READY ALMOST READY ALMOST READY
-// ALMOST READY ALMOST READY ALMOST READY
-// ALMOST READY ALMOST READY ALMOST READY
-// ALMOST READY ALMOST READY ALMOST READY
-// ALMOST READY ALMOST READY ALMOST READY
-// ALMOST READY ALMOST READY ALMOST READY
+// TODO add comments
 
 
 /* Hash function
 * TODO probably change it
 */
 unsigned long int hashf(const char *key) {
+
  	unsigned long int  value = 0;
 	unsigned int  i = 0;
  	unsigned int key_len = strlen(key);
@@ -83,7 +75,7 @@ bool symTableSearch(TSymTable *symtab, char *key) {
 	TListItem* tmpitem = symtab->items[index];
 
 	while(!found && tmpitem != NULL)  {
-		if (symtab->items[index]->key == tmpitem->key) {
+		if (tmpitem->key == key) {
 			found = true;
 		}
 		tmpitem = tmpitem->nextItem;
@@ -152,48 +144,75 @@ void symTabDeleteItem(TSymTable *symtab, char *key) {
 
 	if (symtab->items[index] != NULL) {
 		
-		TListItem *tmpitem = symtab->items[index];
-		while(tmpitem != NULL) {
-		
-			if (tmpitem->nextItem == NULL){
-				free(tmpitem);
-				break;
-			} else {
+		if (symtab->items[index]->nextItem == NULL) {
+
+			free(symtab->items[index]->data);
+			free(symtab->items[index]);
+			symtab->items[index] = NULL;
+
+		} else {
+
+			TListItem *previtem = symtab->items[index];
+			TListItem *nextitem = symtab->items[index]->nextItem;
+
+			while(nextitem->nextItem != NULL) {
+
+				previtem = nextitem;
+				nextitem = nextitem->nextItem;
+			}
+
+			free(nextitem->data);
+			free(nextitem);
+			previtem->nextItem = NULL;
+		}
+	}
+}
+
+
+/*
+*Function returns a pointer to last item with entered key
+*/
+TData *symTableGetItem(TSymTable *symtab, char *key) {
+
+	if (symtab == NULL) {
+		exit(EXIT_FAILURE);
+	} else {
+
+		TData *data;
+		unsigned long int index = hashf(key);
+		TListItem* tmpitem = symtab->items[index];
+
+		if (tmpitem != NULL) {
+			while( tmpitem->nextItem != NULL)  {
 				tmpitem = tmpitem->nextItem;
 			}
 		}
+
+		data = tmpitem->data;
+		printf("symTableGetItem : data = %p\n", (void *)data);
+		return data;
 	}
 }
 
 
 
 /*
-* Function accesses/copy a table element
-* returns
+* Functiond prints all symtable items
 */
-void symTableCopy();
-
-
-
 void symTableDump(TSymTable *symtab) {
     
-	for (int i = 0; i < MAX_ST_SIZE; ++i) {
+	for (int index = 0; index < MAX_ST_SIZE; index++) {
         
-		TListItem *tmpitem = symtab->items[i];
+		TListItem *tmpitem = symtab->items[index];
 
         if (tmpitem == NULL) {
             continue;
         }
 
-        printf("slot[%4d]: ", i);
+        printf("slot[%4d]: ", index);
 
-        for(;;) {
+        while (tmpitem != NULL) {
             printf(" [%s]\t ", tmpitem->key);
-
-            if (tmpitem->nextItem == NULL) {
-                break;
-            }
-
             tmpitem = tmpitem->nextItem;
         }
 
@@ -226,48 +245,3 @@ void symTableDestoy(TSymTable *symtab) {
 		free(symtab);
 	}
 }
-
-
-
-int main() {
-
-	TSymTable *symtab = symTableInit();
-	
-	TData *data1 = malloc(sizeof(TData));
-	TData *data2 = malloc(sizeof(TData));
-	TData *data3 = malloc(sizeof(TData));
-	TData *data4 = malloc(sizeof(TData));
-	TData *data5 = malloc(sizeof(TData));
-	TData *data6 = malloc(sizeof(TData));
-
-
-	char *key1 = "guyb";
-	char *key2 = "llplj8";
-	char *key3 = "mnkb4";
-	char *key4 = "ppoqa";
-	char *key5 = "ttkjnh";
-	char *key6 = "Identifier_6";
-
-	symTableInsert(symtab, key1, data1);
-	symTableInsert(symtab, key2, data2);
-	symTableInsert(symtab, key3, data3);
-	symTableInsert(symtab, key4, data4);
-	symTableInsert(symtab, key5, data5);
-	symTableInsert(symtab, key6, data6);
-
-	symTableDump(symtab);
-
-	symTableDestoy(symtab);
-
-	return 0;
-}
-
-
-
-//	data1->dataType = TOKEN_INT;
-//	data2->dataType = TOKEN_DOUBLE;
-//	data3->dataType = TOKEN_STRING;
-//	data4->dataType = TOKEN_IDENTIFIER;
-//	data5->dataType = TOKEN_KEYWORD;
-//	data6->dataType = TOKEN_MINUS;
-
