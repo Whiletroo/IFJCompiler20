@@ -138,7 +138,7 @@ typedef struct
     char *id;
 } tToken;
 
-tToken token; // Global variable
+extern tToken token; // Global variable
 
 /**
 * Sets source file to be scanned.

@@ -22,7 +22,7 @@ int stackEmpty (Stack* s)
     return s->topItem == NULL;
 }
 
-void stackPush (Stack* s, tToken t, DATA_TYPE type)
+void stackPush (Stack* s, tToken t, PrecedenceTableSymbol type)
 {
 
     StackItem* newTop = (StackItem*) malloc(sizeof(StackItem));
@@ -103,7 +103,7 @@ int insertStopper(Stack* s)
             }
 
             stopper->symbol = STOP;
-            stopper->type = TYPE_NIL;
+            stopper->type = TOKEN_NIL;
 
             if(terminal == NULL)
             {
