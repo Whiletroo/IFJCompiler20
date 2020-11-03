@@ -1,9 +1,9 @@
 # Author: xkrukh00
 
 CC = gcc
-CFLAGS = -std=c99 -Wall -Wextra -Werror -g
+CFLAGS = -std=c99 -Wall -Werror -g
 OUTPUT_EXEC = compiler
-OBJ = scanner.c
+all = main.c dynamicStr.c scanner.c stack.c symtable.c
 
-target: $(OBJ)
-    $(CC) $(CFLAGS) -o $(OUTPUT_EXEC) $(OBJ)
+all: all
+	$(CC) $(CFLAGS) $(all) -o compiler
