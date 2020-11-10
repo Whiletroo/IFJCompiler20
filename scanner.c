@@ -17,8 +17,6 @@
 FILE *source;             // Source file that will be scanned
 DYN_STRING *d_string; // Dynamic string that will be written into
 
-tToken token;
-
 int DocToString = 0;      // Global variable to contro transformation of Documentary string to ordinary string
 
 char sEOL[] = "\\012";
@@ -386,6 +384,14 @@ int getToken(tToken *token)
                 else if (c == '*')
                 {
                     token->token_type = TOKEN_MUL;
+                    return freeResources(OK, str);
+                }
+                    /* If first symbol is semicolon:                 */
+                    /*   1) send TOKEN - SEMICOLON                   */
+                    /*   2) return with function freeResources */
+                else if (c == ';')
+                {
+                    token->token_type = TOKEN_SEMICOLON;
                     return freeResources(OK, str);
                 }
                     /* If first symbol is DIV:                                 */

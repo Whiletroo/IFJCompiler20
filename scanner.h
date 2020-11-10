@@ -120,6 +120,7 @@ typedef enum
     TOKEN_COMMA,         // , //  DONE IN SCANNER
     TOKEN_LCURLY_BRACKET,// { //  DONE IN SCANNER
     TOKEN_RCURLY_BRACKET,// } //  DONE IN SCANNER
+    TOKEN_SEMICOLON,     // ; //  DONE IN SCANNER
     TOKEN_NONE,
 
 } TOKENS;
@@ -138,7 +139,7 @@ typedef struct
     char *id;
 } tToken;
 
-extern tToken token; // Global variable
+tToken token; // Global variable
 
 /**
 * Sets source file to be scanned.
