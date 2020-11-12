@@ -337,7 +337,13 @@ int getToken(tToken *token)
                     token->token_type = TOKEN_EOL;
                     return freeResources(OK, str);
                 }
-
+               
+                else if (isspace(c))
+                {
+                    state = STATE_START;
+                    return freeResources(OK, str);
+                }
+                
                 else if (c == '!')
                 {
                     state = STATE_SCREAMER;
