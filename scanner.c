@@ -17,6 +17,8 @@
 FILE *source;             // Source file that will be scanned
 DYN_STRING *d_string; // Dynamic string that will be written into
 
+tToken token;
+
 int DocToString = 0;      // Global variable to contro transformation of Documentary string to ordinary string
 
 char sEOL[] = "\\012";
@@ -271,6 +273,8 @@ const char *getTokenName(TOKENS token)
             return "Left curly bracket";
         case TOKEN_RCURLY_BRACKET:
             return "Right curly bracket";
+        case TOKEN_SEMICOLON:
+            return "Semicolon";
          case TOKEN_NIL:
             return "Nil";
         case TOKEN_NONE:
