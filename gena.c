@@ -135,7 +135,7 @@ bool genArithm(tToken token, bool stackVersion)
     }
     return true;
 }
-        //Ф-ция создаст основной фрейм функии
+        //Г”-Г¶ГЁГї Г±Г®Г§Г¤Г Г±ГІ Г®Г±Г­Г®ГўГ­Г®Г© ГґГ°ГҐГ©Г¬ ГґГіГ­ГЄГЁГЁ
 bool genCreaStartFream(char *nameFrame)
 {
     if ( strcmp(nameFrame,"main"))
@@ -151,7 +151,7 @@ bool genCreaStartFream(char *nameFrame)
      }
 	return true;
 }
-    //Функция закроет фрейм
+    //Г”ГіГ­ГЄГ¶ГЁГї Г§Г ГЄГ°Г®ГҐГІ ГґГ°ГҐГ©Г¬
 bool genCreEndFream()
 {
 	ADD_INST("POPFRAME");
@@ -160,7 +160,7 @@ bool genCreEndFream()
 	return true;
 }
 
-/*           //Нужна ли эта золупа?
+/*           //ГЌГіГ¦Г­Г  Г«ГЁ ГЅГІГ  Г§Г®Г«ГіГЇГ ?
 bool genCreateFrame()
 {
     ADD_INST("CREATEFRAME");
