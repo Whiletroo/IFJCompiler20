@@ -10,22 +10,19 @@
 
 #include "scanner.h"
 
-
 typedef enum { variable, function, label } TIdType;
+
+typedef enum { INT, DOUBLE, BOOL, STRING, UNDEF} tDataType;
 
 
 typedef struct {
 
-	char *id;
-	TIdType iDtype;			// type of id: variable, function, label(for jumps)
-    TOKENS dataType;        // type of data
-	void *valuePtr;			// for variables
-	unsigned int pos;       // not sure
-	bool defined;
-	bool found; 		    // for label. was the target found?
+	tAttribute *attribute;	// pointer to value (attribute)
+	TIdType iDtype;			// type of id: variable, function, label
+    tDataType dataType;     // type of data if it is variable
+	bool label_found; 		// flag for labels (is it found?)
 
 } TData;
-
 
 
 typedef struct symtabitem {
@@ -35,10 +32,9 @@ typedef struct symtabitem {
 } TListItem;
 
 
-typedef struct {
+typedef struct symTable{
 	TListItem **items;
 } TSymTable;
-
 
 
 unsigned long int hashf(const char *key);
@@ -47,12 +43,14 @@ TSymTable *symTableInit();
 
 void symTableInsert(TSymTable *symtable, char *key, TData *data);
 
+void symTableActualize(TSymTable *symtable, char *key, TData *data); //TODO
+
 bool symTableSearch(TSymTable *symtable, char *key);
 
 void symTabDeleteItem(TSymTable *symtab, char *key);
 
 TData *symTableGetItem(TSymTable *symtab, char *key);
 
-void symTableDestoy(TSymTable *symtab);
+void symTableDestroy(TSymTable *symtab);
 
 #endif
