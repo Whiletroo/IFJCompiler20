@@ -59,40 +59,15 @@ typedef enum
     KEYWORD_PACKAGE, // package
     KEYWORD_RETURN, // return
     KEYWORD_STRING, // string
-/**
-    * Additional tasks *
-    * Boolop *
-    KEYWORD_TRUE,  //true
-    KEYWORD_FALSE, // false
-    KEYWORD_NOT,   // not
-    KEYWORD_AND,   // and
-    KEYWORD_OR,    // or
-
-    * Base ??? *
-
-    * Cycles *
-    KEYWORD_FOR,      // for
-    KEYWORD_BREAK,    // break
-    KEYWORD_CONTINUE, // continue
-
-    * Funexp ??? *
-
-    * Ifthen *
-    KEYWORD_ELIF, // elif
-    KEYWORD_IN,   // in
-*/
 } KEYWORDS;
 
 typedef enum
 {
-    
     TOKEN_EOF,        /// EOL //   DONE IN SCANNER
     TOKEN_EOL,        /// EOF //   DONE IN SCANNER
     TOKEN_EMPTY,      /// Empty // DONE IN SCANNER
-    TOKEN_KEYWORD,    /// Keyword //    DONE IN SCANNER
-    TOKEN_ASSIGN, // = //  DONE IN SCANNER
-
     TOKEN_IDENTIFIER, /// Identifier // DONE IN SCANNER
+    TOKEN_KEYWORD,    /// Keyword //    DONE IN SCANNER
 
 
     TOKEN_INT,    /// Integer number // DONE IN SCANNER
@@ -102,30 +77,28 @@ typedef enum
 
 
     /* Operations */
+    TOKEN_ASSIGN, // = //  DONE IN SCANNER
     TOKEN_PLUS,   // + //  DONE IN SCANNER
     TOKEN_MINUS,  // - //  DONE IN SCANNER
     TOKEN_MUL,    // * //  DONE IN SCANNER
     TOKEN_DIV,    // / //  DONE IN SCANNER
 
     /* Comparison */
-    TOKEN_EQUALS,          // == // DONE IN SCANNER 
-    TOKEN_NOT_EQUAL,       // != // DONE IN SCANNER
-    TOKEN_LESS_OR_EQUAL,   // <= // DONE IN SCANNER
-    TOKEN_LESS,            // < //  DONE IN SCANNER
+    TOKEN_EQUALS,          // == // DONE IN SCANNER
     TOKEN_HIGHER_OR_EQUAL, // >= // DONE IN SCANNER
     TOKEN_HIGHER,          // > //  DONE IN SCANNER
-   
+    TOKEN_LESS_OR_EQUAL,   // <= // DONE IN SCANNER
+    TOKEN_LESS,            // < //  DONE IN SCANNER
+    TOKEN_NOT_EQUAL,       // != // DONE IN SCANNER
+    TOKEN_DEFINITION,      // := // PROBABLY DONE IN SCANNER
+
     /* */
     TOKEN_LEFT_BRACKET,  // ( //  DONE IN SCANNER
     TOKEN_RIGHT_BRACKET, // ) //  DONE IN SCANNER
     TOKEN_COMMA,         // , //  DONE IN SCANNER
-
-    TOKEN_DEFINITION,      // := // PROBABLY DONE IN SCANNER
-
     TOKEN_LCURLY_BRACKET,// { //  DONE IN SCANNER
     TOKEN_RCURLY_BRACKET,// } //  DONE IN SCANNER
     TOKEN_SEMICOLON,     // ; //  DONE IN SCANNER
-    TOKEN_NONE,
 
 } TOKENS;
 
@@ -141,10 +114,9 @@ typedef struct
     TOKENS token_type;
     tAttribute attribute;
     char *id;
-
 } tToken;
 
-extern tToken token; // Global variable
+tToken token; // Global variable
 
 /**
 * Sets source file to be scanned.

@@ -1,0 +1,18 @@
+/**
+* @file parser.h
+* @author xproko40
+* @date 11.11.2020
+* @brief The parser
+*/
+
+#ifndef _PARSER_H
+#define _PARSER_H
+#include <stdbool.h>
+
+#include "symtable.h"
+
+
+tToken token;
+TData *data;
+
+#endif //_PARSER_H
