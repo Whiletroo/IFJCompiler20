@@ -85,11 +85,14 @@ typedef enum
 
 typedef enum
 {
+    
     TOKEN_EOF,        /// EOL //   DONE IN SCANNER
     TOKEN_EOL,        /// EOF //   DONE IN SCANNER
     TOKEN_EMPTY,      /// Empty // DONE IN SCANNER
-    TOKEN_IDENTIFIER, /// Identifier // DONE IN SCANNER
     TOKEN_KEYWORD,    /// Keyword //    DONE IN SCANNER
+    TOKEN_ASSIGN, // = //  DONE IN SCANNER
+
+    TOKEN_IDENTIFIER, /// Identifier // DONE IN SCANNER
 
 
     TOKEN_INT,    /// Integer number // DONE IN SCANNER
@@ -99,25 +102,26 @@ typedef enum
 
 
     /* Operations */
-    TOKEN_ASSIGN, // = //  DONE IN SCANNER
     TOKEN_PLUS,   // + //  DONE IN SCANNER
     TOKEN_MINUS,  // - //  DONE IN SCANNER
     TOKEN_MUL,    // * //  DONE IN SCANNER
     TOKEN_DIV,    // / //  DONE IN SCANNER
 
     /* Comparison */
-    TOKEN_EQUALS,          // == // DONE IN SCANNER
-    TOKEN_HIGHER_OR_EQUAL, // >= // DONE IN SCANNER
-    TOKEN_HIGHER,          // > //  DONE IN SCANNER
+    TOKEN_EQUALS,          // == // DONE IN SCANNER 
+    TOKEN_NOT_EQUAL,       // != // DONE IN SCANNER
     TOKEN_LESS_OR_EQUAL,   // <= // DONE IN SCANNER
     TOKEN_LESS,            // < //  DONE IN SCANNER
-    TOKEN_NOT_EQUAL,       // != // DONE IN SCANNER
-    TOKEN_DEFINITION,      // := // PROBABLY DONE IN SCANNER
-
+    TOKEN_HIGHER_OR_EQUAL, // >= // DONE IN SCANNER
+    TOKEN_HIGHER,          // > //  DONE IN SCANNER
+   
     /* */
     TOKEN_LEFT_BRACKET,  // ( //  DONE IN SCANNER
     TOKEN_RIGHT_BRACKET, // ) //  DONE IN SCANNER
     TOKEN_COMMA,         // , //  DONE IN SCANNER
+
+    TOKEN_DEFINITION,      // := // PROBABLY DONE IN SCANNER
+
     TOKEN_LCURLY_BRACKET,// { //  DONE IN SCANNER
     TOKEN_RCURLY_BRACKET,// } //  DONE IN SCANNER
     TOKEN_SEMICOLON,     // ; //  DONE IN SCANNER
@@ -137,6 +141,7 @@ typedef struct
     TOKENS token_type;
     tAttribute attribute;
     char *id;
+
 } tToken;
 
 extern tToken token; // Global variable
