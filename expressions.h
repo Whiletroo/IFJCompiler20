@@ -9,7 +9,9 @@
 #define _EXPRESSIONS_H
 
 #include "scanner.h"
-
+#include "scanner.c"
+#include "stdbool.h"
+#include "error.h"
 
 /* Precedence TAble Indexes */
 typedef enum {  
@@ -20,42 +22,44 @@ typedef enum {
     I_LEFT_BRACKET,		// 4 (
     I_RIGHT_BRACKET,	// 5 )
     I_DOLLAR			// 6 $
-} tPrecTableIndex;
+} tPrecTabIndex;
 
 
 /* Precedence Items */
-enum PrecTabItem {
+typedef enum {
     
     /* Data Types */
     IDENTIFIER,		// 0 ID
     INT_NUMBER,		// 1 int
     DOUBLE_NUMBER,	// 2 double
     STRING,			// 3 string
-    NIL,
+    NIL,            // 4 nil
 
     /* Mathematical Operators */
-    ADD,			// 4 +
-    SUB,			// 5 -
-    MUL,			// 6 *
-    DIV,			// 7 /
+    ADD,			// 5 +
+    SUB,			// 6 -
+    MUL,			// 7 *
+    DIV,			// 8 /
 
     /* Relation Operators */
-    EQ,				// 8 ==
-    NEQ,			// 9 !=
-    LEQ,			// 10 <=
-    LTN,			// 11 <
-    HEQ,			// 12 >=
-    HTN,			// 113 >
+    EQ,				// 9 ==
+    NEQ,			// 10 !=
+    LEQ,			// 11 <=
+    LTN,			// 12 <
+    HEQ,			// 13 >=
+    HTN,			// 14 >
 
     /* Braces */
-    LEFT_BRACKET,	// 14 (
-    RIGHT_BRACKET,	// 15 )
+    LEFT_BRACKET,	// 15 (
+    RIGHT_BRACKET,	// 16 )
 
     /* Others */
-    DOLLAR,			// 16 $
-    REDUCE,			// 17 stop symbol used when reducing
-    NON_TERM,		// 18 non-terminal
-};
+    DOLLAR,			// 17 $
+    REDUCE,			// 18 for rule reduce
+    NON_TERM,		// 19 non-terminal
+    STOP            //
+
+} tPrecTabItem;
 
 
 typedef enum
@@ -78,7 +82,7 @@ typedef enum
 
 
 const char precedence_table[7][7] = {
-/*         /*   +- rel  id  (   )   $       */
+/*         /   *   +   - rel  id  (   )   $       */
 /* /*  */ {'>', '>', '>', '<', '<', '>', '>'},
 /* + - */ {'<', '>', '>', '<', '<', '>', '>'},
 /* rel */ {'<', '<', ' ', '<', '<', '>', '>'},
@@ -95,16 +99,18 @@ const char precedence_table[7][7] = {
 */
 
 
-tPrecTableIndex token2precTableIndex();
 
-char get_precedence();
+char precedence();
+
+
+tPrecTabIndex getPrecTabIndex();
 
 /****** ADT stack for Precedence analysis    *******/
 /* Stack with linked items. Here is access to items
-* under top of stack, every item have right and left
-* pointers to neightbo. This is needed to be able to 
+* under top of stack, every item have pointer to 
+* nextitem in stack. This is needed to be able to 
 * get to the first non-terminal in the Stack. A stack 
-* is essentially a Doubly linked list              */
+* is essentially a linked list                     */
 
 // Init Stack
 // Push PrecS Stack
@@ -113,6 +119,31 @@ char get_precedence();
 // Dispose Stack
 // Find First non-terminal in Stack
 
+
+typedef struct precStackItem {
+
+    tPrecTabItem type;
+    struct precStackItem *next;
+
+}tPrecStackItem;
+
+
+typedef struct {
+    tPrecStackItem *top;
+}tPrecStack;
+
+tPrecStack initPrecStack();
+
+tPrecStackItem *topPrecStack();
+tPrecStackItem *topTermPrecStack();
+bool emptyPrecStack();
+bool pushPrecStack(tPrecTabItem type);
+tPrecTabItem tkn2precItem();
+void insertReducePrecStack();
+
+
+
+int exp();
 
 
 #endif
