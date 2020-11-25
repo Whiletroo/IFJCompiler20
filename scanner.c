@@ -158,49 +158,6 @@ int processIdentifier(DYN_STRING *str, tToken *token)
         token->attribute.keyword = KEYWORD_STRING;
         token->token_type = TOKEN_KEYWORD;
     }
-
-/**
-    else if (!dynamicStrCompareConstString(str, "not"))
-    {
-        token->attribute.keyword = KEYWORD_NOT;
-        token->token_type = TOKEN_KEYWORD;
-    }
-    else if (!dynamicStrCompareConstString(str, "and"))
-    {
-        token->attribute.keyword = KEYWORD_AND;
-        token->token_type = TOKEN_KEYWORD;
-    }
-    else if (!dynamicStrCompareConstString(str, "or"))
-    {
-        token->attribute.keyword = KEYWORD_OR;
-        token->token_type = TOKEN_KEYWORD;
-    }
-    else if (!dynamicStrCompareConstString(str, "for"))
-    {
-        token->attribute.keyword = KEYWORD_FOR;
-        token->token_type = TOKEN_KEYWORD;
-    }
-    else if (!dynamicStrCompareConstString(str, "break"))
-    {
-        token->attribute.keyword = KEYWORD_BREAK;
-        token->token_type = TOKEN_KEYWORD;
-    }
-    else if (!dynamicStrCompareConstString(str, "continue"))
-    {
-        token->attribute.keyword = KEYWORD_CONTINUE;
-        token->token_type = TOKEN_KEYWORD;
-    }
-    else if (!dynamicStrCompareConstString(str, "elif"))
-    {
-        token->attribute.keyword = KEYWORD_ELIF;
-        token->token_type = TOKEN_KEYWORD;
-    }
-    else if (!dynamicStrCompareConstString(str, "in"))
-    {
-        token->attribute.keyword = KEYWORD_IN;
-        token->token_type = TOKEN_KEYWORD;
-    }
-*/
         /* If the dynamic line does not contain keywords, then the word located in it is an identifier */
     else
     {
@@ -277,8 +234,6 @@ const char *getTokenName(TOKENS token)
             return "Semicolon";
          case TOKEN_NIL:
             return "Nil";
-        case TOKEN_NONE:
-            return "None";
     }
     return 0;
 }
@@ -337,13 +292,11 @@ int getToken(tToken *token)
                     token->token_type = TOKEN_EOL;
                     return freeResources(OK, str);
                 }
-               
                 else if (isspace(c))
                 {
-                    state = STATE_START;
-                    return freeResources(OK, str);
+                        state = STATE_START;
+                        return freeResources(OK, str);
                 }
-                
                 else if (c == '!')
                 {
                     state = STATE_SCREAMER;
