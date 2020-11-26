@@ -14,7 +14,8 @@
 #include "scanner.h"
 
 #define GET_TOKEN()                               \
-    if ((result = getToken(&token)) != OK)
+    if ((result = getToken(&token)) != OK)        \
+        return result
 
 #define CHECK_TOKEN(expected)                                       \
     if (token.token_type != (expected))                             \
@@ -47,7 +48,12 @@
 		CHECK_KEYWORD(_keyword);									\
 	} while(0)
 
+
+static int start();
 static int prog();
+static int type();
+static int types();
+static int next_types();
 static int func_args();
 static int func_next_arg();
 static int func_ret_types();
@@ -62,14 +68,37 @@ static int func_call_args();
 static int func_call_next_arg();
 
 
+
+static int start(){
+    int result;
+    // <start> -> package id <prog>
+    GET_TOKEN_AND_CHECK_KEYWORD(KEYWORD_PACKAGE);
+    GET_AND_CHECK_TOKEN(TOKEN_IDENTIFIER);
+    GET_TOKEN();
+    return prog(data);
+}
+
+
+
+
 static int prog()
 {
     int result;
+    TData *dataptr;
+    TSymTable *globalTable;
+    if (symTableDataInit(dataptr)){
+        return ERR_INTERNAL;
+    }
+    if (symTableInit(globalTable)) {
+        return ERR_INTERNAL;
+    }
 
     // <prog> → func id (<func_args>) <func_ret_types> {<st_list>}  <prog>
     if (token.token_type == TOKEN_KEYWORD && token.attribute.keyword == KEYWORD_FUNC) {
-
         GET_AND_CHECK_TOKEN(TOKEN_IDENTIFIER);
+
+        symTableInsert(globalTable, token.id, function);
+
         GET_AND_CHECK_TOKEN(TOKEN_LEFT_BRACKET);
         GET_TOKEN_AND_CHECK_RULE(func_args);
         CHECK_TOKEN(TOKEN_RIGHT_BRACKET);
@@ -79,7 +108,7 @@ static int prog()
         CHECK_TOKEN(TOKEN_RCURLY_BRACKET);
 
         GET_TOKEN();
-        return prog();
+        return prog(data);
 
     }
     // <prog> → EOF
@@ -92,25 +121,53 @@ static int prog()
 static int type()
 {
     // int, double or string
+    switch (token.token_type) {
+        case TOKEN_INT:
+            return INT;
+        case TOKEN_DOUBLE:
+            return DOUBLE;
+        case TOKEN_BOOL:
+            return BOOL;
+        case TOKEN_STRING:
+            return STRING;
+        default:
+            return NIL;
+    }
 }
 
 static int types()
 {
+    int result;
     // <types> → <type> <next_types>
+    GET_TOKEN_AND_CHECK_RULE(type);
+    GET_TOKEN();
+    return next_types(data);
     // <types> → ε
+    return OK;
 }
 
 static int next_types()
 {
-    // <next_types> → , <type next_types>
+    int result;
+    // <next_types> → , <type> <next_types>
+    GET_AND_CHECK_TOKEN(TOKEN_COMMA);
+    GET_TOKEN_AND_CHECK_RULE(type);
+    GET_TOKEN();
+    return next_types(data);
     // <next_types> → ε
+    return OK;
 }
 
 static int func_args()
 {
-
+    int result;
     // <func_args> → id <type> <func_next_arg>
+    GET_AND_CHECK_TOKEN(TOKEN_IDENTIFIER);
+    GET_TOKEN_AND_CHECK_RULE(type);
+    GET_TOKEN();
+    return func_ret_types(data);
     // <func_args> → ε
+    return OK;
 }
 
 static int func_next_arg()

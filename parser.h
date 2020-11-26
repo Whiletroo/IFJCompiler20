@@ -8,12 +8,9 @@
 #ifndef _PARSER_H
 #define _PARSER_H
 #include <stdbool.h>
-
 #include "symtable.h"
 
-
-tToken token;
+tToken token;				/// Token
 TData *data;
-
 
 #endif //_PARSER_H
