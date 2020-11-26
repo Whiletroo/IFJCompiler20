@@ -1,7 +1,7 @@
 /**
 * @file parser.h
 * @author xproko40
-* @date 11.11.2020
+* @date 25.11.2020
 * @brief The parser
 */
 
@@ -14,5 +14,6 @@
 
 tToken token;
 TData *data;
+
 
 #endif //_PARSER_H

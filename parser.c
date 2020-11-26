@@ -1,7 +1,7 @@
 /**
 * @file parser.c
 * @author xproko40
-* @date 11.11.2020
+* @date 25.11.2020
 * @brief The parser
 */
 
@@ -12,63 +12,6 @@
 #include "gena.h"
 #include "symtable.h"
 #include "scanner.h"
-
-/**
-#define next() do { \
-	if (getToken(&token) == LEX_ERROR) \
-		return LEX_ERROR; \
-	PRINTTOKEN(); \
-} while (0)
-
-#define check(T) do { \
-	if (tToken.token_type != T) { \
-		fprintf(stderr, "Syntax error\n"); \
-		return SYNTAX_ERR; \
-	} \
-} while (0)
-
-#define term(T) do { \
-	check(T); \
-	next(); \
-} while (0)
-
-#define call(R) do { \
-	PRINTNTERM(R); \
-	int err = R(); \
-	if (err != OK) \
-		return err; \
-} while (0)
-
-#define try(C) do { \
-	int err = C; \
-	if (err != OK) \
-		return err; \
-} while (0)
-
-#define return(R) do { \
-	PRINTNTERM(R); \
-	return R(); \
-} while (0)
-
-
- void GET_TOKEN(int result)
-{
-     if ((result = getToken(&token)) != OK)
-     {
-        stopProgram(result, NULL);
-     }
-}
-
-
-void CHECK_TOKEN(unsigned int expected)
-{
-    if (token.token_type != expected)
-    {
-        fprintf(stderr, "%s\n", getTokenName(token.token_type));
-        stopProgram(SYNTAX_ERR, "Not expected token");
-    }
-}
-*/
 
 #define GET_TOKEN()                               \
     if ((result = getToken(&token)) != OK)
@@ -104,23 +47,46 @@ void CHECK_TOKEN(unsigned int expected)
 		CHECK_KEYWORD(_keyword);									\
 	} while(0)
 
+static int prog();
+static int func_args();
+static int func_next_arg();
+static int func_ret_types();
+static int st_list();
+static int state();
+static int var_def();
+static int var_dec();
+static int else_state();
+static int assign();
+static int func_call();
+static int func_call_args();
+static int func_call_next_arg();
+
 
 static int prog()
 {
     int result;
-    // <prog> → func id (<func_args>) <func_ret_types> {<st_list>}  <prog>
-    switch (token.token_type) {
-        case TOKEN_INT:
-        case TOKEN_DOUBLE:
-        case TOKEN_STRING:
 
-            break;
-            // <prog> → EOF
-        case TOKEN_EOF:
-            return OK;
-        default:
-            return SYNTAX_ERR;
+    // <prog> → func id (<func_args>) <func_ret_types> {<st_list>}  <prog>
+    if (token.token_type == TOKEN_KEYWORD && token.attribute.keyword == KEYWORD_FUNC) {
+
+        GET_AND_CHECK_TOKEN(TOKEN_IDENTIFIER);
+        GET_AND_CHECK_TOKEN(TOKEN_LEFT_BRACKET);
+        GET_TOKEN_AND_CHECK_RULE(func_args);
+        CHECK_TOKEN(TOKEN_RIGHT_BRACKET);
+        GET_TOKEN_AND_CHECK_RULE(func_ret_types);
+        GET_AND_CHECK_TOKEN(TOKEN_LCURLY_BRACKET);
+        GET_TOKEN_AND_CHECK_RULE(st_list);
+        CHECK_TOKEN(TOKEN_RCURLY_BRACKET);
+
+        GET_TOKEN();
+        return prog();
+
     }
+    // <prog> → EOF
+    else if (token.token_type == TOKEN_EOF){
+        return OK;
+    }
+    return SYNTAX_ERR;
 }
 
 static int type()
@@ -142,6 +108,7 @@ static int next_types()
 
 static int func_args()
 {
+
     // <func_args> → id <type> <func_next_arg>
     // <func_args> → ε
 }
@@ -165,7 +132,7 @@ static int st_list()
 
 static int state()
 {
-    // <state> → E
+    // <state> → Exp
     // <state> → <var_def>
     // <state> → <var_dec>
     // <state> → {<st_list>}
@@ -177,7 +144,7 @@ static int state()
 
 static int var_def()
 {
-    // <var_def> → id := E
+    // <var_def> → id := Exp
 }
 
 static int var_dec()
@@ -193,7 +160,7 @@ static int else_state()
 
 static int assign()
 {
-    // <assign> → id = E
+    // <assign> → id = Exp
     // <assign> → ε
 }
 
