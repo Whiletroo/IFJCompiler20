@@ -39,7 +39,7 @@ typedef struct symTable{
 
 unsigned long int hashf(const char *key);
 
-TSymTable *symTableInit();
+int symTableInit(TSymTable *symtab);
 
 void symTableInsert(TSymTable *symtable, char *key, TData *data);
 

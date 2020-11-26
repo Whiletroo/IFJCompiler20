@@ -5,6 +5,7 @@
 
 #include "scanner.h"
 #include "symtable.h"
+#include "error.h"
 
 #define MAX_ST_SIZE 100 // size of hash table. set MAX_ST_SIZE to 4 for test(uncomment main func)
 
@@ -33,19 +34,19 @@ unsigned long int hashf(const char *key) {
 * Functiond allocates memory
 * for symbol table.
 */
-TSymTable *symTableInit() {
+int symTableInit(TSymTable *symtab) {
 
 	// memory allocatoin for table
-	TSymTable *symtab = malloc(sizeof(TSymTable));
+	symtab = malloc(sizeof(TSymTable));
 	if ( symtab == NULL ){
-		exit (EXIT_FAILURE);
+		return ERR_INTERNAL;
 	}
 
 	// memory allocatoin for pointer to items
 	symtab->items = malloc(sizeof(TListItem*) * MAX_ST_SIZE);
 	if ( symtab->items == NULL) {
 		free(symtab);
-		exit (EXIT_FAILURE);
+		return ERR_INTERNAL;
 	}
 
 	// set each NULL
@@ -53,7 +54,7 @@ TSymTable *symTableInit() {
 		symtab->items[i] = NULL;
 	}
 
-	return symtab;
+	return OK;
 }
 
 
@@ -138,7 +139,9 @@ void symTableInsert(TSymTable *symtab, char *key, TData *data){
 	}
 }
 
-
+void symTableActualize(TSymTable *symtable, char *key, TData *data) {
+	
+}
 
 /*
 * Function delete the last symbol
@@ -238,7 +241,7 @@ void symTableDump(TSymTable *symtab) {
 /*
 * Frees allocated memory for symbol table
 */
-void symTableDestoy(TSymTable *symtab) {
+void symTableDestroy(TSymTable *symtab) {
 
 	if (symtab != NULL) {
 		
@@ -258,99 +261,3 @@ void symTableDestoy(TSymTable *symtab) {
 		free(symtab);
 	}
 }
-
-/*
-// Simple test
-int main(){
-
-	TData *data1 = malloc(sizeof(TData));
-	TData *data2 = malloc(sizeof(TData));
-	TData *data3 = malloc(sizeof(TData));
-	TData *data4 = malloc(sizeof(TData));
-	TData *data5 = malloc(sizeof(TData));
-	TData *data6 = malloc(sizeof(TData));
-	TData *data7 = malloc(sizeof(TData));
-	TData *data8 = malloc(sizeof(TData));
-	TData *data9 = malloc(sizeof(TData));
-	TData *data10 = malloc(sizeof(TData));
-	TData *data11 = malloc(sizeof(TData));
-	TData *data12 = malloc(sizeof(TData));
-
-	TSymTable *symtab = symTableInit();
-
-	data10->id = "first inserted name10";
-
-	symTableInsert(symtab, "name1", data1);
-	symTableInsert(symtab, "name2", data2);
-	symTableInsert(symtab, "name3", data3);
-	symTableInsert(symtab, "name4", data4);
-	symTableInsert(symtab, "name5", data5);
-	symTableInsert(symtab, "name6", data6);
-	symTableInsert(symtab, "name7", data7);
-	symTableInsert(symtab, "name8", data8);
-	symTableInsert(symtab, "name9", data9);
-	symTableInsert(symtab, "name10", data10);
-	symTableInsert(symtab, "name11", data11);
-	symTableInsert(symtab, "name12", data12);
-
-	symTableDump(symtab);
-
-
-	printf("Getting data from name 10\n");
-	TData *tmpdata = symTableGetItem(symtab, "name10");
-	printf("Data from name10 : \"%s\"\n", tmpdata->id);
-
-
-	printf("Insert new name10\n");
-	TData *mydata = malloc(sizeof(TData));
-	mydata->id = "last inserted name 10";
-	symTableInsert(symtab, "name10", mydata);
-	symTableDump(symtab);
-
-
-	printf("Getting data from name 10\n");
-	tmpdata = symTableGetItem(symtab, "name10");
-	printf("Data from name10 : \"%s\"\n", tmpdata->id);
-
-
-	printf("\nCall delete functoin with arg \"name10\"\n");
-	symTabDeleteItem(symtab, "name10");
-	printf("Result :\n");
-	symTableDump(symtab);
-
-
-	printf("Getting data from name 10\n");
-	tmpdata = symTableGetItem(symtab, "name10");
-	printf("Data from name10 : \"%s\"\n", tmpdata->id);
-
-	
-	printf("\nCall delete functoin with arg \"name3\"\n");
-	symTabDeleteItem(symtab, "name3");
-	printf("Result :\n");
-	symTableDump(symtab);
-
-
-	printf("\nCall delete functoin with arg \"name8\"\n");
-	symTabDeleteItem(symtab, "name8");
-	printf("Result :\n");
-	symTableDump(symtab);
-
-
-	printf("\nCall delete functoin with arg \"name4\"\n");
-	symTabDeleteItem(symtab, "name4");
-	printf("Result :\n");
-	symTableDump(symtab);
-
-
-	printf("\nCall insert function, insert back name8\n");
-	data8 = malloc(sizeof(TData));
-	symTableInsert(symtab, "name8", data8);
-	printf("Result :\n");
-	symTableDump(symtab);
-
-
-	symTableDestoy(symtab);
-
-	return 0;
-}
-*/
