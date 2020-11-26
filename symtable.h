@@ -10,7 +10,7 @@
 
 #include "scanner.h"
 
-typedef enum { variable, function, label } TIdType;
+typedef enum { variable, function, UNDEF } TIdType;
 
 typedef enum { INT, DOUBLE, BOOL, STRING, UNDEF} tDataType;
 
@@ -20,7 +20,6 @@ typedef struct {
 	tAttribute *attribute;	// pointer to value (attribute)
 	TIdType iDtype;			// type of id: variable, function, label
     tDataType dataType;     // type of data if it is variable
-	bool label_found; 		// flag for labels (is it found?)
 
 } TData;
 
@@ -41,7 +40,17 @@ unsigned long int hashf(const char *key);
 
 int symTableInit(TSymTable *symtab);
 
-void symTableInsert(TSymTable *symtable, char *key, TData *data);
+int symTableInsert(TSymTable *symtable, char *key, TData *data);
+
+
+/**
+ * Allocates memry for TData in symbol table item. Use it Before calling symTableInstert.
+ * 
+ * @param data pointer to which will be assigned the value of the pointer to initialized TData
+ * @return Exit code. OK (0) if it is ok.
+*/
+int symTableDataInit(TData *data)
+
 
 void symTableActualize(TSymTable *symtable, char *key, TData *data); //TODO
 
