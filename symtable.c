@@ -7,14 +7,7 @@
 #include "symtable.h"
 #include "error.h"
 
-#define MAX_ST_SIZE 100 // size of hash table. set MAX_ST_SIZE to 4 for test(uncomment main func)
 
-// TODO add comments
-
-
-/* Hash function
-* TODO probably change it
-*/
 unsigned long int hashf(const char *key) {
 
  	unsigned long int  value = 0;
@@ -29,11 +22,6 @@ unsigned long int hashf(const char *key) {
 }
 
 
-
-/*
-* Functiond allocates memory
-* for symbol table.
-*/
 int symTableInit(TSymTable *symtab) {
 
 	// memory allocatoin for table
@@ -76,12 +64,6 @@ int symTableDataInit(TData *data) {
 }
 
 
-/*
-* Function indicates if еhe symbol 
-* with the entered key is in table.
-* Returns true if found, or false
-* if item istn found.
-*/
 bool symTableSearch(TSymTable *symtab, char *key) {
 
 	if (symtab == NULL) {
