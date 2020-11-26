@@ -58,6 +58,23 @@ int symTableInit(TSymTable *symtab) {
 }
 
 
+int symTableDataInit(TData *data) {
+
+	if ( (data = malloc(sizeof(TData))) == NULL ) {
+		return ERR_INTERNAL;
+	}
+
+	if ( (data->attribute = malloc(sizeof(tAttribute))) == NULL ){
+		return ERR_INTERNAL;
+	}
+
+	data->attribute = NULL;
+	data->iDtype = UNDEF;
+	data->dataType = UNDEF;
+
+	return OK;
+}
+
 
 /*
 * Function indicates if еhe symbol 
@@ -91,7 +108,7 @@ bool symTableSearch(TSymTable *symtab, char *key) {
 * key and data. If item(s) with enered key exists
 * insetr a new item to end of list of items
 */
-void symTableInsert(TSymTable *symtab, char *key, TData *data){
+int symTableInsert(TSymTable *symtab, char *key, TData *data){
 	
 	if (symtab == NULL) {
 		exit(EXIT_FAILURE);
