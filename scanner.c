@@ -158,6 +158,36 @@ int processIdentifier(DYN_STRING *str, tToken *token)
         token->attribute.keyword = KEYWORD_STRING;
         token->token_type = TOKEN_KEYWORD;
     }
+    else if (!dynamicStrCompareConstString(str, "boolean"))
+    {
+        token->attribute.keyword = KEYWORD_BOOLEAN;
+        token->token_type = TOKEN_KEYWORD;
+    }
+    else if (!dynamicStrCompareConstString(str, "true"))
+    {
+        token->attribute.keyword = KEYWORD_TRUE;
+        token->token_type = TOKEN_KEYWORD;
+    }
+    else if (!dynamicStrCompareConstString(str, "false"))
+    {
+        token->attribute.keyword = KEYWORD_FALSE;
+        token->token_type = TOKEN_KEYWORD;
+    }
+    else if (!dynamicStrCompareConstString(str, "not"))
+    {
+        token->attribute.keyword = KEYWORD_NOT;
+        token->token_type = TOKEN_KEYWORD;
+    }
+    else if (!dynamicStrCompareConstString(str, "and"))
+    {
+        token->attribute.keyword = KEYWORD_AND;
+        token->token_type = TOKEN_KEYWORD;
+    }
+    else if (!dynamicStrCompareConstString(str, "or"))
+    {
+        token->attribute.keyword = KEYWORD_OR;
+        token->token_type = TOKEN_KEYWORD;
+    }
         /* If the dynamic line does not contain keywords, then the word located in it is an identifier */
     else
     {
@@ -295,7 +325,6 @@ int getToken(tToken *token)
                 else if (isspace(c))
                 {
                         state = STATE_START;
-                        return freeResources(OK, str);
                 }
                 else if (c == '!')
                 {

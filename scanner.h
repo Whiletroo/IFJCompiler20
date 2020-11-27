@@ -59,6 +59,12 @@ typedef enum
     KEYWORD_PACKAGE, // package
     KEYWORD_RETURN, // return
     KEYWORD_STRING, // string
+    KEYWORD_BOOLEAN,
+    KEYWORD_TRUE,
+    KEYWORD_FALSE,
+    KEYWORD_NOT,
+    KEYWORD_AND,
+    KEYWORD_OR,
 } KEYWORDS;
 
 typedef enum
