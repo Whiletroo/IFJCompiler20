@@ -98,7 +98,7 @@ static int processDecimal(DYN_STRING *str, tToken *token)
     }
 
     token->attribute.value_double = val;
-    token->token_type = TOKEN_DOUBLE;
+    token->token_type = TOKEN_FLOAT64;
 
     return freeResources(OK, str);
 }
@@ -222,8 +222,8 @@ const char *getTokenName(TOKENS token)
             return "Keyword";
         case TOKEN_INT:
             return "Int";
-        case TOKEN_DOUBLE:
-            return "Double";
+        case TOKEN_FLOAT64:
+            return "Float64";
         case TOKEN_STRING:
             return "String";
         case TOKEN_ASSIGN:
