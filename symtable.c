@@ -7,14 +7,7 @@
 #include "symtable.h"
 #include "error.h"
 
-#define MAX_ST_SIZE 100 // size of hash table. set MAX_ST_SIZE to 4 for test(uncomment main func)
 
-// TODO add comments
-
-
-/* Hash function
-* TODO probably change it
-*/
 unsigned long int hashf(const char *key) {
 
  	unsigned long int  value = 0;
@@ -30,10 +23,6 @@ unsigned long int hashf(const char *key) {
 
 
 
-/*
-* Functiond allocates memory
-* for symbol table.
-*/
 int symTableInit(TSymTable *symtab) {
 
 	// memory allocatoin for table
@@ -43,7 +32,7 @@ int symTableInit(TSymTable *symtab) {
 	}
 
 	// memory allocatoin for pointer to items
-	symtab->items = malloc(sizeof(TListItem*) * MAX_ST_SIZE);
+	symtab->items = malloc(sizeof(TSymbolItem*) * MAX_ST_SIZE);
 	if ( symtab->items == NULL) {
 		free(symtab);
 		return ERR_INTERNAL;
@@ -58,30 +47,7 @@ int symTableInit(TSymTable *symtab) {
 }
 
 
-int symTableDataInit(TData *data) {
 
-	if ( (data = malloc(sizeof(TData))) == NULL ) {
-		return ERR_INTERNAL;
-	}
-
-	if ( (data->attribute = malloc(sizeof(tAttribute))) == NULL ){
-		return ERR_INTERNAL;
-	}
-
-	data->attribute = NULL;
-	data->iDtype = UNDEF;
-	data->dataType = UNDEF;
-
-	return OK;
-}
-
-
-/*
-* Function indicates if еhe symbol 
-* with the entered key is in table.
-* Returns true if found, or false
-* if item istn found.
-*/
 bool symTableSearch(TSymTable *symtab, char *key) {
 
 	if (symtab == NULL) {
@@ -90,7 +56,7 @@ bool symTableSearch(TSymTable *symtab, char *key) {
 
 	bool found = false;
 	unsigned long int index = hashf(key);
-	TListItem* tmpitem = symtab->items[index];
+	TSymbolItem* tmpitem = symtab->items[index];
 
 	while(!found && tmpitem != NULL)  {
 		if (!strcmp(tmpitem->key, key)) {
@@ -103,32 +69,36 @@ bool symTableSearch(TSymTable *symtab, char *key) {
 
 
 
-/*
-* Function insert new item with entered
-* key and data. If item(s) with enered key exists
-* insetr a new item to end of list of items
-*/
 int symTableInsert(TSymTable *symtab, char *key, TData *data){
 	
 	if (symtab == NULL) {
-		exit(EXIT_FAILURE);
+		return ERR_INTERNAL;
 	}
 
 	unsigned long int index = hashf(key);
 
 	if (symtab->items[index] == NULL) { // if entry is empty
 		
-		symtab->items[index] = malloc(sizeof(TListItem));
+		symtab->items[index] = malloc(sizeof(TSymbolItem));
 		if (symtab->items[index] == NULL) {
-			exit(EXIT_FAILURE);
+			return ERR_INTERNAL;
 		}
+
 		symtab->items[index]->nextItem = NULL;
-		symtab->items[index]->key = key;
-		symtab->items[index]->data = data;
+		strcpy(symtab->items[index]->key ,key);
+
+		// setting data values
+		strcpy(symtab->items[index]->data.identifier, key);
+		symtab->items[index]->data.dataType = NIL;
+		symtab->items[index]->data.idType = UNDEF;
+		symtab->items[index]->data.defined = false;
+		symtab->items[index]->data.string_val = NULL ; // setting only of value of union
+
+		return OK;
 
 	} else {							// if entry is not empty
 
-		TListItem *tmpitem = symtab->items[index];
+		TSymbolItem *tmpitem = symtab->items[index];
 
 		while(tmpitem->nextItem != NULL ) { 			// set tmpitem to last position or
 			if (!strcmp(tmpitem->nextItem->key, key)){	// position before a cell with same key
@@ -139,40 +109,80 @@ int symTableInsert(TSymTable *symtab, char *key, TData *data){
 
 		if (tmpitem->nextItem == NULL) {  				// if position is the last position
 
-			tmpitem->nextItem = malloc(sizeof(TListItem));
-			tmpitem->nextItem->key = key;
-			tmpitem->nextItem->data = data;
-			tmpitem->nextItem->nextItem = NULL;
+			tmpitem->nextItem = malloc(sizeof(TSymbolItem));
+			if (tmpitem->nextItem == NULL){
+				return ERR_INTERNAL;
+			}
+
+			strcpy(tmpitem->nextItem->key, key);
+			strcpy(tmpitem->nextItem->data.identifier, key);
+			tmpitem->nextItem->data.dataType = NIL;
+			tmpitem->nextItem->data.idType = UNDEF;
+			tmpitem->nextItem->data.defined = false;
+			tmpitem->nextItem->data.string_val = NULL;
+
+			return OK;
 
 		} else {										// if position is position before item with a same key
 
-			TListItem *newitem = malloc(sizeof(TListItem));
-			newitem->key = key;
-			newitem->data = data;
+
+			TSymbolItem *newitem = malloc(sizeof(TSymbolItem));
+			if (newitem == NULL) {
+				return ERR_INTERNAL;
+			}
+
+			strcpy(newitem->key, key);
+			strcpy(newitem->data.identifier, key);
+			newitem->data.dataType = NIL;
+			newitem->data.idType = UNDEF;
+			newitem->data.defined = false;
+			newitem->data.string_val = NULL;
+
 			newitem->nextItem = tmpitem->nextItem;
 			tmpitem->nextItem = newitem;
+
+			return OK;
 
 		}
 	}
 }
 
-void symTableActualize(TSymTable *symtable, char *key, TData *data) {
-	
+
+
+TData *symTableGetItem(TSymTable *symtab, char *key) {
+
+	if (symtab == NULL) {
+		return ERR_INTERNAL;
+	} else {
+
+		TData *data = NULL;
+		unsigned long int index = hashf(key);
+		TSymbolItem* tmpitem = symtab->items[index];
+
+		if (tmpitem != NULL) {			
+			while( tmpitem != NULL )  {
+				if (!strcmp(tmpitem->key, key)) {
+					data = &tmpitem->data;
+					return data;
+				}
+				tmpitem = tmpitem->nextItem;
+			}
+		}
+		return data;
+	}
 }
 
-/*
-* Function delete the last symbol
-* with entered key.
-*/
+
+
 void symTabDeleteItem(TSymTable *symtab, char *key) {
 
 	if (symtab == NULL) {
-		exit(EXIT_FAILURE);
+		return ERR_INTERNAL;
 	}
 
 	unsigned long int index = hashf(key);
 
-	TListItem *actitem, *previtem;
+	TSymbolItem *actitem, *previtem;
 	actitem = symtab->items[index];
 	previtem = NULL;
 
@@ -192,50 +202,18 @@ void symTabDeleteItem(TSymTable *symtab, char *key) {
 			previtem->nextItem = actitem->nextItem;
 		}
 
-		free(actitem->data);
 		free(actitem);
 	}
 
 }
 
 
-/*
-*Function returns a pointer to last item with entered key
-* Returns NULL of item isnt found
-*/
-TData *symTableGetItem(TSymTable *symtab, char *key) {
 
-	if (symtab == NULL) {
-		exit(EXIT_FAILURE);
-	} else {
-
-		TData *data = NULL;
-		unsigned long int index = hashf(key);
-		TListItem* tmpitem = symtab->items[index];
-
-		if (tmpitem != NULL) {			
-			while( tmpitem != NULL )  {
-				if (!strcmp(tmpitem->key, key)) {
-					data = tmpitem->data;
-					return data;
-				}
-				tmpitem = tmpitem->nextItem;
-			}
-		}
-		return data;
-	}
-}
-
-
-
-/*
-* Functiond prints all symtable items
-*/
 void symTableDump(TSymTable *symtab) {
     
 	for (int index = 0; index < MAX_ST_SIZE; index++) {
         
-		TListItem *tmpitem = symtab->items[index];
+		TSymbolItem *tmpitem = symtab->items[index];
 
         if (tmpitem == NULL) {
             continue;
@@ -255,21 +233,17 @@ void symTableDump(TSymTable *symtab) {
 
 
 
-/*
-* Frees allocated memory for symbol table
-*/
 void symTableDestroy(TSymTable *symtab) {
 
 	if (symtab != NULL) {
 		
-		TListItem *tmpitem ,*nextitem;
+		TSymbolItem *tmpitem ,*nextitem;
 
 		for( unsigned long int index = 0; index < MAX_ST_SIZE; index++) {
 
 			for( tmpitem = symtab->items[index]; tmpitem != NULL; tmpitem = nextitem) {
 
 				nextitem = tmpitem->nextItem;
-				free(tmpitem->data);
 				free(tmpitem);
 			}
 		}
