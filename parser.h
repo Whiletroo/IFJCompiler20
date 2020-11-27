@@ -10,7 +10,10 @@
 #include <stdbool.h>
 #include "symtable.h"
 
-tToken token;				/// Token
+TSymTable *globalTable;
 TData *data;
+tToken token;				/// Token
+int label_index;
+int label_deep;
 
 #endif //_PARSER_H

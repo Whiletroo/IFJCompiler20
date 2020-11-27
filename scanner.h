@@ -77,7 +77,7 @@ typedef enum
 
 
     TOKEN_INT,    /// Integer number // DONE IN SCANNER
-    TOKEN_DOUBLE, /// Double number //  DONE IN SCANNER
+    TOKEN_FLOAT64, /// Double number //  DONE IN SCANNER
     TOKEN_STRING, /// String //         DONE IN SCANNER
     TOKEN_NIL,
 
