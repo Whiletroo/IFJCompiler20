@@ -11,7 +11,7 @@
 #include <stdbool.h>
 #include "scanner.h"
 
-#define MAX_ST_SIZE 1000 //size of symbol table
+#define MAX_ST_SIZE 4 //size of symbol table
 
 typedef enum { variable, function, UNDEF } TIdType;
 
@@ -41,7 +41,7 @@ typedef struct symtabitem {
 
 
 typedef struct symTable{
-	TSymbolItem **items;
+	TSymbolItem *items[MAX_ST_SIZE];
 } TSymTable;
 
 
@@ -51,17 +51,16 @@ typedef struct symTable{
  * @param key string to be hashed
  * @return hash code
 */
-unsigned long int hashf(const char *key);
+int hashf(const char *key);
 
 
 /**
  * Symbol table initialization. 
  * Allocates memory for symtab and initialize it.
  * 
- * @param symtab pointer to TSymTable.
- * @return exit code. OK if it is ok, else ERR_INTERNAL.
+ * @return pointer to intialized symtable or NULL if error.
 */
-int symTableInit(TSymTable *symtab);
+TSymTable *symTableInit();
 
 
 /**
@@ -90,8 +89,9 @@ bool symTableSearch(TSymTable *symtab, char *key);
  * 
  * @param symtab pointer to TSymTable.
  * @param key key of the symbol table item. (Name of identifier).
+ * @return exit code. OK if it is ok, else ERR_INTERNAL.
 */
-void symTabDeleteItem(TSymTable *symtab, char *key);
+int symTabDeleteItem(TSymTable *symtab, char *key);
 
 /**
  * Getting a pointer to data of symbol with entered key.
@@ -99,7 +99,7 @@ void symTabDeleteItem(TSymTable *symtab, char *key);
  * 
  * @param symtab pointer to TSymTable.
  * @param key key of the symbol table item. (Name of identifier).
- * @return TData* pointer to data.
+ * @return TData* pointer to data. NULL if symbol doesn't exist.
 */
 TData *symTableGetItem(TSymTable *symtab, char *key);
 

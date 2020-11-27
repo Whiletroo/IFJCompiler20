@@ -8,9 +8,9 @@
 #include "error.h"
 
 
-unsigned long int hashf(const char *key) {
+int hashf(const char *key) {
 
- 	unsigned long int  value = 0;
+ 	int  value = 0;
 	unsigned int  i = 0;
  	unsigned int key_len = strlen(key);
 
@@ -23,27 +23,19 @@ unsigned long int hashf(const char *key) {
 
 
 
-int symTableInit(TSymTable *symtab) {
+TSymTable *symTableInit() {
 
-	// memory allocatoin for table
+	TSymTable *symtab;
 	symtab = malloc(sizeof(TSymTable));
-	if ( symtab == NULL ){
-		return ERR_INTERNAL;
+	if (symtab == NULL ) {
+		return NULL;
 	}
 
-	// memory allocatoin for pointer to items
-	symtab->items = malloc(sizeof(TSymbolItem*) * MAX_ST_SIZE);
-	if ( symtab->items == NULL) {
-		free(symtab);
-		return ERR_INTERNAL;
-	}
-
-	// set each NULL
-	for(int i = 0; i < MAX_ST_SIZE; i++){
+	for (int i = 0; i < MAX_ST_SIZE; i++) {
 		symtab->items[i] = NULL;
 	}
 
-	return OK;
+	return symtab;
 }
 
 
@@ -55,7 +47,7 @@ bool symTableSearch(TSymTable *symtab, char *key) {
 	}
 
 	bool found = false;
-	unsigned long int index = hashf(key);
+	int index = hashf(key);
 	TSymbolItem* tmpitem = symtab->items[index];
 
 	while(!found && tmpitem != NULL)  {
@@ -75,20 +67,26 @@ int symTableInsert(TSymTable *symtab, char *key){
 		return ERR_INTERNAL;
 	}
 
-	unsigned long int index = hashf(key);
+	int index = hashf(key);
 
 	if (symtab->items[index] == NULL) { // if entry is empty
 		
-		symtab->items[index] = malloc(sizeof(TSymbolItem));
+		symtab->items[index] = (TSymbolItem *)malloc(sizeof(TSymbolItem));
 		if (symtab->items[index] == NULL) {
 			return ERR_INTERNAL;
 		}
 
+		// setting symbol item values
 		symtab->items[index]->nextItem = NULL;
-		strcpy(symtab->items[index]->key ,key);
+		symtab->items[index]->key = malloc(sizeof(char));
+		memcpy(symtab->items[index]->key, key, strlen(key));		
+
+		// allocating memory for data
+		symtab->items[index]->data = *(TData *)malloc(sizeof(TData));
+		symtab->items[index]->data.identifier = malloc(sizeof(char));
 
 		// setting data values
-		strcpy(symtab->items[index]->data.identifier, key);
+		memcpy(symtab->items[index]->data.identifier, key, strlen(key));
 		symtab->items[index]->data.dataType = NIL;
 		symtab->items[index]->data.idType = UNDEF;
 		symtab->items[index]->data.defined = false;
@@ -152,11 +150,11 @@ int symTableInsert(TSymTable *symtab, char *key){
 TData *symTableGetItem(TSymTable *symtab, char *key) {
 
 	if (symtab == NULL) {
-		return ERR_INTERNAL;
+		return NULL;
 	} else {
 
 		TData *data = NULL;
-		unsigned long int index = hashf(key);
+		int index = hashf(key);
 		TSymbolItem* tmpitem = symtab->items[index];
 
 		if (tmpitem != NULL) {			
@@ -174,13 +172,13 @@ TData *symTableGetItem(TSymTable *symtab, char *key) {
 
 
 
-void symTabDeleteItem(TSymTable *symtab, char *key) {
+int symTabDeleteItem(TSymTable *symtab, char *key) {
 
 	if (symtab == NULL) {
 		return ERR_INTERNAL;
 	}
 
-	unsigned long int index = hashf(key);
+	int index = hashf(key);
 
 	TSymbolItem *actitem, *previtem;
 	actitem = symtab->items[index];
@@ -219,7 +217,7 @@ void symTableDump(TSymTable *symtab) {
             continue;
         }
 
-        printf("slot[%4d]: ", index);
+        printf("slot[%d]: ", index);
 
         while (tmpitem != NULL) {
             printf(" [%s]\t ", tmpitem->key);
@@ -239,11 +237,18 @@ void symTableDestroy(TSymTable *symtab) {
 		
 		TSymbolItem *tmpitem ,*nextitem;
 
-		for( unsigned long int index = 0; index < MAX_ST_SIZE; index++) {
+		// iteration over table
+		for( int index = 0; index < MAX_ST_SIZE; index++) {
 
+			// iteration over list
 			for( tmpitem = symtab->items[index]; tmpitem != NULL; tmpitem = nextitem) {
-
-				nextitem = tmpitem->nextItem;
+				
+				if (tmpitem->nextItem != NULL) {
+					nextitem = tmpitem->nextItem;
+				}
+				free(tmpitem->key);
+				free(tmpitem->data.identifier);
+				free(&tmpitem->data);
 				free(tmpitem);
 			}
 		}
@@ -251,4 +256,68 @@ void symTableDestroy(TSymTable *symtab) {
 		free(symtab->items);
 		free(symtab);
 	}
+}
+
+void printData(TData *data) {
+
+	printf("Identifier  	:\t%s\n",data->identifier);
+	printf("Type of DATA    :\t");
+	switch(data->dataType) {
+		case INT:
+			printf("INT\n");
+			break;
+		case FLOAT:
+			printf("FLOAT\n");
+			break;
+		case STRING:
+			printf("STRING\n");
+			break;
+		default:
+			printf("NIL\n");
+			break;
+	}
+	printf("Defined         :\t%s\n",((data->defined) ? "true":"false"));
+	printf("Identifier type :\t");
+
+	switch(data->idType) {
+		case variable:
+			printf("variable\n");
+			break;
+		case function:
+			printf("function\n");
+			break;
+		default:
+			printf("undef\n");
+			break;
+	}
+
+	if (data->dataType == STRING) {
+		printf("String value    :\t%s\n",data->string_val);
+	} else if (data->dataType == INT) {
+		printf("Int value     :\t%d\n",data->int_val);
+	} else if (data->dataType == FLOAT) {
+		printf("Doubel value   :\t%lf\n",data->double_val);
+	} else {
+		printf("Value undifiened\n");
+	}
+}
+
+int main() {
+
+	TSymTable *symtab;
+	TData *data;
+	symtab = symTableInit();
+	symTableInsert(symtab, "key1");
+	data = symTableGetItem(symtab, "key1");
+	data->dataType = STRING;
+	data->defined = true;
+	data->idType = variable;
+	data->string_val = "symbol1";
+
+	printData(data);
+
+	symTableDestroy(symtab);
+
+
+	return 0;
 }
