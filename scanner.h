@@ -9,7 +9,11 @@
 #define _SCANNER_H
 
 #include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
+#include "error.h"
 #include "dynamicStr.h"
 
 
@@ -122,7 +126,7 @@ typedef struct
     char *id;
 } tToken;
 
-tToken token; // Global variable
+//tToken token; // Global variable
 
 /**
 * Sets source file to be scanned.
@@ -153,5 +157,9 @@ const char *getTokenName(TOKENS token);
 * @return 0 (TOKEN_OK) if token is OK, otherwise in case of lex error one of ERROR_... constant.
 */
 int getToken(tToken *token);
+
+extern FILE *source;             // Source file that will be scanned
+extern tToken token;
+
 
 #endif
