@@ -9,13 +9,17 @@
 #define _SYMTABLE_H
 
 #include <stdbool.h>
-#include "scanner.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+#include "error.h"
 
 #define MAX_ST_SIZE 4 //size of symbol table
 
 typedef enum { variable, function, UNDEF } TIdType;
 
-typedef enum { INT, FLOAT, BOOL, STRING, NIL} tDataType;
+typedef enum { INT_TYPE, FLOAT_TYPE, BOOL_TYPE, STRING_TYPE, NIL_TYPE} tDataType;
 
 
 typedef struct {

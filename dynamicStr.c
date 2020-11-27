@@ -5,12 +5,6 @@
  * @brief The dynamic string
 */
 
-#include <stdio.h>
-#include <ctype.h>
-
-#include <stdlib.h>
-#include <string.h>
-
 #include "dynamicStr.h"
 
 /* The initial size of string */
