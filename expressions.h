@@ -9,7 +9,6 @@
 #define _EXPRESSIONS_H
 
 #include "scanner.h"
-#include "scanner.c"
 #include "stdbool.h"
 #include "error.h"
 
@@ -81,16 +80,7 @@ typedef enum
 } PrecRules;
 
 
-const char precedence_table[7][7] = {
-/*         /   *   +   - rel  id  (   )   $       */
-/* /*  */ {'>', '>', '>', '<', '<', '>', '>'},
-/* + - */ {'<', '>', '>', '<', '<', '>', '>'},
-/* rel */ {'<', '<', ' ', '<', '<', '>', '>'},
-/* id  */ {'>', '>', '>', ' ', ' ', '>', '>'},
-/*  )  */ {'<', '<', '<', '<', '<', '=', '>'},
-/*  )  */ {'>', '>', '>', ' ', ' ', '>', '>'},
-/*  $  */ {'<', '<', '<', '<', '<', '<', ' '}
-};
+
 
 /*
 1. ADT стак для PrecTableItem
@@ -143,7 +133,7 @@ void insertReducePrecStack();
 
 
 
-int exp();
+int expessions();
 
 
 #endif

@@ -22,7 +22,7 @@ int stackEmpty (Stack* s)
     return s->topItem == NULL;
 }
 
-void stackPush (Stack* s, tToken t, PrecedenceTableSymbol type)
+void stackPush (Stack* s, tToken t, tPrecTabItem type)
 {
 
     StackItem* newTop = (StackItem*) malloc(sizeof(StackItem));

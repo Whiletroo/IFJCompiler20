@@ -5,21 +5,12 @@
 * @brief The scanner
 */
 
-#include <stdio.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "scanner.h"
-#include "error.h"
-#include "dynamicStr.h"
 
-FILE *source;             // Source file that will be scanned
 DYN_STRING *d_string; // Dynamic string that will be written into
-
-tToken token;
-
 int DocToString = 0;      // Global variable to contro transformation of Documentary string to ordinary string
+
+FILE *source;
 
 char sEOL[] = "\\012";
 char sTAB[] = "\\011";
@@ -1005,7 +996,4 @@ int getToken(tToken *token)
                 break;
         }
     }
-}
-int main(){
-    return 0;
 }

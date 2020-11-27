@@ -8,6 +8,12 @@
 #ifndef _DYNAMIC_STR_H
 #define _DYNAMIC_STR_H
 
+#include <stdio.h>
+#include <ctype.h>
+
+#include <stdlib.h>
+#include <string.h>
+
 typedef struct
 {
     char *str;              /* <- value */
