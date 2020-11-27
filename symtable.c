@@ -69,7 +69,7 @@ bool symTableSearch(TSymTable *symtab, char *key) {
 
 
 
-int symTableInsert(TSymTable *symtab, char *key, TData *data){
+int symTableInsert(TSymTable *symtab, char *key){
 	
 	if (symtab == NULL) {
 		return ERR_INTERNAL;
