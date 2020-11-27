@@ -15,7 +15,7 @@
 
 typedef enum { variable, function, UNDEF } TIdType;
 
-typedef enum { INT, FLOAT, BOOL, STRING, NIL} tDataType;
+typedef enum { INT_TYPE, FLOAT_TYPE, BOOL_TYPE, STRING_TYPE, NIL_TYPE} tDataType;
 
 
 typedef struct {

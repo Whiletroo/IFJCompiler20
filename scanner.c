@@ -14,16 +14,12 @@
 #include "error.h"
 #include "dynamicStr.h"
 
-FILE *source;             // Source file that will be scanned
-DYN_STRING *d_string; // Dynamic string that will be written into
-
-tToken token;
-
-int DocToString = 0;      // Global variable to contro transformation of Documentary string to ordinary string
-
+/*
 char sEOL[] = "\\012";
 char sTAB[] = "\\011";
 char sSPC[] = "\\032";
+*/
+
 
 /**
 * Free resources and returns exit code.

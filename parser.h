@@ -9,6 +9,11 @@
 #define _PARSER_H
 #include <stdbool.h>
 #include "symtable.h"
+#include "dynamicStr.h"
+#include "error.h"
+//#include "gena.h"
+#include "scanner.h"
+#include "expressions.h"
 
 TSymTable *globalTable;
 TData *data;

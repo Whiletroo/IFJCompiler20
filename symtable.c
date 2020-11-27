@@ -87,7 +87,7 @@ int symTableInsert(TSymTable *symtab, char *key){
 
 		// setting data values
 		memcpy(symtab->items[index]->data.identifier, key, strlen(key));
-		symtab->items[index]->data.dataType = NIL;
+		symtab->items[index]->data.dataType = NIL_TYPE;
 		symtab->items[index]->data.idType = UNDEF;
 		symtab->items[index]->data.defined = false;
 		symtab->items[index]->data.string_val = NULL ; // setting only of value of union
@@ -114,7 +114,7 @@ int symTableInsert(TSymTable *symtab, char *key){
 
 			strcpy(tmpitem->nextItem->key, key);
 			strcpy(tmpitem->nextItem->data.identifier, key);
-			tmpitem->nextItem->data.dataType = NIL;
+			tmpitem->nextItem->data.dataType = NIL_TYPE;
 			tmpitem->nextItem->data.idType = UNDEF;
 			tmpitem->nextItem->data.defined = false;
 			tmpitem->nextItem->data.string_val = NULL;
@@ -131,7 +131,7 @@ int symTableInsert(TSymTable *symtab, char *key){
 
 			strcpy(newitem->key, key);
 			strcpy(newitem->data.identifier, key);
-			newitem->data.dataType = NIL;
+			newitem->data.dataType = NIL_TYPE;
 			newitem->data.idType = UNDEF;
 			newitem->data.defined = false;
 			newitem->data.string_val = NULL;
@@ -202,6 +202,7 @@ int symTabDeleteItem(TSymTable *symtab, char *key) {
 
 		free(actitem);
 	}
+	return OK;
 
 }
 
@@ -263,13 +264,13 @@ void printData(TData *data) {
 	printf("Identifier  	:\t%s\n",data->identifier);
 	printf("Type of DATA    :\t");
 	switch(data->dataType) {
-		case INT:
+		case INT_TYPE:
 			printf("INT\n");
 			break;
-		case FLOAT:
+		case FLOAT_TYPE:
 			printf("FLOAT\n");
 			break;
-		case STRING:
+		case STRING_TYPE:
 			printf("STRING\n");
 			break;
 		default:
@@ -291,11 +292,11 @@ void printData(TData *data) {
 			break;
 	}
 
-	if (data->dataType == STRING) {
+	if (data->dataType == STRING_TYPE) {
 		printf("String value    :\t%s\n",data->string_val);
-	} else if (data->dataType == INT) {
+	} else if (data->dataType == INT_TYPE) {
 		printf("Int value     :\t%d\n",data->int_val);
-	} else if (data->dataType == FLOAT) {
+	} else if (data->dataType == FLOAT_TYPE) {
 		printf("Doubel value   :\t%lf\n",data->double_val);
 	} else {
 		printf("Value undifiened\n");
@@ -309,7 +310,7 @@ int main() {
 	symtab = symTableInit();
 	symTableInsert(symtab, "key1");
 	data = symTableGetItem(symtab, "key1");
-	data->dataType = STRING;
+	data->dataType = STRING_TYPE;
 	data->defined = true;
 	data->idType = variable;
 	data->string_val = "symbol1";

@@ -5,13 +5,7 @@
 * @brief The parser
 */
 
-#include "symtable.h"
-#include "dynamicStr.h"
 #include "parser.h"
-#include "error.h"
-#include "gena.h"
-#include "symtable.h"
-#include "scanner.h"
 
 #define GET_TOKEN()                               \
     if ((result = getToken(&token)) != OK)        \
@@ -60,7 +54,7 @@ static int func_ret_types();
 static int st_list();
 static int state();
 static int var_def();
-static int var_dec();
+//static int var_dec();
 static int else_state();
 static int assign();
 static int func_call();
@@ -78,6 +72,7 @@ static int start(){
         GET_TOKEN();
         return prog();
     }
+    return OK;
 }
 
 static int prog()
@@ -90,10 +85,10 @@ static int prog()
 
         GET_AND_CHECK_TOKEN(TOKEN_IDENTIFIER);
         // add function to global symbol table
-        if ((symTableSearch(&globalTable, token.attribute.value_string->str)) == false)
+        if ((symTableSearch(globalTable, token.attribute.value_string->str)) == false)
         {
-             symTableInsert(&globalTable, token.attribute.value_string->str);
-             symTableGetItem(&globalTable, token.attribute.value_string->str)->idType = function;
+             symTableInsert(globalTable, token.attribute.value_string->str);
+             symTableGetItem(globalTable, token.attribute.value_string->str)->idType = function;
         }
 
         GET_AND_CHECK_TOKEN(TOKEN_LEFT_BRACKET);
@@ -117,23 +112,27 @@ static int prog()
 
 static int type()
 {
+    int result;
     // int, double or string
     if (token.token_type == TOKEN_KEYWORD){
         switch (token.attribute.keyword) {
             case KEYWORD_INT:
-                symTableGetItem(&globalTable, token.attribute.value_string->str)->dataType = INT;
+                symTableGetItem(globalTable, token.attribute.value_string->str)->dataType = INT_TYPE;
                 break;
             case KEYWORD_FLOAT64:
-                symTableGetItem(&globalTable, token.attribute.value_string->str)->dataType = FLOAT;
+                symTableGetItem(globalTable, token.attribute.value_string->str)->dataType = FLOAT_TYPE;
                 break;
             case KEYWORD_STRING:
-                symTableGetItem(&globalTable, token.attribute.value_string->str)->dataType = STRING;
+                symTableGetItem(globalTable, token.attribute.value_string->str)->dataType = STRING_TYPE;
                 break;
             default:
                 return SYNTAX_ERR;
         }
-    } else
+    } else {
         return SYNTAX_ERR;
+    }
+    GET_TOKEN(); //TODO
+    return result;
 }
 
 static int types()
@@ -164,10 +163,10 @@ static int func_args()
     // <func_args> → id <type> <func_next_arg>
     if (token.token_type == TOKEN_IDENTIFIER) {
         // add variable to global symbol table
-        if ((symTableSearch(&globalTable, token.attribute.value_string->str)) == false)
+        if ((symTableSearch(globalTable, token.attribute.value_string->str)) == false)
         {
-            symTableInsert(&globalTable, token.attribute.value_string->str);
-            symTableGetItem(&globalTable, token.attribute.value_string->str)->idType = variable;
+            symTableInsert(globalTable, token.attribute.value_string->str);
+            symTableGetItem(globalTable, token.attribute.value_string->str)->idType = variable;
         }
         GET_TOKEN_AND_CHECK_RULE(type);
         GET_TOKEN_AND_CHECK_RULE(func_next_arg);
@@ -211,6 +210,7 @@ static int st_list()
         CHECK_RULE(state);
         GET_TOKEN_AND_CHECK_RULE(st_list);
     }
+    return OK;
 }
 
 static int state()
@@ -218,7 +218,7 @@ static int state()
     int result;
     // <state> → if E <state> <else_state>
     if (token.token_type == TOKEN_KEYWORD && token.attribute.keyword == KEYWORD_IF){
-        GET_TOKEN_AND_CHECK_RULE(exp);
+        GET_TOKEN_AND_CHECK_RULE(expessions);
         GET_TOKEN_AND_CHECK_RULE(state);
         GET_TOKEN_AND_CHECK_RULE(else_state);
     }
@@ -226,14 +226,14 @@ static int state()
     else if (token.token_type == TOKEN_KEYWORD && token.attribute.keyword == KEYWORD_FOR){
         GET_TOKEN_AND_CHECK_RULE(var_def);
         GET_AND_CHECK_TOKEN(TOKEN_SEMICOLON);
-        GET_TOKEN_AND_CHECK_RULE(exp);
+        GET_TOKEN_AND_CHECK_RULE(expessions);
         GET_AND_CHECK_TOKEN(TOKEN_SEMICOLON);
         GET_TOKEN_AND_CHECK_RULE(assign);
         GET_TOKEN_AND_CHECK_RULE(state);
     }
     // <state> → return E
     else if (token.token_type == TOKEN_KEYWORD && token.attribute.keyword == KEYWORD_RETURN){
-        GET_TOKEN_AND_CHECK_RULE(exp);
+        GET_TOKEN_AND_CHECK_RULE(expessions);
     }
     // <state> → {<st_list>}
     else if (token.token_type == TOKEN_LCURLY_BRACKET){
@@ -256,8 +256,8 @@ static int state()
         }
     }
     // <state> → Exp
-    else if{
-        GET_TOKEN_AND_CHECK_RULE(exp);
+    else {
+        GET_TOKEN_AND_CHECK_RULE(expessions);
     }
     return OK;
 }
@@ -266,14 +266,17 @@ static int var_def()
 { int result;
     // <var_def> → := Exp
     if (token.token_type == TOKEN_DEFINITION){
-        GET_TOKEN_AND_CHECK_RULE(exp);
+        GET_TOKEN_AND_CHECK_RULE(expessions);
     }
+    return OK;
 }
 
+/* дважды декларирована
 static int var_dec()
 {
     // <var_dec> → <type> ничего не надо
 }
+*/
 
 static int func_call()
 {
@@ -282,6 +285,7 @@ static int func_call()
     if (token.token_type == TOKEN_LEFT_BRACKET){
         GET_TOKEN_AND_CHECK_RULE(func_call_args);
     }
+    return OK;
 }
 
 
@@ -302,7 +306,7 @@ static int assign()
     // <assign> → id = Exp
     if (token.token_type == TOKEN_IDENTIFIER){
         GET_AND_CHECK_TOKEN(TOKEN_ASSIGN);
-        GET_TOKEN_AND_CHECK_RULE(exp);
+        GET_TOKEN_AND_CHECK_RULE(expessions);
     }
     // <assign> → ε
     return OK;
@@ -316,6 +320,7 @@ static int func_call_args()
     if (token.token_type == TOKEN_IDENTIFIER){
         GET_TOKEN_AND_CHECK_RULE(func_call_next_arg);
     }
+    return OK;
 }
 
 static int func_call_next_arg()
@@ -336,11 +341,15 @@ int parse() {
 
     if ((result = getToken(&token)) == OK)
     {
+
         if (token.token_type == TOKEN_EOF)
         {
             fprintf(stderr, "#FILE: Input file is empty\n");
             dynamicStrFree(&string);
             return result;
+        } else {
+            CHECK_RULE(start);
         }
     }
+    return OK;
 }

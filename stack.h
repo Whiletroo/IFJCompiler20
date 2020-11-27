@@ -34,9 +34,9 @@ typedef enum
 typedef struct stackItem
 {
 
-    PrecedenceTableSymbol symbol;
+    tPrecTabItem symbol;
     tToken token;
-    PrecedenceTableSymbol type;
+    tPrecTabItem type;
     bool isTerminal; /* <- Whether the terminal is terminal or not */
     bool isStart;    /* <- Start non-terminal */
     struct stackItem *nextItem;
@@ -70,7 +70,7 @@ int stackEmpty (Stack* s);
  * @param s
  * @param token
  */
-void stackPush (Stack* s, tToken token, PrecedenceTableSymbol type);
+void stackPush (Stack* s, tToken token, tPrecTabItem type);
 
 /**
  * Pop item from the stack

@@ -15,11 +15,13 @@
 */
 
 
-int exp (){
+int expessions (){
 
     // Navratova hodnota
-    int result;
+    int result = OK;
+    return result;
 
+/*
     tPrecStack *precStack = 
 
     pushItem(DOLLAR);
@@ -41,7 +43,7 @@ int exp (){
                 break;
 
             case '>':
-                if (/*TODO*/ 1) {
+                if ( 1) {
 
                 } else {
                     fprintf(stderr, "Error: \n");
@@ -57,5 +59,5 @@ int exp (){
 
     }
 
-    return;
+    return; */
 }

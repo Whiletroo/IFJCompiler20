@@ -122,7 +122,7 @@ typedef struct
     char *id;
 } tToken;
 
-tToken token; // Global variable
+//tToken token; // Global variable
 
 /**
 * Sets source file to be scanned.
@@ -153,5 +153,19 @@ const char *getTokenName(TOKENS token);
 * @return 0 (TOKEN_OK) if token is OK, otherwise in case of lex error one of ERROR_... constant.
 */
 int getToken(tToken *token);
+
+
+
+extern FILE *source;             // Source file that will be scanned
+extern DYN_STRING *d_string; // Dynamic string that will be written into
+
+extern tToken token;
+
+char sEOL[] = "\\012";
+char sTAB[] = "\\011";
+char sSPC[] = "\\032";
+
+int DocToString = 0;      // Global variable to contro transformation of Documentary string to ordinary string
+
 
 #endif
