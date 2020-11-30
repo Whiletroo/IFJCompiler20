@@ -1,5 +1,7 @@
 #include "symtable.h"
 
+//#define P(str) printf("%s\n", str); //Macro for debug
+
 int hashf(const char *key) {
 
  	int  value = 0;
@@ -74,7 +76,7 @@ int symTableInsert(TSymTable *symtab, char *key){
 		memcpy(symtab->items[index]->key, key, strlen(key));		
 
 		// allocating memory for data
-		symtab->items[index]->data = *(TData *)malloc(sizeof(TData));
+		//symtab->items[index]->data = *(TData *)malloc(sizeof(TData));
 		symtab->items[index]->data.identifier = malloc(sizeof(char));
 
 		// setting data values
@@ -239,14 +241,14 @@ void symTableDestroy(TSymTable *symtab) {
 				if (tmpitem->nextItem != NULL) {
 					nextitem = tmpitem->nextItem;
 				}
+
 				free(tmpitem->key);
 				free(tmpitem->data.identifier);
-				free(&tmpitem->data);
+				//free(&tmpitem->data);
 				free(tmpitem);
 			}
 		}
 		
-		free(symtab->items);
 		free(symtab);
 	}
 }
@@ -293,23 +295,71 @@ void printData(TData *data) {
 	} else {
 		printf("Value undifiened\n");
 	}
+
 }
+
+/* Debug func prunts full table, with all data TODO
+void printTable(TSymTable *symtab){
+
+
+	for (int i = 0; i < MAX_ST_SIZE; i++) {
+
+		for( tmpitem = symtab->items[index]; tmpitem != NULL; tmpitem = nextitem) {
+				
+
+		}
+		
+	}
+
+}*/
+
+
 /*
 int main() {
 
+
+	// pointers declaration
 	TSymTable *symtab;
 	TData *data;
-	symtab = symTableInit();
-	symTableInsert(symtab, "key1");
-	data = symTableGetItem(symtab, "key1");
+	P("data initialized");
+	
+
+	// init symtab
+	if ( (symtab = symTableInit()) == NULL ) {
+		return ERR_INTERNAL;
+	}
+	P("symbol table initialized");
+
+	// insertn new symbol
+	if (symTableInsert(symtab, "key1")) {
+		return ERR_INTERNAL;
+	}
+	P("symbol inserted");
+
+	// get pointer to symbol data
+	if ( (data = symTableGetItem(symtab, "key1")) == NULL) {
+		return ERR_INTERNAL;
+	}
+	P("Got Pointer to data");
+
+	// init data
 	data->dataType = STRING_TYPE;
 	data->defined = true;
 	data->idType = variable;
 	data->string_val = "symbol1";
+	P("data initialized");
 
+	// out data
 	printData(data);
+	P("data printed");
 
+	symTableDump(symtab);
+
+	// free allocated memory
 	symTableDestroy(symtab);
+	P("table destoyed");
+
+
 
 
 	return 0;
