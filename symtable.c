@@ -1,3 +1,9 @@
+/**
+ * @file symtable.c
+ * @author xkrukh00
+ * @date 21.10.2020
+*/
+
 #include "symtable.h"
 
 #define CHECK_PTR(ptr)\
