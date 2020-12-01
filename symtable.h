@@ -15,7 +15,7 @@
 #include <string.h>
 #include "error.h"
 
-#define MAX_ST_SIZE 4 //size of symbol table
+#define MAX_ST_SIZE 2 //size of symbol table
 
 typedef enum { variable, function, UNDEF } TIdType;
 
@@ -113,5 +113,26 @@ TData *symTableGetItem(TSymTable *symtab, char *key);
  * @param symtab pointer to TSymTable.
 */
 void symTableDestroy(TSymTable *symtab);
+
+
+
+/******* DEBUG FUNCTIONS *********/
+
+
+/**
+ * Print to stdout FULL symbol table
+ * 
+ * @param symtab pointer to symbol table
+*/
+void printTable(TSymTable *symtab);
+
+
+/**
+ * Print to stdout data of symbol (symbol table item)
+ * 
+ * @param data pointer to data of symbol
+*/
+void printData(TData *data);
+
 
 #endif
