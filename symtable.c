@@ -2,6 +2,7 @@
  * @file symtable.c
  * @author xkrukh00
  * @date 21.10.2020
+ * @brief Implementation of symbol teable.
 */
 
 #include "symtable.h"
