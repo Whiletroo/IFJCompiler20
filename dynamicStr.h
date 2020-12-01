@@ -22,11 +22,11 @@ typedef struct
 } DYN_STRING;
 
 /**
- * Dynamic String Initialization
- * @param ds
- * @return Initialized Dynamic String
+ * Returns pointer to dynamic string
+ *
+ * @return Pointer to dynamic string DYN_STRING *
  */
-int dynamicStrInit(DYN_STRING *ds);
+DYN_STRING *dynamicStrInit();
 
 /**
  * Dynamic String Free

@@ -340,19 +340,21 @@ static int func_call_next_arg()
 
 int parse() {
     int result;
-    DYN_STRING string;
+    d_string = dynamicStrInit();
 
     if ((result = getToken(&token)) == OK)
     {
-
         if (token.token_type == TOKEN_EOF)
         {
             fprintf(stderr, "#FILE: Input file is empty\n");
-            dynamicStrFree(&string);
+            dynamicStrFree(d_string);
             return result;
         } else {
             CHECK_RULE(start);
         }
+        return OK;
+    } else 
+    {
+        return ERR_INTERNAL;
     }
-    return OK;
 }

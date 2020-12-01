@@ -11,7 +11,7 @@
 #include <stdbool.h>
 
 #include "symtable.h"
-//#include "dynamicStr.h"
+#include "dynamicStr.h"
 #include "error.h"
 //#include "gena.h"
 #include "scanner.h"

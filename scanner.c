@@ -283,9 +283,10 @@ int getToken(tToken *token)
 
     DYN_STRING string;
     DYN_STRING *str = &string;
+    str = dynamicStrInit();
 
     /* DynamicString inicialization */
-    if (!dynamicStrInit(str))
+    if (str == NULL)
     {
         return ERR_INTERNAL;
     }
