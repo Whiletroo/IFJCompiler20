@@ -13,21 +13,25 @@
 #define DYN_STRING_ERROR 0
 #define DYN_STRING_OK 1
 
-int dynamicStrInit(DYN_STRING *ds)
+DYN_STRING *dynamicStrInit()
 {
+    DYN_STRING *ds;
+    ds = (DYN_STRING *) malloc(sizeof(DYN_STRING));
+    if (ds == NULL) {
+        return NULL;
+    }
 
-    ds->str = malloc(sizeof(DYN_STRING_LEN_INC));
-
+    ds->str = (char *) malloc(DYN_STRING_LEN_INC);
     if (ds->str == NULL)
     {
-        return DYN_STRING_ERROR;
+        return NULL;
     }
 
     ds->length = 0;
     ds->allocSize = DYN_STRING_LEN_INC;
     ds->str[0] = '\0';
 
-    return DYN_STRING_OK;
+    return ds;
 }
 
 void dynamicStrFree(DYN_STRING *ds)

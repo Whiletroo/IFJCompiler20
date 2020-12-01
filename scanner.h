@@ -126,7 +126,10 @@ typedef struct
     char *id;
 } tToken;
 
-//tToken token; // Global variable
+extern FILE *source;             // Source file that will be scanned
+extern tToken token;
+extern DYN_STRING *d_string;
+
 
 /**
 * Sets source file to be scanned.
@@ -158,8 +161,7 @@ const char *getTokenName(TOKENS token);
 */
 int getToken(tToken *token);
 
-extern FILE *source;             // Source file that will be scanned
-extern tToken token;
+
 
 
 #endif
