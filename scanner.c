@@ -316,7 +316,7 @@ int getToken(tToken *token)
                 }
                 else if (isspace(c))
                 {
-                        state = STATE_START;
+                    break;
                 }
                 else if (c == '!')
                 {
@@ -439,6 +439,14 @@ int getToken(tToken *token)
                 {
                     token->token_type = TOKEN_EOF;
                     return freeResources(OK, str);
+                } 
+                else if (isalnum(c) || c == '_' ) 
+                {
+                    state = STATE_IDENTIFIER_OR_KEYWORD;
+                    if (!dynamicStrAddChar(str, c))
+                    {
+                        return freeResources(ERR_INTERNAL, str);
+                    }
                 }
                 break;
 

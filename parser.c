@@ -15,12 +15,13 @@ tToken token;
         return result
 
 #define CHECK_TOKEN(expected)                                       \
-    if (token.token_type != (expected))                             \
-    fprintf (stderr, "%s\n", getTokenName(token.token_type));       \
-    return SYNTAX_ERR
+    if (token.token_type != (expected)){                            \
+        fprintf (stderr, "%s\n", getTokenName(token.token_type));   \
+        return SYNTAX_ERR;                                           \
+    }
 
 #define CHECK_RULE(rule)                          \
-    if ((result = rule ())) return result
+    if (( result = rule() )) return result
 
 #define CHECK_KEYWORD(_keyword)                   \
     if (token.token_type != TOKEN_KEYWORD         \
@@ -69,9 +70,10 @@ static int func_call_next_arg();
 
 static int start(){
     int result;
-    // <start> -> package id <prog>
+    // <start> -> package id EOL <prog>
     if (token.token_type == TOKEN_KEYWORD && token.attribute.keyword == KEYWORD_PACKAGE) {
         GET_AND_CHECK_TOKEN(TOKEN_IDENTIFIER);
+        GET_AND_CHECK_TOKEN(TOKEN_EOL);
         GET_TOKEN();
         return prog();
     }
