@@ -448,6 +448,14 @@ int getToken(tToken *token)
                         return freeResources(ERR_INTERNAL, str);
                     }
                 }
+                else if (isdigit(c))
+                {
+                    if (!dynamicStrAddChar(str, c))
+                    {
+                        return freeResources(ERR_INTERNAL, str);
+                    }
+                    state = STATE_INTEGER;
+                }
                 break;
 
                 /*              STATE_DIV               */
