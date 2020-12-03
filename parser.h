@@ -18,7 +18,8 @@
 #include "expressions.h"
 
 extern TSymTable *globalTable;
-extern TData *data;
+extern TSymTable *localTable;
+extern TData *currentId;
 //int label_index;
 //int label_deep;
 

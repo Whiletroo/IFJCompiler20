@@ -407,12 +407,6 @@ int getToken(tToken *token)
                     /*   3) return with function freeResources */
                 else if (c == '(')
                 {
-                    c = (char)getc(source);
-                    if (c == '\"')
-                    {
-                        DocToString = 1;
-                    }
-                    ungetc(c, source);
                     token->token_type = TOKEN_LEFT_BRACKET;
                     return freeResources(OK, str);
                 }
@@ -804,7 +798,7 @@ int getToken(tToken *token)
                 {
                     state = STATE_STRING_ESCAPE;
                 }
-                    /* If next symbol is '             */
+                    /* If next symbol is "             */
                     /*   1) change state STATE_STRING  */
                 else if (c == '\"')
                 {
