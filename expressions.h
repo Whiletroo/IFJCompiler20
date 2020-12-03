@@ -11,6 +11,7 @@
 #include "scanner.h"
 #include "stdbool.h"
 #include "error.h"
+#include "precstack.h"
 
 /* Precedence TAble Indexes */
 typedef enum {  
@@ -25,7 +26,7 @@ typedef enum {
 
 
 /* Precedence Items */
-typedef enum {
+typedef enum precTabItems{
     
     /* Data Types */
     IDENTIFIER,		// 0 ID
@@ -42,11 +43,11 @@ typedef enum {
 
     /* Relation Operators */
     EQ,				// 9 ==
+    HEQ,			// 13 >=   
+    HTN,			// 14 >  
+    LEQ,			// 11 <=  
+    LTN,			// 12 <         
     NEQ,			// 10 !=
-    LEQ,			// 11 <=
-    LTN,			// 12 <
-    HEQ,			// 13 >=
-    HTN,			// 14 >
 
     /* Braces */
     LEFT_BRACKET,	// 15 (
@@ -63,76 +64,65 @@ typedef enum {
 
 typedef enum
 {
-    E_OPERAND,		// 0 E -> i
-    LPAR_E_RPAR,    // 1 E -> (E)
-    E_PLUS_E,		// 2 E -> E + E
-    E_MINUS_E,	    // 3 E -> E - E
-    E_MUL_E,		// 4 E -> E * E
-    E_DIV_E,		// 5 E -> E / E
-    E_EQ_E,		    // 6 E -> E == E
-    E_NEQ_E,		// 7 E -> E != E
-    E_LEQ_E,		// 8 E -> E <= E
-    E_LTN_E,		// 9 E -> E < E
-    E_MEQ_E,		// 10 E -> E => E
-    E_MTN_E,		// 11 E -> E > E
-
-    NOT_E_RULE		// 12 rule doesn't exist
+    NOT_E_RULE,		// 0 rule doesn't exist
+    E_OPERAND,		// 1 E -> i
+    LPAR_E_RPAR,    // 2 E -> (E)
+    E_PLUS_E,		// 3 E -> E + E
+    E_MINUS_E,	    // 4 E -> E - E
+    E_MUL_E,		// 5 E -> E * E
+    E_DIV_E,		// 6 E -> E / E
+    E_EQ_E,		    // 7 E -> E == E
+    E_NEQ_E,		// 8 E -> E != E
+    E_LEQ_E,		// 9 E -> E <= E
+    E_LTN_E,		// 10 E -> E < E
+    E_MEQ_E,		// 11 E -> E => E
+    E_MTN_E         // 12 E -> E > E
 } PrecRules;
 
 
-
-
-/*
-1. ADT стак для PrecTableItem
-2. функция для ковертирования токена на PrecTabItem
-3. функция для поучения precedence ( < > = )
+/**
+ * Get precedence table index by precedence table item.
+ * 
+ * @return tPrecTabIntex index for precedence table.
 */
+tPrecTabIndex getPrecTabIndex(tPrecTabItem precItem);
 
 
-
-char precedence();
-
-
-tPrecTabIndex getPrecTabIndex();
-
-/****** ADT stack for Precedence analysis    *******/
-/* Stack with linked items. Here is access to items
-* under top of stack, every item have pointer to 
-* nextitem in stack. This is needed to be able to 
-* get to the first non-terminal in the Stack. A stack 
-* is essentially a linked list                     */
-
-// Init Stack
-// Push PrecS Stack
-// 
-// Pop Stack
-// Dispose Stack
-// Find First non-terminal in Stack
-
-
-typedef struct precStackItem {
-
-    tPrecTabItem type;
-    struct precStackItem *next;
-
-}tPrecStackItem;
-
-
-typedef struct {
-    tPrecStackItem *top;
-}tPrecStack;
-
-tPrecStack initPrecStack();
-
-tPrecStackItem *topPrecStack();
-tPrecStackItem *topTermPrecStack();
-bool emptyPrecStack();
-bool pushPrecStack(tPrecTabItem type);
+/**
+ * Converts token.token_type to precedence item.
+ * 
+ * @return tPrecTabItem precedence item. NON_TERM if unexpected token.
+*/
 tPrecTabItem tkn2precItem();
-void insertReducePrecStack();
 
 
+/**
+ * Converts type of token to tDataType
+ * 
+ * @return tDataType equivalent, UNDEFINED if equivalent is not found
+*/
+tDataType tokenType2DataType();
 
+
+/**
+ * get precedence from precedence table
+*/
+char precedence(tPrecTabIndex topTerm, tPrecTabIndex inTerm);
+
+
+/**
+ * reduce by rule.
+ * 
+ * @return exit code.
+*/
+int reduce();
+
+
+/**
+ * <expression> rule.
+ * 
+ * @return exit code.
+*/
 int expessions();
 
 

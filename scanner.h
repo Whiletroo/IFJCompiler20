@@ -76,15 +76,14 @@ typedef enum
     TOKEN_EOF,        /// EOL //   DONE IN SCANNER
     TOKEN_EOL,        /// EOF //   DONE IN SCANNER
     TOKEN_EMPTY,      /// Empty // DONE IN SCANNER
-    TOKEN_IDENTIFIER, /// Identifier // DONE IN SCANNER
     TOKEN_KEYWORD,    /// Keyword //    DONE IN SCANNER
-
+    TOKEN_IDENTIFIER, /// Identifier // DONE IN SCANNER
 
     TOKEN_INT,    /// Integer number // DONE IN SCANNER
     TOKEN_FLOAT64, /// Double number //  DONE IN SCANNER
     TOKEN_STRING, /// String //         DONE IN SCANNER
+    TOKEN_BOOL,
     TOKEN_NIL,
-
 
     /* Operations */
     TOKEN_ASSIGN, // = //  DONE IN SCANNER
