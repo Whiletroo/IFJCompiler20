@@ -298,7 +298,7 @@ void printTable(TSymTable *symtab){
 }
 
 
-
+/*
 int main() {
 
 
@@ -426,3 +426,4 @@ int main() {
 
 	return 0;
 }
+*/

@@ -217,6 +217,8 @@ const char *getTokenName(TOKENS token)
             return "Float64";
         case TOKEN_STRING:
             return "String";
+        case TOKEN_BOOL:
+            return "Bool";
         case TOKEN_ASSIGN:
             return "Assign";
         case TOKEN_PLUS:

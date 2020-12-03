@@ -16,6 +16,7 @@
 //#include "gena.h"
 #include "scanner.h"
 #include "expressions.h"
+#include "precstack.h"
 
 extern TSymTable *globalTable;
 extern TSymTable *localTable;

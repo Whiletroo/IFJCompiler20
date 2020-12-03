@@ -1,21 +1,25 @@
+/**
+* @file precstack.h
+* @author xkrukh00
+* @date 03.12.2020
+* @brief The header file for precstack.c
+*/
+
 #ifndef _PRECSTACK_H
 #define _PRECSTACK_H
 
+
 #include "expressions.h"
 #include "symtable.h"
-
-
 
 /**
  * @struct Precedence stack item
 */
 typedef struct precStackItem {
-
     tPrecTabItem precItem;
     tDataType dataType;
     struct precStackItem *next;
-
-}tPSItem;
+} tPSItem;
 
 typedef struct {
     tPSItem *top;

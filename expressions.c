@@ -1,7 +1,14 @@
+/**
+* @file expressions.h
+* @author xkrukh00
+* @date 03.11.2020
+* @brief Implementation of Precedence analise
+*/
+
 #include "expressions.h"
 
 const char precedence_table[7][7] = {
-/*         /*   +-   rel  id    (    )    $   */
+/*         / *  + -  rel  id    (    )    $   */
 /* / * */ {'>', '>', '>', '<', '<', '>', '>'},
 /* + - */ {'<', '>', '>', '<', '<', '>', '>'},
 /* rel */ {'<', '<', ' ', '<', '<', '>', '>'},
@@ -32,10 +39,8 @@ tPrecTabIndex getPrecTabIndex(tPrecTabItem precItem){
         case RIGHT_BRACKET:
             return RIGHT_BRACKET;
             break;
-        case DOLLAR:
+        default: // DOLLAR
             return I_DOLLAR;
-            break;
-        default:
             break;
     }
 }
@@ -73,26 +78,83 @@ tDataType tokenType2DataType() {
     }
 }
 
+tPrecRules getRule(){
+
+    if (precStack->top->next->precItem == REDUCE) {
+        // E -> i
+        switch (precStack->top->precItem) {
+            case IDENTIFIER:
+            case INT_NUMBER:
+            case DOUBLE_NUMBER:
+            case STRING:
+                return E_OPERAND;
+                break;
+        
+            default:
+                return NOT_E_RULE;
+                break;
+        }
+
+    } else if (precStack->top->next->next->next->precItem == REDUCE) {
+       // E -> (E) 
+       if (precStack->top->precItem == RIGHT_BRACKET && precStack->top->next->precItem == NON_TERM && precStack->top->next->next->precItem == LEFT_BRACKET) {
+           return LBRCT_E_RBRCT;
+
+        } else if (precStack->top->precItem == NON_TERM && precStack->top->next->next->precItem == NON_TERM) {
+            // rules : E -> E + E  ...  E -> E != E
+            if(precStack->top->next->precItem > 4 && precStack->top->next->precItem < 15) {
+                return precStack->top->next->precItem - 2;
+            } else {
+                return NOT_E_RULE;
+            }
+        } else {
+           return NOT_E_RULE;
+        }
+    } else {
+        return NOT_E_RULE;
+    }
+}
+
+
+int sematic(tPrecRules rule, tDataType *expType) {
+    
+
+    return OK;
+
+}
+
+
+int reduce() {
+
+    int result = SYNTAX_ERR;
+    tDataType expType = UNDEFINED_TYPE;
+    tPrecRules rule = getRule();
+
+    if (rule == NOT_E_RULE) {
+        return SYNTAX_ERR;
+    }
+
+    result = sematic(rule, &expType);
+    if(result){
+        return result;
+    }
+
+    return OK;
+//TODO
+}
+
 
 char precedence(tPrecTabIndex topTerm, tPrecTabIndex inTerm) {
     return precedence_table[topTerm][inTerm];
 }
 
 
-int reduce() {
-
-    
-
-}
 
 
 int expessions (){
 
-    // return value
-    int result = SYNTAX_ERR;
-
     // precedence stack initialization
-    precStack = initPS;
+    precStack = initPS();
     pushPS(DOLLAR, UNDEFINED_TYPE);
 
     tPrecTabItem topTerm;   // top terminal in precedence stack
@@ -134,7 +196,7 @@ int expessions (){
                 if (topTerm == DOLLAR && inTerm == DOLLAR) {
                     return OK;
                 } else {
-                    fprintf(stderr, "Syntax error: expression error : %s\n",token.token_type);
+                    fprintf(stderr, "Syntax error: expression error : %s\n",getTokenName(token.token_type));
                     freePS();
                     return SYNTAX_ERR;
                 }

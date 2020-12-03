@@ -1,3 +1,10 @@
+/**
+* @file precstack.c
+* @author xkrukh00
+* @date 03.12.2020
+* @brief The implementation of stack for precedence analise
+*/
+
 #include "precstack.h"
 
 #define CHECKPTR_RETNULL(ptr)\
@@ -13,11 +20,13 @@
 tPS *precStack;
 
 tPS *initPS(){
-    precStack = malloc(sizeof(tPS));
-    if( precStack == NULL) {
+
+    tPS *tmpptr = (tPS *)malloc(sizeof(tPS));
+    if( tmpptr == NULL) {
         return NULL;
     }
-    precStack->top = NULL;
+    tmpptr->top = NULL;
+    return tmpptr;
 }
 
 
