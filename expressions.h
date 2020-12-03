@@ -99,7 +99,7 @@ tPrecTabItem tkn2precItem();
 /**
  * Converts type of token to tDataType
  * 
- * @return tDataType equivalent, UNDEFINED if equivalent is not found
+ * @return tDataType equivalent, UNDEFINED_TYPE if equivalent is not found
 */
 tDataType tokenType2DataType();
 

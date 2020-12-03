@@ -16,6 +16,7 @@
 #include "error.h"
 
 #define MAX_ST_SIZE 2 //size of symbol table
+#define MAX_RETURN_TYPES 10
 
 typedef enum {UNDEF, variable, function} TIdType;
 
@@ -25,7 +26,7 @@ typedef enum {UNDEFINED_TYPE, INT_TYPE, FLOAT_TYPE, STRING_TYPE, NIL_TYPE} tData
 typedef struct {
 
 	char *identifier;		// name of the sumbol
-    tDataType dataType;     // type of data if it is variable
+    tDataType dataType[MAX_RETURN_TYPES];     // type of data if it is variable
 	TIdType idType;			// type of id: variable, function, label
 	bool defined;
 	union {

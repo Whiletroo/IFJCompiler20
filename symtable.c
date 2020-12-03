@@ -88,7 +88,9 @@ int symTableInsert(TSymTable *symtab, char *key) {
 		symtab->items[index]->data.identifier = malloc(sizeof(char));
 		CHECK_PTR(symtab->items[index]->data.identifier);
 		memcpy(symtab->items[index]->data.identifier, key, strlen(key));
-		symtab->items[index]->data.dataType = NIL_TYPE;
+		for (int i = 0; i < MAX_ST_SIZE; i++) {
+			symtab->items[index]->data.dataType[i] = UNDEFINED_TYPE;
+		}
 		symtab->items[index]->data.idType = UNDEF;
 		symtab->items[index]->data.defined = false;
 		symtab->items[index]->data.string_val = NULL;
@@ -112,7 +114,10 @@ int symTableInsert(TSymTable *symtab, char *key) {
 		newitem->data.identifier = malloc(sizeof(char));
 		CHECK_PTR(newitem->data.identifier);
 		memcpy(newitem->data.identifier, key, strlen(key));
-		newitem->data.dataType = NIL_TYPE;
+
+		for (int i = 0; i < MAX_ST_SIZE; i++) {
+			newitem->data.dataType[0] = UNDEFINED_TYPE;
+		}
 		newitem->data.idType = UNDEF;
 		newitem->data.defined = false;
 		newitem->data.string_val = NULL;
@@ -221,7 +226,7 @@ void printData(TData *data) {
 
 	printf("\tIdentifier  	:\t%s\n",data->identifier);
 	printf("\tType of DATA    :\t");
-	switch(data->dataType) {
+	switch(data->dataType[0]) {
 		case INT_TYPE:
 			printf("INT\n");
 			break;
@@ -250,11 +255,11 @@ void printData(TData *data) {
 			break;
 	}
 
-	if (data->dataType == STRING_TYPE) {
+	if (data->dataType[0] == STRING_TYPE) {
 		printf("\tString value    :\t%s\n",data->string_val);
-	} else if (data->dataType == INT_TYPE) {
+	} else if (data->dataType[0] == INT_TYPE) {
 		printf("\tInt value       :\t%d\n",data->int_val);
-	} else if (data->dataType == FLOAT_TYPE) {
+	} else if (data->dataType[0] == FLOAT_TYPE) {
 		printf("\tDoubel value    :\t%lf\n",data->double_val);
 	} else {
 		printf("\tValue undifiened\n");
@@ -293,7 +298,7 @@ void printTable(TSymTable *symtab){
 }
 
 
-/*
+
 int main() {
 
 
@@ -318,7 +323,7 @@ int main() {
 	P("Got Pointer to data");
 
 	// init data
-	data->dataType = STRING_TYPE;
+	data->dataType[0] = STRING_TYPE;
 	data->defined = true;
 	data->idType = variable;
 	data->string_val = "symbol1";
@@ -340,7 +345,7 @@ int main() {
 	data = symTableGetItem(symtab, "key2");
 
 	// init data
-	data->dataType = FLOAT_TYPE;
+	data->dataType[0] = FLOAT_TYPE;
 	data->defined = true;
 	data->idType = variable;
 	data->double_val = 420.0;
@@ -362,7 +367,7 @@ int main() {
 	}
 
 	// init data
-	data->dataType = STRING_TYPE;
+	data->dataType[0] = STRING_TYPE;
 	data->defined = true;
 	data->idType = function;
 	data->string_val = "kuku epta";
@@ -382,7 +387,7 @@ int main() {
 	P("got data pointer");
 
 	// init data
-	data->dataType = INT_TYPE;
+	data->dataType[0] = INT_TYPE;
 	data->defined = true;
 	data->idType = variable;
 	data->int_val = 421;
@@ -421,4 +426,3 @@ int main() {
 
 	return 0;
 }
-*/
