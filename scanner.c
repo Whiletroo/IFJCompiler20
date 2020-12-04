@@ -257,8 +257,10 @@ const char *getTokenName(TOKENS token)
             return "Right curly bracket";
         case TOKEN_SEMICOLON:
             return "Semicolon";
-         case TOKEN_NIL:
+        case TOKEN_NIL:
             return "Nil";
+        case TOKEN_BOOL:
+            return "Bool";
     }
     return 0;
 }
