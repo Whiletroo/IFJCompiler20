@@ -1,5 +1,5 @@
 /**
-* @file expressions.c
+* @file expressions.h
 * @author xkrukh00
 * @date 03.11.2020
 * @brief header file for expresions.c
@@ -15,6 +15,7 @@
 
 /* Precedence TAble Indexes */
 typedef enum {  
+    
     I_MUL_DIV,	        // 0 /*
     I_ADD_SUB,		    // 1 +-
     I_REL,			    // 2 rel (relation operators) < <= > >= == !=    
@@ -22,11 +23,12 @@ typedef enum {
     I_LEFT_BRACKET,		// 4 (
     I_RIGHT_BRACKET,	// 5 )
     I_DOLLAR			// 6 $
+
 } tPrecTabIndex;
 
 
 /* Precedence Items */
-typedef enum precTabItems{
+typedef enum {
     
     /* Data Types */
     IDENTIFIER,		// 0 ID
@@ -43,11 +45,11 @@ typedef enum precTabItems{
 
     /* Relation Operators */
     EQ,				// 9 ==
-    HEQ,			// 13 >=   
-    HTN,			// 14 >  
-    LEQ,			// 11 <=  
-    LTN,			// 12 <         
-    NEQ,			// 10 !=
+    HEQ,			// 10 >=   
+    HTN,			// 11 >  
+    LEQ,			// 12 <=  
+    LTN,			// 13 <         
+    NEQ,			// 14 !=
 
     /* Braces */
     LEFT_BRACKET,	// 15 (
@@ -59,25 +61,24 @@ typedef enum precTabItems{
     NON_TERM,		// 19 non-terminal
     STOP            //
 
-} tPrecTabItem;
+}tPrecTabItem;
 
 
-typedef enum
-{
+typedef enum {
     NOT_E_RULE,		// 0 rule doesn't exist
     E_OPERAND,		// 1 E -> i
-    LPAR_E_RPAR,    // 2 E -> (E)
+    LBRCT_E_RBRCT,  // 2 E -> (E)
     E_PLUS_E,		// 3 E -> E + E
     E_MINUS_E,	    // 4 E -> E - E
     E_MUL_E,		// 5 E -> E * E
     E_DIV_E,		// 6 E -> E / E
     E_EQ_E,		    // 7 E -> E == E
-    E_NEQ_E,		// 8 E -> E != E
-    E_LEQ_E,		// 9 E -> E <= E
-    E_LTN_E,		// 10 E -> E < E
-    E_MEQ_E,		// 11 E -> E => E
-    E_MTN_E         // 12 E -> E > E
-} PrecRules;
+    E_HEQ_E,		// 8 E -> E => E 
+    E_HTN_E,        // 9 E -> E > E
+    E_LEQ_E,		// 10 E -> E <= E   
+    E_LTN_E,		// 11 E -> E < E     
+    E_NEQ_E		    // 12 E -> E != E
+} tPrecRules;
 
 
 /**
@@ -108,6 +109,20 @@ tDataType tokenType2DataType();
  * get precedence from precedence table
 */
 char precedence(tPrecTabIndex topTerm, tPrecTabIndex inTerm);
+
+
+/**
+ * Get rule by items in stack
+*/
+tPrecRules getRule();
+
+
+/**
+ * Sematic analyse TODO
+ * 
+ * @return exit code
+*/
+int sematic(tPrecRules rule, tDataType *expType);
 
 
 /**
