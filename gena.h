@@ -14,6 +14,7 @@
 #include <stdbool.h>
 #include "dynamicStr.h"
 #include "scanner.h"
+#include "symtable.h"
 
 bool codeGenStart();
 void codeGenClear();
@@ -26,11 +27,11 @@ bool genCreateLabel(char *Label);
 bool genDestLabelEndJamp(char* Label);
 bool genCheckFrameDeep(int FramDeep);
 bool genCreClear();
-bool genCheckArithm(tToken token, bool stackVersion,char *result, char *var1,char *var2,tDataType typeValue);
+bool genCheckArithm(tToken token, bool stackVersion,tDataType typeValue);
 bool genCheckTypeValue(tDataType type);
 bool genCreDefVar(int FrameDeep,char *nameMod);
 bool geneCall(char *Label );
-bool genFunRead(char nameValue,int FrameDeep,tDataType typeValu);
+bool genFunRead(char *nameValue,int FrameDeep,tDataType typeValue);
 bool genFunWrite(char *nameMod,int FrameDeep);
 bool genCreJumpEQ(char *Label, char *var1,int FrameDeep, char *typeOfVar, char *var2, bool stak);
 bool genCreJumpNEQ(char *Label, char *var1,int FrameDeep, char *typeOfVar, char *var2, bool stak);
@@ -39,9 +40,9 @@ bool genBreak();
 bool genDpronr(char *valOfvar,tDataType type);
 bool int2Float(char *retval1,int nameVal,bool stak);
 bool int2Char(char *retval1,int nameVal,bool stak);
-bool float2Int(char *retval1,double nameVal,bool stak);
+bool float2Int(char *retval1,char *nameVal,bool stak);
 bool string2Int(char *retval1,char *nameVal,bool stak);
-bool genConCat(char *nameMod,char *retval1,int FrameDeep,int *FrameDeep1);
+bool genConCat(char *nameMod,char *retval1,int FrameDeep,int FrameDeep1);
 bool genStrLen(char *nameMod,int FrameDeep);
 bool genGetChar(char *nameMod,char *retval1,int FrameDeep,int FrameDeep1);
 bool genSetChar(char *nameMod,char *indFildMod,char *nameChar,int FrameDeep,int FrameDeep1,tDataType type);

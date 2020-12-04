@@ -5,8 +5,8 @@
  * @brief The generator
 */
 
-#include"gena.h"
-#include"symtable.h"
+#include "gena.h"
+#include "symtable.h"
 
 ///DEINITIONS FOR FUNCTIONS
 #define ADD_INST(_inst) if (!dynamicStrAddStr(&dyncode, (_inst))) return false;\
@@ -28,7 +28,7 @@ void codeGenClear()
 	dynamicStrFree(&dyncode);
 }
 
-/** Создает Главичку соубору
+/** пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
  * Generate compulsory sting for correct work
  *
  *
@@ -44,7 +44,7 @@ bool codeGenOpen()
 
 
 
-/** //Ф-ция создаст фрейм функии
+/**
  * Generate main struction of function
  *
  *
@@ -65,7 +65,7 @@ bool genCreaStartFream(char *nameFrame)
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCrePushFr() //Ф-ция двинет фрейм
+bool genCrePushFr() 
 {
     ADD_INST("PUSHFRAME");
     return true;
@@ -77,13 +77,13 @@ bool genCrePushFr() //Ф-ция двинет фрейм
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCrePopFr()  //Ф-ция попнет фрейм
+bool genCrePopFr()  
 {
     ADD_INST("POPFRAME");
     return true;
 }
 
-/** //Ф-ия вызовет фрейм
+/**
  * Generate RETURN command
  *
  *
@@ -96,7 +96,7 @@ bool genCreReturn()
 }
 
 
-/** //Ф-ция создаст лабде
+/**
  * Generate LABEL command
  *
  *
@@ -131,7 +131,7 @@ bool genCreClear(){
     return true;
 }
 
- /** //Ф-ция определит глубину переменной
+ /**
  * Check deep of frame
  *
  *
@@ -156,7 +156,7 @@ bool genCheckFrameDeep(int FrameDeep)
     return true;
 }
 
-/** //Ф-ция определяет тип переменной
+/** 
  * Generates default value of variable.
  *
  *
@@ -200,7 +200,7 @@ bool genCreStradaiSuka(int DeepFrame,char *result, char *var1,char *var2,tDataTy
     ADD_INST(var2);
 }
 */
- /** //Ф-ция проведет команныу из експрешена
+ /**
  * Generates command from expression list
  *
  *
@@ -282,7 +282,7 @@ bool genCheckArithm(tToken token, bool stackVersion,tDataType typeValue)
 }
 
 
- /** //Ф-ция декларирует переменную
+ /** //пїЅ-пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
  * Generate deklaration of variable
  *
  *
@@ -296,7 +296,7 @@ bool genCreDefVar(int FrameDeep,char *nameMod)
     return true;
 }
 
-/** //Ф-ция вызовет перемнную
+/**
  * Generate CALL command
  *
  *
@@ -308,13 +308,13 @@ bool geneCall(char *Label )
 	return true;
 }
 
-/** //Ф-ция вызовет перемнную
+/**
  * Generate READ command
  *
  *
  * @return True if it was successful, false otherwise.
  */
-bool genFunRead(char *nameValue,int FrameDeep,tDataType typeValu)
+bool genFunRead(char *nameValue,int FrameDeep,tDataType typeValue)
 {
     ADD_CODE("READ ");
     genCheckFrameDeep(FrameDeep);
@@ -493,7 +493,7 @@ bool int2Char(char *retval1,int nameVal,bool stak)
  *
  * @return True if it was successful, false otherwise.
  */
-bool float2Int(char *retval1,double nameVal,bool stak)
+bool float2Int(char *retval1, char *nameVal,bool stak)
 {
     if (stak)
         {
@@ -505,7 +505,7 @@ bool float2Int(char *retval1,double nameVal,bool stak)
         ADD_CODE("FLOAT2INT ");
         ADD_CODE("LF@");
         ADD_CODE(retval1);
-        ADD_CODE(" float64@");
+        ADD_CODE("float64@");
         ADD_INST(nameVal);
         return true;
     }
