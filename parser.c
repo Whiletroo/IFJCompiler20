@@ -61,7 +61,7 @@ static int func_ret_types();
 static int st_list();
 static int state();
 static int var_def();
-//static int var_dec();
+
 static int else_state();
 static int assign();
 static int func_call();
@@ -129,13 +129,13 @@ static int type()
     if (token.token_type == TOKEN_KEYWORD) {
         switch (token.attribute.keyword) {
             case KEYWORD_INT:
-                symTableGetItem(globalTable, token.attribute.value_string->str)->dataType = INT_TYPE;
+                symTableGetItem(globalTable, token.attribute.value_string->str)->dataType[0] = INT_TYPE;
                 break;
             case KEYWORD_FLOAT64:
-                symTableGetItem(globalTable, token.attribute.value_string->str)->dataType = FLOAT_TYPE;
+                symTableGetItem(globalTable, token.attribute.value_string->str)->dataType[0] = FLOAT_TYPE;
                 break;
             case KEYWORD_STRING:
-                symTableGetItem(globalTable, token.attribute.value_string->str)->dataType = STRING_TYPE;
+                symTableGetItem(globalTable, token.attribute.value_string->str)->dataType[0] = STRING_TYPE;
                 break;
             default:
                 return SYNTAX_ERR;
@@ -279,7 +279,6 @@ static int state()
     }
     return OK;
 }
-
 static int var_def()
 { int result;
     // <var_def> → := Exp

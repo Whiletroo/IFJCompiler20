@@ -25,6 +25,7 @@ extern TData *currentId;
 //int label_deep;
 
 
+
 int parse();
 
 #endif //_PARSER_H
