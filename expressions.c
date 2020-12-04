@@ -120,8 +120,56 @@ tPrecRules getRule(){
 
 
 int sematic(tPrecRules rule, tDataType *expType) {
-    
 
+    /* Checking operands definitions */
+    
+    // E -> i
+    if (rule == E_OPERAND) {
+
+        if (precStack->top->dataType == UNDEFINED_TYPE) {
+            return SEM_ERR_TYPE_COMPAT;
+        }
+
+    // E -> (E)
+    } else if (rule == LBRCT_E_RBRCT) {
+
+        if (precStack->top->next->dataType == UNDEFINED_TYPE) {
+            return SEM_ERR_UNDEFINED_VAR;
+        }
+
+    } else if ( rule > 2 ) {
+        // Rules with operators. If one of operands have to type -> Error.
+        if (precStack->top->dataType == UNDEFINED_TYPE || precStack->top->next->next->dataType == UNDEFINED_TYPE ) {
+            return SEM_ERR_UNDEFINED_VAR;
+        }
+    }
+
+
+    // Assing data type of expression result
+    switch (rule) {
+        case E_OPERAND:
+            *expType = precStack->top->dataType;
+            break;
+        case LBRCT_E_RBRCT:
+            *expType = precStack->top->next->dataType;
+            break;
+
+        case E_PLUS_E:
+            *expType = FLOAT_TYPE;
+            if ( precStack->top->next->next->dataType == STRING_TYPE && precStack->top->dataType == STRING_TYPE && rule == E_PLUS_E ) {
+                *expType = STRING_TYPE;
+                break;
+            }  else if ( precStack->top->next->next->dataType == INT_TYPE && precStack->top->dataType == INT_TYPE ) {
+                *expType = INT_TYPE;
+                break;
+            } else if ( precStack->top->next->next->dataType == FLOAT_TYPE && precStack->top->dataType == INT_TYPE ) {
+                
+            }
+        break;
+
+        default:
+            break;
+        }
     return OK;
 
 }
