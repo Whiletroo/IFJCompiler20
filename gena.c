@@ -65,7 +65,7 @@ bool genCreaStartFream(char *nameFrame)
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCrePushFr() 
+bool genCrePushFr()
 {
     ADD_INST("PUSHFRAME");
     return true;
@@ -77,7 +77,7 @@ bool genCrePushFr()
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCrePopFr()  
+bool genCrePopFr()
 {
     ADD_INST("POPFRAME");
     return true;
@@ -156,7 +156,7 @@ bool genCheckFrameDeep(int FrameDeep)
     return true;
 }
 
-/** 
+/**
  * Generates default value of variable.
  *
  *
@@ -444,7 +444,7 @@ bool genDpronr(char *valOfvar,tDataType type)
  *
  * @return True if it was successful, false otherwise.
  */
-bool int2Float(char *retval1,int nameVal,bool stak){
+bool int2Float(char *retval1,bool stak){
     if (stak)
         {
             ADD_CODE("INT2FLOATS ");
@@ -456,7 +456,7 @@ bool int2Float(char *retval1,int nameVal,bool stak){
             ADD_CODE("LF@");
             ADD_CODE(retval1);
             ADD_CODE(" int@");
-            ADD_INST(nameVal);
+            ADD_INST(retval1);
             return true;
     }
     return false;
@@ -468,7 +468,7 @@ bool int2Float(char *retval1,int nameVal,bool stak){
  *
  * @return True if it was successful, false otherwise.
  */
-bool int2Char(char *retval1,int nameVal,bool stak)
+bool int2Char(char *retval,bool stak)
 {
     if (stak)
         {
@@ -479,9 +479,9 @@ bool int2Char(char *retval1,int nameVal,bool stak)
     {
      ADD_CODE("INT2CHAR ");
     ADD_CODE("LF@");
-    ADD_CODE(retval1);
+    ADD_CODE(retval);
     ADD_CODE(" int@");
-    ADD_INST(nameVal);
+    ADD_INST(retval);
     return true;
     }
     return false;
@@ -493,7 +493,7 @@ bool int2Char(char *retval1,int nameVal,bool stak)
  *
  * @return True if it was successful, false otherwise.
  */
-bool float2Int(char *retval1, char *nameVal,bool stak)
+bool float2Int(char *retval, bool stak)
 {
     if (stak)
         {
@@ -504,9 +504,9 @@ bool float2Int(char *retval1, char *nameVal,bool stak)
     {
         ADD_CODE("FLOAT2INT ");
         ADD_CODE("LF@");
-        ADD_CODE(retval1);
+        ADD_CODE(retval);
         ADD_CODE("float64@");
-        ADD_INST(nameVal);
+        ADD_INST(retval);
         return true;
     }
     return false;
@@ -518,7 +518,7 @@ bool float2Int(char *retval1, char *nameVal,bool stak)
  *
  * @return True if it was successful, false otherwise.
  */
-bool string2Int(char *nameVal,char *retval1,bool stak)
+bool string2Int(char *retval,bool stak)
 {
     if (stak)
         {
@@ -530,9 +530,9 @@ bool string2Int(char *nameVal,char *retval1,bool stak)
        ADD_CODE("STRING2INT ");
         ADD_CODE("FLOAT2INT ");
         ADD_CODE("LF@");
-        ADD_CODE(retval1);
+        ADD_CODE(retval);
         ADD_CODE(" string@");
-        ADD_INST(nameVal);
+        ADD_INST(retval);
         return true;
        return true;
     }
