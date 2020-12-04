@@ -8,10 +8,8 @@
 #ifndef _EXPRESSIONS_H
 #define _EXPRESSIONS_H
 
-#include "scanner.h"
-#include "stdbool.h"
-#include "error.h"
-#include "precstack.h"
+#include "symtable.h"
+#include "parser.h"
 
 /* Precedence TAble Indexes */
 typedef enum {  

@@ -8,17 +8,17 @@
 #ifndef _PRECSTACK_H
 #define _PRECSTACK_H
 
-
 #include "expressions.h"
-#include "symtable.h"
 
 /**
  * @struct Precedence stack item
 */
 typedef struct precStackItem {
-    tPrecTabItem precItem;
+
+    tPrecTabItem precItem;   
     tDataType dataType;
     struct precStackItem *next;
+
 } tPSItem;
 
 typedef struct {
@@ -86,7 +86,7 @@ void disposePS();
 void freePS();
 
 
-extern tPS *precedenceStack;
+
 
 
 #endif

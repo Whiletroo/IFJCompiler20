@@ -17,8 +17,6 @@
 
 
 
-tPS *precStack;
-
 tPS *initPS(){
 
     tPS *tmpptr = (tPS *)malloc(sizeof(tPS));

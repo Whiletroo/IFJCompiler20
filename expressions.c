@@ -5,7 +5,10 @@
 * @brief Implementation of Precedence analise
 */
 
+#include "precstack.h"
 #include "expressions.h"
+
+tPS *precStack;
 
 const char precedence_table[7][7] = {
 /*         / *  + -  rel  id    (    )    $   */
@@ -140,7 +143,6 @@ int reduce() {
     }
 
     return OK;
-//TODO
 }
 
 
@@ -155,7 +157,9 @@ int expessions (){
 
     // precedence stack initialization
     precStack = initPS();
-    pushPS(DOLLAR, UNDEFINED_TYPE);
+    if (!pushPS(DOLLAR, UNDEFINED_TYPE)) {
+        return ERR_INTERNAL;
+    }
 
     tPrecTabItem topTerm;   // top terminal in precedence stack
     tPrecTabItem inTerm;    // terminal on input
@@ -178,7 +182,7 @@ int expessions (){
                 // 1. insert reduce item after top terminal
                 // 2. push new terminal
                 // 3. get next terminal
-                pusPS(REDUCE, UNDEFINED_TYPE);
+                pushPS(REDUCE, UNDEFINED_TYPE);
                 pushPS(tkn2precItem(), tokenType2DataType());
                 getToken(&token);
                 break;
