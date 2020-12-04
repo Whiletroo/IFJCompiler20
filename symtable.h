@@ -18,9 +18,9 @@
 #define MAX_ST_SIZE 2 //size of symbol table
 #define MAX_RETURN_TYPES 10
 
-typedef enum idType {UNDEF, variable, function} TIdType;
+typedef enum {UNDEF, variable, function} TIdType;
 
-typedef enum dataType {UNDEFINED_TYPE, INT_TYPE, FLOAT_TYPE, STRING_TYPE, NIL_TYPE} tDataType;
+typedef enum {UNDEFINED_TYPE, INT_TYPE, FLOAT_TYPE, STRING_TYPE, NIL_TYPE} tDataType;
 
 
 typedef struct {
