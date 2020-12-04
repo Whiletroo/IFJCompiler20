@@ -120,13 +120,24 @@ bool genDestLabelEndJamp(char* Label)
     return true;
 }
 
+/**
+ * Generates CLEARS command
+ *
+ *
+ * @return True if it was successful, false otherwise.
+ */
+bool genCreClear(){
+    ADD_INST("CLEARS");
+    return true;
+}
+
  /** //Ф-ция определит глубину переменной
  * Check deep of frame
  *
  *
  * @return True if it was successful, false otherwise.
  */
-void genCheckFrameDeep(int *FramDeep)
+bool genCheckFrameDeep(int FrameDeep)
 {
       switch (FrameDeep)
 	{
@@ -142,25 +153,60 @@ void genCheckFrameDeep(int *FramDeep)
 		default:
 			return false;
 	}
+    return true;
 }
-/**
- * Generates CLEARS command
+
+/** //Ф-ция определяет тип переменной
+ * Generates default value of variable.
  *
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCreClear(){
-    ADD_INST("CLEARS");
-    return true;
+bool genCheckTypeValue(tDataType type)
+{
+	switch (type)
+	{
+		case INT_TYPE:
+			ADD_CODE(" int");
+
+			break;
+
+		case FLOAT_TYPE:
+			ADD_CODE(" float64");
+
+			break;
+
+		case STRING_TYPE:
+			ADD_CODE(" string");
+
+			break;
+
+		case NIL_TYPE:
+			 ADD_CODE(" nil");
+		default:
+			return false;
+	}
+	return true;
 }
 
+/*
+bool genCreStradaiSuka(int DeepFrame,char *result, char *var1,char *var2,tDataType typeValue)
+{
+    genCheckFrameDeep(DeepFrame);
+    ADD_CODE(result);
+    ADD_CODE(" ");
+    ADD_CODE(var1);
+    ADD_CODE(" ");
+    ADD_INST(var2);
+}
+*/
  /** //Ф-ция проведет команныу из експрешена
  * Generates command from expression list
  *
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCheckArithm(tToken token, bool stackVersion,char *result, char *var1,char *var2,TDataType typeValue)
+bool genCheckArithm(tToken token, bool stackVersion,tDataType typeValue)
 {
     if (stackVersion)
         {
@@ -198,43 +244,20 @@ bool genCheckArithm(tToken token, bool stackVersion,char *result, char *var1,cha
             {
             case TOKEN_PLUS:
                 ADD_CODE("ADD ");
-                ADD_CODE(result);
-                ADD_CODE(" ");
-                ADD_CODE(var1);
-                ADD_CODE(" ");
-                ADD_INST(var2);
                 break;
             case TOKEN_MINUS:
                 ADD_CODE("SUB ");
-                ADD_CODE(result);
-                ADD_CODE(" ");
-                ADD_CODE(var1);
-                ADD_CODE(" ");
-                ADD_INST(var2);
+
                 break;
             case TOKEN_MUL:
                 ADD_CODE("MUL ");
-                AADD_CODE(result);
-                ADD_CODE(" ");
-                ADD_CODE(var1);
-                ADD_CODE(" ");
-                ADD_INST(var2);
+
                 break;
             case TOKEN_DIV:
-                if (typeValue==FLOAT){
+                if (typeValue==FLOAT_TYPE){
                     ADD_CODE("DIV ");
-                    ADD_CODE(result);
-                    ADD_CODE(" ");
-                    ADD_CODE(var1);
-                    ADD_CODE(" ");
-                    ADD_INST(var2);
                 }else{
                     ADD_CODE("IDIV ");
-                    ADD_CODE(result);
-                    ADD_CODE(" ");
-                    ADD_CODE(var1);
-                    ADD_CODE(" ");
-                    ADD_INST(var2);
                 }
                 break;
             case TOKEN_HIGHER:
@@ -259,47 +282,13 @@ bool genCheckArithm(tToken token, bool stackVersion,char *result, char *var1,cha
 }
 
 
-/** //Ф-ция определяет тип переменной
- * Generates default value of variable.
- *
- *
- * @return True if it was successful, false otherwise.
- */
-bool genCheckTypeValue(TDataType type)
-{
-	switch (type)
-	{
-		case INT:
-			ADD_CODE(" int");
-
-			break;
-
-		case FLOAT:
-			ADD_CODE(" float64");
-
-			break;
-
-		case STRING:
-			ADD_CODE(" string");
-
-			break;
-
-		case NIL:
-			 ADD_CODE(" nil");
-		default:
-			return false;
-	}
-	return true;
-}
-
-
  /** //Ф-ция декларирует переменную
  * Generate deklaration of variable
  *
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCreDefVar(int *FrameDeep,char *nameMod)
+bool genCreDefVar(int FrameDeep,char *nameMod)
 {
     ADD_CODE("DEFVAR ");
     genCheckFrameDeep(FrameDeep);
@@ -325,13 +314,13 @@ bool geneCall(char *Label )
  *
  * @return True if it was successful, false otherwise.
  */
-bool genFunRead(char nameValue,int FrameDeep,TDataType typeValu)
+bool genFunRead(char *nameValue,int FrameDeep,tDataType typeValu)
 {
     ADD_CODE("READ ");
     genCheckFrameDeep(FrameDeep);
-    ADD_CODE(nameMod);
+    ADD_CODE(nameValue);
     ADD_CODE(" ");
-    genCheckFrameDeep(typeValue);
+    genCheckTypeValue(typeValue);
 
     return true;
 }
@@ -356,7 +345,7 @@ bool genFunWrite(char *nameMod,int FrameDeep)
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCreJumpEQ(char *Label, char *var1,int *FrameDeep, char *typeOfVar, char *var2, bool stak)
+bool genCreJumpEQ(char *Label, char *var1,int FrameDeep, char *typeOfVar, char *var2, bool stak)
 {
     if (stak)
     {
@@ -386,7 +375,7 @@ bool genCreJumpEQ(char *Label, char *var1,int *FrameDeep, char *typeOfVar, char 
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCreJumpNEQ(char *Label, char *var1,int *FrameDeep, char *typeOfVar, char *var2, bool stak)
+bool genCreJumpNEQ(char *Label, char *var1,int FrameDeep, char *typeOfVar, char *var2, bool stak)
 {
     if (stak){
             ADD_CODE("JUMPIFEQS ");
@@ -440,7 +429,7 @@ bool genBreak()
  *
  * @return True if it was successful, false otherwise.
  */
-bool genDpronr(char *valOfvar,TDataType type)
+bool genDpronr(char *valOfvar,tDataType type)
 {
     ADD_CODE("DPRINT ");
     genCheckTypeValue(type);
@@ -455,7 +444,7 @@ bool genDpronr(char *valOfvar,TDataType type)
  *
  * @return True if it was successful, false otherwise.
  */
-bool int2Float(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool stak){
+bool int2Float(char *retval1,int nameVal,bool stak){
     if (stak)
         {
             ADD_CODE("INT2FLOATS ");
@@ -464,12 +453,11 @@ bool int2Float(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool s
     else
     {
             ADD_CODE("INT2FLOATS ");
-        genCheckFrameDeep(FrameDeep);
-            ADD_CODE(nameMod);
-        genCheckFrameDeep(FrameDeep1);
-            ADD_INST(retval1);
+            ADD_CODE("LF@");
+            ADD_CODE(retval1);
+            ADD_CODE(" int@");
+            ADD_INST(nameVal);
             return true;
-       return true;
     }
     return false;
 }
@@ -480,7 +468,7 @@ bool int2Float(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool s
  *
  * @return True if it was successful, false otherwise.
  */
-bool int2Char(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool stak)
+bool int2Char(char *retval1,int nameVal,bool stak)
 {
     if (stak)
         {
@@ -489,12 +477,12 @@ bool int2Char(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool st
         }
     else
     {
-      ADD_CODE("INT2CHAR ");
-       genCheckFrameDeep(FrameDeep);
-      ADD_CODE(nameMod);
-       genCheckFrameDeep(FrameDeep);
-       ADD_INST(retval1);
-      return true;
+     ADD_CODE("INT2CHAR ");
+    ADD_CODE("LF@");
+    ADD_CODE(retval1);
+    ADD_CODE(" int@");
+    ADD_INST(nameVal);
+    return true;
     }
     return false;
 }
@@ -505,7 +493,7 @@ bool int2Char(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool st
  *
  * @return True if it was successful, false otherwise.
  */
-bool float2Int(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool stak)
+bool float2Int(char *retval1,double nameVal,bool stak)
 {
     if (stak)
         {
@@ -515,10 +503,10 @@ bool float2Int(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool s
     else
     {
         ADD_CODE("FLOAT2INT ");
-        genCheckFrameDeep(FrameDeep);
-        ADD_CODE(nameMod);
-        genCheckFrameDeep(FrameDeep1);
-        ADD_INST(retval1);
+        ADD_CODE("LF@");
+        ADD_CODE(retval1);
+        ADD_CODE(" float64@");
+        ADD_INST(nameVal);
         return true;
     }
     return false;
@@ -530,7 +518,7 @@ bool float2Int(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool s
  *
  * @return True if it was successful, false otherwise.
  */
-bool string2Int(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool stak)
+bool string2Int(char *nameVal,char *retval1,bool stak)
 {
     if (stak)
         {
@@ -540,10 +528,12 @@ bool string2Int(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool 
     else
     {
        ADD_CODE("STRING2INT ");
-       genCheckFrameDeep(FrameDeep);
-       ADD_CODE(nameMod);
-       genCheckFrameDeep(FrameDeep1);
-       ADD_INST(retval1);
+        ADD_CODE("FLOAT2INT ");
+        ADD_CODE("LF@");
+        ADD_CODE(retval1);
+        ADD_CODE(" string@");
+        ADD_INST(nameVal);
+        return true;
        return true;
     }
     return false;
@@ -555,7 +545,7 @@ bool string2Int(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool 
  *
  * @return True if it was successful, false otherwise.
  */
-bool genConCat(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1)
+bool genConCat(char *nameMod,char *retval1,int FrameDeep,int FrameDeep1)
 {
     ADD_CODE("CONCAT ");
     genCheckFrameDeep(FrameDeep);
@@ -571,7 +561,7 @@ bool genConCat(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1)
  *
  * @return True if it was successful, false otherwise.
  */
-bool genStrLen(char *nameMod,int *FrameDeep)
+bool genStrLen(char *nameMod,int FrameDeep)
 {
     ADD_CODE("STRLEN ");
     genCheckFrameDeep(FrameDeep);
@@ -585,7 +575,7 @@ bool genStrLen(char *nameMod,int *FrameDeep)
  *
  * @return True if it was successful, false otherwise.
  */
-bool genGetChar(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1)
+bool genGetChar(char *nameMod,char *retval1,int FrameDeep,int FrameDeep1)
 {
     ADD_CODE("GETCHAR ");
     genCheckFrameDeep(FrameDeep);
@@ -601,7 +591,7 @@ bool genGetChar(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1)
  *
  * @return True if it was successful, false otherwise.
  */
-bool genSetChar(char *nameMod,char *indFildMod,char *nameChar,int *FrameDeep,int *FrameDeep1,TDataType type)
+bool genSetChar(char *nameMod,char *indFildMod,char *nameChar,int FrameDeep,int FrameDeep1,tDataType type)
 {
     ADD_CODE("SETCHAR ");
     genCheckFrameDeep(FrameDeep);
@@ -620,7 +610,7 @@ bool genSetChar(char *nameMod,char *indFildMod,char *nameChar,int *FrameDeep,int
  *
  * @return True if it was successful, false otherwise.
  */
-bool genType(char *varToSave,int *FrameDeep,char *typeMod,char *nameOfVar,TDataType type)
+bool genType(char *varToSave,int FrameDeep,char *typeMod,char *nameOfVar,tDataType type)
 {
     ADD_CODE("TYPE ");
     genCheckFrameDeep(FrameDeep);
@@ -628,6 +618,6 @@ bool genType(char *varToSave,int *FrameDeep,char *typeMod,char *nameOfVar,TDataT
     ADD_CODE(" ");
     genCheckFrameDeep(type);
     ADD_CODE("@");
-    ADD_INST(nameVarMod);
+    ADD_INST(nameOfVar);
     return true;
 }
