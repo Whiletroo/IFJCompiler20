@@ -163,7 +163,7 @@ int sematic(tPrecRules rule, tDataType *expType) {
                 *expType = INT_TYPE;
                 break;
             } else if ( precStack->top->next->next->dataType == FLOAT_TYPE && precStack->top->dataType == INT_TYPE ) {
-                
+                int2Float();
             }
         break;
 

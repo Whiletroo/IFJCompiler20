@@ -10,6 +10,7 @@
 
 #include "symtable.h"
 #include "parser.h"
+#include "gena.h"
 
 /* Precedence TAble Indexes */
 typedef enum {  
