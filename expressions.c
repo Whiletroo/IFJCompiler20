@@ -154,22 +154,38 @@ int sematic(tPrecRules rule, tDataType *expType) {
             *expType = precStack->top->next->dataType;
             break;
 
-        case E_PLUS_E:
+        case E_PLUS_E: case E_MINUS_E:
             *expType = FLOAT_TYPE;
-            if ( precStack->top->next->next->dataType == STRING_TYPE && precStack->top->dataType == STRING_TYPE && rule == E_PLUS_E ) {
-                *expType = STRING_TYPE;
-                break;
+            // str +- str
+            if ( precStack->top->next->next->dataType == STRING_TYPE && precStack->top->dataType == STRING_TYPE ) {
+                // str + str
+                if (rule == E_PLUS_E) {
+                    *expType = STRING_TYPE;
+                    // gen concatenation
+                    break;
+                }
+                return SEM_ERR_TYPE_COMPAT;
+
+            // int +- int
             }  else if ( precStack->top->next->next->dataType == INT_TYPE && precStack->top->dataType == INT_TYPE ) {
                 *expType = INT_TYPE;
                 break;
+            // float64 +- int
             } else if ( precStack->top->next->next->dataType == FLOAT_TYPE && precStack->top->dataType == INT_TYPE ) {
-                int2Float();
+                // gen int2float
+                break;
+            // int +- float64
+            } else if ( precStack->top->next->next->dataType == INT_TYPE && precStack->top->dataType == FLOAT_TYPE ) {
+                // gen int2float
+                break;
             }
-        break;
+            break;
+        
+            
 
         default:
             break;
-        }
+    }
     return OK;
 
 }
