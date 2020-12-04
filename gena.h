@@ -1,8 +1,8 @@
 /**
- * @file CodeGenerator.h
+ * @file gena.h
  * @author xpimen00
  * @date 4.11.2020
- * @brief Header file for CodeGenrator.c
+ * @brief Header file for gena.c
 */
 
 #ifndef _GENERATE_H_
@@ -38,10 +38,10 @@ bool genCreJumpNEQ(char *Label, char *var1,int FrameDeep, char *typeOfVar, char 
 bool genExit(char *val);
 bool genBreak();
 bool genDpronr(char *valOfvar,tDataType type);
-bool int2Float(char *retval1,int nameVal,bool stak);
-bool int2Char(char *retval1,int nameVal,bool stak);
-bool float2Int(char *retval1,char *nameVal,bool stak);
-bool string2Int(char *retval1,char *nameVal,bool stak);
+bool int2Float(char *retval1,bool stak);
+bool int2Char(char *retval1,bool stak);
+bool float2Int(char *retval1,bool stak);
+bool string2Int(char *retval1,bool stak);
 bool genConCat(char *nameMod,char *retval1,int FrameDeep,int FrameDeep1);
 bool genStrLen(char *nameMod,int FrameDeep);
 bool genGetChar(char *nameMod,char *retval1,int FrameDeep,int FrameDeep1);
