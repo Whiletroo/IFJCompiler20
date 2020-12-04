@@ -8,8 +8,6 @@
 #include "scanner.h"
 
 DYN_STRING *d_string; // Dynamic string that will be written into
-int DocToString = 0;      // Global variable to contro transformation of Documentary string to ordinary string
-
 FILE *source;
 
 char sEOL[] = "\\012";
@@ -179,6 +177,12 @@ int processIdentifier(DYN_STRING *str, tToken *token)
         token->attribute.keyword = KEYWORD_OR;
         token->token_type = TOKEN_KEYWORD;
     }
+    else if (!dynamicStrCompareConstString(str, "print"))
+    {
+        token->attribute.keyword = KEYWORD_PRINT;
+        token->token_type = TOKEN_KEYWORD;
+    }
+
         /* If the dynamic line does not contain keywords, then the word located in it is an identifier */
     else
     {
@@ -217,8 +221,6 @@ const char *getTokenName(TOKENS token)
             return "Float64";
         case TOKEN_STRING:
             return "String";
-        case TOKEN_BOOL:
-            return "Bool";
         case TOKEN_ASSIGN:
             return "Assign";
         case TOKEN_PLUS:
@@ -436,7 +438,7 @@ int getToken(tToken *token)
                     token->token_type = TOKEN_EOF;
                     return freeResources(OK, str);
                 } 
-                else if (isalnum(c) || c == '_' ) 
+                else if (isalpha(c) || c == '_' )
                 {
                     state = STATE_IDENTIFIER_OR_KEYWORD;
                     if (!dynamicStrAddChar(str, c))
@@ -452,6 +454,14 @@ int getToken(tToken *token)
                     }
                     state = STATE_INTEGER;
                 }
+                else if (c == '\"')
+                {
+                    state = STATE_STRING_START;
+                }
+                else
+                {
+                    return freeResources(LEX_ERROR, str);
+                }
                 break;
 
                 /*              STATE_DIV               */
@@ -465,7 +475,7 @@ int getToken(tToken *token)
                 }
                 /* If next symbol is */
                 /*  1) change state to STATE_BLOCK_COMMENTARY and analize the sequence */
-                if (c == '*')
+                else if (c == '*')
                 {
                     state = STATE_BLOCK_COMMENTARY;
                 }
@@ -477,21 +487,18 @@ int getToken(tToken *token)
                 {
                     ungetc(c, source);
                     token->token_type = TOKEN_DIV;
+                    return freeResources(OK, str);
                 }
-                return freeResources(OK, str);
+                break;
 
                 /*  STATE_STRING_COMMENTARY    */
                 /* analyse sequence           */
             case (STATE_STRING_COMMENTARY):
                 /* If next symbol is EOL:                 */
-                /*    If DocToString == 0:                */
                 /*      1) set state on start             */
-                /*      2) set variable First symbol on 1 */
-                if (c == '\n' || c == EOF)
-                {
+                if (c == '\n' || c == EOF) {
                     state = STATE_START;
-                    if (c == EOF)
-                        ungetc(c, source);
+                    ungetc(c, source);
                 }
                 break;
 
@@ -499,8 +506,10 @@ int getToken(tToken *token)
                 if (c == '*')
                 {
                     state = STATE_BLOCK_COMMENTARY_LEAVE;
-                    if (c == EOF)
-                        ungetc(c, source);
+                }
+                else if (c == EOF)
+                {
+                    return freeResources(LEX_ERROR, str);
                 }
                 break;
 
@@ -605,7 +614,7 @@ int getToken(tToken *token)
                 }
                 return freeResources(OK, str);
 
-                /*     STATE_INTEGER  1       */
+                /*     STATE_INTEGER          */
                 /* analyse sequence of digits */
             case (STATE_INTEGER):
                 /* If next symbol digit:            */
@@ -824,7 +833,7 @@ int getToken(tToken *token)
                 }
                 break;
 
-                /*   STATE_STRING_START "...\ */
+                /*   STATE_STRING_ESCAPE "...\ */
                 /* analyse sequence of chars  */
             case (STATE_STRING_ESCAPE):
                 /* If next symbol is n                            */
@@ -969,7 +978,7 @@ int getToken(tToken *token)
                 }
                 break;
 
-                /* STATE_STRING '...'        */
+                /* STATE_STRING "..."        */
                 /* analyse sequence of chars */
             case (STATE_STRING):
                 /*      1) unget actual symbol                                 */
