@@ -1,15 +1,21 @@
+/**
+ * @file gena.c
+ * @author xpimen00
+ * @date 4.12.2020
+ * @brief The generator
+*/
+
 #include"gena.h"
 #include"symtable.h"
 
 ///DEINITIONS FOR FUNCTIONS
-#define ADD_INST(_inst)														\
-	if (!dynamic_string_add_const_str(&code, (_inst "\n"))) return false
+#define ADD_INST(_inst) if (!dynamicStrAddStr(&dyncode, (_inst))) return false;\
+    if(!dynamicStrAddChar(&dyncode,('\n'))) return false;
 
 
-#define ADD_CODE(_code)														\
-	if (!dynamicStrAddStr(&dyncode, (_code))) return false;
+#define ADD_CODE(_inst) if(!dynamicStrAddStr(&dyncode, (_inst))) return false; \
 
-#define MAX_LENGTH 20
+DYN_STRING dyncode;
 
 bool codeGenStart()
 {
@@ -46,11 +52,12 @@ bool codeGenOpen()
  */
 bool genCreaStartFream(char *nameFrame)
 {
-	ADD_CODE("LABEL "); ADD_CODE(nameFrame);
+	ADD_CODE("LABEL "); ADD_INST(nameFrame);
 	ADD_INST("CREATEFRAME");
 
 	return true;
 }
+
 
 /**
  * Generate PUSHFRAME command
@@ -107,7 +114,7 @@ bool genCreateLabel(char *Label)
  *
  * @return True if it was successful, false otherwise.
  */
-bool genDestLabelEndJamp(int* Label)
+bool genDestLabelEndJamp(char* Label)
 {
     ADD_CODE("JUMP ");ADD_INST(Label);
     return true;
@@ -136,8 +143,16 @@ void genCheckFrameDeep(int *FramDeep)
 			return false;
 	}
 }
-
-
+/**
+ * Generates CLEARS command
+ *
+ *
+ * @return True if it was successful, false otherwise.
+ */
+bool genCreClear(){
+    ADD_INST("CLEARS");
+    return true;
+}
 
  /** //Ф-ция проведет команныу из експрешена
  * Generates command from expression list
@@ -540,12 +555,12 @@ bool string2Int(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool 
  *
  * @return True if it was successful, false otherwise.
  */
-bool genConCat(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,)
+bool genConCat(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1)
 {
     ADD_CODE("CONCAT ");
     genCheckFrameDeep(FrameDeep);
     ADD_CODE(nameMod);
-    genCheckFrameDeep(FrameDeep);
+    genCheckFrameDeep(FrameDeep1);
     ADD_INST(retval1);
     return true;
 }

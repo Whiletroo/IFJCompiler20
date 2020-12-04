@@ -1,7 +1,7 @@
 /**
  * @file CodeGenerator.h
  * @author xpimen00
- * @date 28.10.2020
+ * @date 4.11.2020
  * @brief Header file for CodeGenrator.c
 */
 
@@ -15,63 +15,37 @@
 #include "dynamicStr.h"
 #include "scanner.h"
 
-DYN_STRING dyncode;
-/*
 bool codeGenStart();
-
 void codeGenClear();
-
 bool codeGenOpen();
-
-bool genArguments(tToken token);
-
-bool genArithm(tToken token, bool stackVersion);
-
 bool genCreaStartFream(char *nameFrame);
-
-bool genCreEndFream();
-
-bool geneVarValue(tToken type, char *valOfType)
-
-bool genCreVal(char *nameMod);
-
-bool geneAssignVal(char *nameMod);
-
-bool geneCall(char *nameOfFunc );
-
-bool int2Float(char *nameMod,char *retval1,bool stak);
-
-bool int2Char(char *nameMod,char *retval1,bool stak);
-
-bool float2Int(char *nameMod,char *retval1,bool stak);
-
-bool string2Int(char *nameMod,char *retval1,bool stak);
-
-bool genFunRead(char *nameMod,char *typeVal);
-
-bool genFunWrite(char *nameMod);
-
-bool genConCat(char *nameMod,char *retval1);
-
-bool genStrLen(char *nameMod);
-
-bool genGetChar(char *nameMod,char *retval1);
-
-bool genSetChar(char *nameMod,char *indFildMod,char *nameChar);
-
-bool genType(char *nameMod,char *typeMod,char *nameVarMod);
-
-bool genCreJump(char *nameFunck);
-
-bool genCreJumpEQ(char *nameFunck, char *nameVarMod, char *typeOfVar, char *valOfVar, bool stak);
-
-bool genCreJumpNEQ(char *nameFunck, char *nameVarMod, char *typeOfVar, char *valOfVar, bool stak);
-
+bool genCrePushFr();
+bool genCrePopFr();
+bool genCreReturn();
+bool genCreateLabel(char *Label);
+bool genDestLabelEndJamp(char* Label);
+void genCheckFrameDeep(int *FramDeep);
+bool genCreClear();
+bool genCheckArithm(tToken token, bool stackVersion,char *result, char *var1,char *var2,TDataType typeValue);
+bool genCheckTypeValue(TDataType type);
+bool genCreDefVar(int *FrameDeep,char *nameMod);
+bool geneCall(char *Label );
+bool genFunRead(char nameValue,int FrameDeep,TDataType typeValu);
+bool genFunWrite(char *nameMod,int FrameDeep);
+bool genCreJumpEQ(char *Label, char *var1,int *FrameDeep, char *typeOfVar, char *var2, bool stak);
+bool genCreJumpNEQ(char *Label, char *var1,int *FrameDeep, char *typeOfVar, char *var2, bool stak);
 bool genExit(char *val);
+bool genBreak();
+bool genDpronr(char *valOfvar,TDataType type);
+bool int2Float(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool stak);
+bool int2Char(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool stak);
+bool float2Int(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool stak);
+bool string2Int(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1,bool stak);
+bool genConCat(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1);
+bool genStrLen(char *nameMod,int *FrameDeep);
+bool genGetChar(char *nameMod,char *retval1,int *FrameDeep,int *FrameDeep1);
+bool genSetChar(char *nameMod,char *indFildMod,char *nameChar,int *FrameDeep,int *FrameDeep1,TDataType type);
+bool genType(char *varToSave,int *FrameDeep,char *typeMod,char *nameOfVar,TDataType type);
 
-bool genBreak(char *val);
-
-bool genDpronr(char *valOfvar);
-*/
 #endif
 
