@@ -24,7 +24,7 @@ const char precedence_table[7][7] = {
 
 tPrecTabIndex getPrecTabIndex(tPrecTabItem precItem){
     switch (precItem) {
-        case IDENTIFIER: case INT_NUMBER: case DOUBLE_NUMBER: case STRING: case NIL:
+        case IDENTIFIER: case INT_NUMBER: case FLOAT64_NUMBER: case STRING: case NIL:
             return I_DATA;
             break;
         case ADD: case SUB:
@@ -50,14 +50,58 @@ tPrecTabIndex getPrecTabIndex(tPrecTabItem precItem){
 
 
 tPrecTabItem tkn2precItem() {
-
-    if ( token.token_type > 3 || token.token_type < 23) {
+/*
+    if ( token.token_type > 3 || token.token_type < 24) {
         return token.token_type - 4;
     } else if (token.token_type == TOKEN_EOL || token.token_type == TOKEN_RCURLY_BRACKET ) {
         return DOLLAR;
     } else {    
         return NON_TERM;
     }
+    */
+   switch (token.token_type){
+        case TOKEN_IDENTIFIER:
+            return IDENTIFIER;
+        case TOKEN_INT:
+            return INT_NUMBER;
+        case TOKEN_FLOAT64:
+            return FLOAT64_NUMBER;
+        case TOKEN_STRING:
+            return STRING;
+        case TOKEN_BOOL:
+            return BOOLEAN;
+        case TOKEN_NIL:
+            return NIL;
+        case TOKEN_PLUS:
+            return ADD;
+        case TOKEN_MINUS:
+            return SUB;
+        case TOKEN_MUL:
+            return MUL;
+        case TOKEN_DIV:
+            return DIV;
+        case TOKEN_EQUALS:
+            return EQ;
+        case TOKEN_HIGHER_OR_EQUAL:
+            return HEQ;
+        case TOKEN_HIGHER:
+            return HTN;
+        case TOKEN_LESS_OR_EQUAL:
+            return LEQ;
+        case TOKEN_LESS:
+            return LTN;
+        case TOKEN_NOT_EQUAL:
+            return NEQ;
+        case TOKEN_LEFT_BRACKET:
+            return LEFT_BRACKET;
+        case TOKEN_RIGHT_BRACKET:
+            return RIGHT_BRACKET;
+        case TOKEN_LCURLY_BRACKET: case TOKEN_EOL:
+            return DOLLAR;
+        default:
+            return NON_TERM;
+            break;
+        }
 }
 
 
@@ -88,7 +132,7 @@ tPrecRules getRule(){
         switch (precStack->top->precItem) {
             case IDENTIFIER:
             case INT_NUMBER:
-            case DOUBLE_NUMBER:
+            case FLOAT64_NUMBER:
             case STRING:
                 return E_OPERAND;
                 break;
@@ -106,6 +150,10 @@ tPrecRules getRule(){
         } else if (precStack->top->precItem == NON_TERM && precStack->top->next->next->precItem == NON_TERM) {
             // rules : E -> E + E  ...  E -> E != E
             if(precStack->top->next->precItem > 4 && precStack->top->next->precItem < 15) {
+                // E -> E idiv E
+                if (precStack->top->next->precItem == DIV && precStack->top->dataType == INT_TYPE && precStack->top->next->next->dataType == INT_TYPE) {
+                    return E_IDIV_E;
+                }
                 return precStack->top->next->precItem - 2;
             } else {
                 return NOT_E_RULE;
@@ -120,6 +168,9 @@ tPrecRules getRule(){
 
 
 int sematic(tPrecRules rule, tDataType *expType) {
+
+    bool convOp1toFloat = false;
+    bool convOp2toFloat = false;
 
     /* Checking operands definitions */
     
@@ -154,35 +205,64 @@ int sematic(tPrecRules rule, tDataType *expType) {
             *expType = precStack->top->next->dataType;
             break;
 
-        case E_PLUS_E: case E_MINUS_E:
+        case E_PLUS_E: case E_MINUS_E: case E_MUL_E:
             *expType = FLOAT_TYPE;
             // str +- str
-            if ( precStack->top->next->next->dataType == STRING_TYPE && precStack->top->dataType == STRING_TYPE ) {
-                // str + str
-                if (rule == E_PLUS_E) {
-                    *expType = STRING_TYPE;
-                    // gen concatenation
-                    break;
+
+            if ( precStack->top->next->next->dataType == STRING_TYPE || precStack->top->dataType == STRING_TYPE ) {
+                if ( precStack->top->next->next->dataType == STRING_TYPE && precStack->top->dataType == STRING_TYPE ) {
+                    // str + str
+                    if (rule == E_PLUS_E) {
+                        *expType = STRING_TYPE;
+                        break;
+                    }
                 }
                 return SEM_ERR_TYPE_COMPAT;
+            }
 
             // int +- int
-            }  else if ( precStack->top->next->next->dataType == INT_TYPE && precStack->top->dataType == INT_TYPE ) {
+            if ( precStack->top->next->next->dataType == INT_TYPE && precStack->top->dataType == INT_TYPE ) {
                 *expType = INT_TYPE;
                 break;
             // float64 +- int
             } else if ( precStack->top->next->next->dataType == FLOAT_TYPE && precStack->top->dataType == INT_TYPE ) {
-                // gen int2float
+                convOp2toFloat = true;
                 break;
             // int +- float64
             } else if ( precStack->top->next->next->dataType == INT_TYPE && precStack->top->dataType == FLOAT_TYPE ) {
-                // gen int2float
+                convOp1toFloat = true;
                 break;
             }
             break;
         
-            
+        case E_DIV_E:
+            *expType = FLOAT_TYPE;
+            if ( precStack->top->next->next->dataType == INT_TYPE || precStack->top->dataType == INT_TYPE ) {
 
+                if (precStack->top->next->next->dataType == INT_TYPE) {
+                    convOp1toFloat = true;
+                } else if (precStack->top->dataType == INT_TYPE) {
+                    convOp2toFloat = true;
+                }
+            }
+
+            if (precStack->top->dataType == STRING_TYPE || precStack->top->next->next->dataType == STRING_TYPE) {
+                return SEM_ERR_TYPE_COMPAT;
+            }
+
+            break;
+
+        case E_IDIV_E:
+            *expType = INT_TYPE;
+            break;
+
+        case E_EQ_E: case E_HEQ_E: case E_HTN_E:
+        case E_LEQ_E: case E_LTN_E: case E_NEQ_E:
+            *expType = BOOLEAN_TYPE;
+
+            if (precStack->top->dataType != precStack->top->next->next->dataType) {
+                return SEM_ERR_EXP_COMPAT;
+            }
         default:
             break;
     }
@@ -206,6 +286,18 @@ int reduce() {
         return result;
     }
 
+    int i;
+    if (rule < 3) {
+        i = 2;
+    } else {
+        i = 4;
+    }
+
+    for(int it = 0; it < i; it++){
+        popPS();
+    }
+    pushPS(NON_TERM, expType);
+
     return OK;
 }
 
@@ -219,16 +311,17 @@ char precedence(tPrecTabIndex topTerm, tPrecTabIndex inTerm) {
 
 int expessions (){
 
+    int result;
     // precedence stack initialization
     precStack = initPS();
-    if (!pushPS(DOLLAR, UNDEFINED_TYPE)) {
+    if (pushPS(DOLLAR, UNDEFINED_TYPE)) {
         return ERR_INTERNAL;
     }
 
     tPrecTabItem topTerm;   // top terminal in precedence stack
     tPrecTabItem inTerm;    // terminal on input
 
-    while(!emptyPS()) {
+    while(true) {
         
         // init both terminals
         topTerm = topTermPS()->precItem;
@@ -246,15 +339,16 @@ int expessions (){
                 // 1. insert reduce item after top terminal
                 // 2. push new terminal
                 // 3. get next terminal
-                pushPS(REDUCE, UNDEFINED_TYPE);
+                insertReducePS();
                 pushPS(tkn2precItem(), tokenType2DataType());
                 getToken(&token);
                 break;
 
             case '>':
                 // check by rule
-                if (reduce()) {
-                    fprintf(stderr, "Error: \n");
+                result = reduce();
+                if ( result ) {
+                    fprintf(stderr, "Error: %d\n", result);
                     return ERR_INTERNAL;
                 }
                 break;

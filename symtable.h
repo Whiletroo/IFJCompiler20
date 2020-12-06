@@ -15,12 +15,12 @@
 #include <string.h>
 #include "error.h"
 
-#define MAX_ST_SIZE 2 //size of symbol table
+#define MAX_ST_SIZE 1000 //size of symbol table
 #define MAX_RETURN_TYPES 10
 
 typedef enum {UNDEF, variable, function} TIdType;
 
-typedef enum {UNDEFINED_TYPE, INT_TYPE, FLOAT_TYPE, STRING_TYPE, NIL_TYPE} tDataType;
+typedef enum {UNDEFINED_TYPE, INT_TYPE, FLOAT_TYPE, STRING_TYPE, BOOLEAN_TYPE,NIL_TYPE} tDataType;
 
 
 typedef struct {

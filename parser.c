@@ -94,9 +94,10 @@ static int prog()
         // add function to global symbol table
         if ((symTableSearch(globalTable, token.attribute.value_string->str)) == false)
         {
-             symTableInsert(globalTable, token.attribute.value_string->str);
-             symTableGetItem(globalTable, token.attribute.value_string->str)->idType = function;
-             symTableGetItem(globalTable, token.attribute.value_string->str)->defined = true;
+            symTableInsert(globalTable, token.attribute.value_string->str);
+            TData *tmpptr = symTableGetItem(globalTable, token.attribute.value_string->str);
+            tmpptr->idType = function;
+            tmpptr->defined = true;
         }
 
         GET_AND_CHECK_TOKEN(TOKEN_LEFT_BRACKET);

@@ -82,13 +82,13 @@ int symTableInsert(TSymTable *symtab, char *key) {
 		// init key value
 		symtab->items[index]->key = malloc(sizeof(char));
 		CHECK_PTR(symtab->items[index]->key);
-		memcpy(symtab->items[index]->key, key, strlen(key));
+		strcpy(symtab->items[index]->key, key);
 
 		// seting data to defaut
 		symtab->items[index]->data.identifier = malloc(sizeof(char));
 		CHECK_PTR(symtab->items[index]->data.identifier);
 		memcpy(symtab->items[index]->data.identifier, key, strlen(key));
-		for (int i = 0; i < MAX_ST_SIZE; i++) {
+		for (int i = 0; i < MAX_RETURN_TYPES; i++) {
 			symtab->items[index]->data.dataType[i] = UNDEFINED_TYPE;
 		}
 		symtab->items[index]->data.idType = UNDEF;
@@ -115,7 +115,7 @@ int symTableInsert(TSymTable *symtab, char *key) {
 		CHECK_PTR(newitem->data.identifier);
 		memcpy(newitem->data.identifier, key, strlen(key));
 
-		for (int i = 0; i < MAX_ST_SIZE; i++) {
+		for (int i = 0; i < MAX_RETURN_TYPES; i++) {
 			newitem->data.dataType[0] = UNDEFINED_TYPE;
 		}
 		newitem->data.idType = UNDEF;

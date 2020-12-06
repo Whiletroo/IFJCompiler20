@@ -32,7 +32,15 @@ int pushPS(tPrecTabItem precItem, tDataType dataType) {
 
     tPSItem *newPSItem = malloc(sizeof(tPSItem));
     CHECKPTR_RETERR(newPSItem);
-
+/*  
+    if (token.id != NULL) {
+        newPSItem->id = malloc(sizeof(char));
+        CHECKPTR_RETERR(newPSItem->id);
+        strcpy(newPSItem->id,token.id);
+    } else {
+        newPSItem->id = NULL;
+    }
+*/
     newPSItem->next = precStack->top;
     newPSItem->precItem = precItem;
     newPSItem->dataType = dataType;
@@ -54,11 +62,41 @@ tPSItem *topTermPS() {
 
     tPSItem *tmpptr = precStack->top;
 
-    while( tmpptr->precItem == NON_TERM ) {
+    while( tmpptr->precItem != DOLLAR ) {
+
+        if ( tmpptr->precItem < 17) {
+            break;
+        }
+
         tmpptr = tmpptr->next;
     }
+
     return tmpptr;
 }
+
+
+void insertReducePS() {    
+
+    tPSItem *act;
+    tPSItem *next = topPS();
+
+    if (next->precItem != NON_TERM ) {
+        pushPS(REDUCE, UNDEFINED_TYPE);
+        return;
+    }
+
+    while ( next->precItem == NON_TERM ) {
+        act = next;
+        next = next->next;
+    }
+
+    act->next = malloc(sizeof(tPSItem));
+    act->next->next = next;
+    act->next->precItem = REDUCE;
+    act->next->dataType = UNDEFINED_TYPE;
+
+}
+
 
 
 bool emptyPS() {
@@ -77,6 +115,8 @@ void popPS() {
     if (precStack->top->precItem != DOLLAR) {
         tPSItem *tmpptr = precStack->top;
         precStack->top = precStack->top->next;
+    //    if (tmpptr->id != NULL)
+    //        free(tmpptr->id);
         free(tmpptr);
     }
 }

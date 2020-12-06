@@ -30,34 +30,35 @@ typedef enum {
 typedef enum {
     
     /* Data Types */
-    IDENTIFIER,		// 0 ID
-    INT_NUMBER,		// 1 int
-    DOUBLE_NUMBER,	// 2 double
-    STRING,			// 3 string
-    NIL,            // 4 nil
+    IDENTIFIER,		//  ID
+    INT_NUMBER,		//  int
+    FLOAT64_NUMBER,	//  double
+    STRING,			//  string
+    BOOLEAN,         //
+    NIL,            //  nil
 
     /* Mathematical Operators */
-    ADD,			// 5 +
-    SUB,			// 6 -
-    MUL,			// 7 *
-    DIV,			// 8 /
+    ADD,			//  +
+    SUB,			//  -
+    MUL,			//  *
+    DIV,			//  /
 
     /* Relation Operators */
-    EQ,				// 9 ==
-    HEQ,			// 10 >=   
-    HTN,			// 11 >  
-    LEQ,			// 12 <=  
-    LTN,			// 13 <         
-    NEQ,			// 14 !=
+    EQ,				//  ==
+    HEQ,			//  >=   
+    HTN,			//  >  
+    LEQ,			//  <=  
+    LTN,			//  <         
+    NEQ,			//  !=
 
     /* Braces */
-    LEFT_BRACKET,	// 15 (
-    RIGHT_BRACKET,	// 16 )
+    LEFT_BRACKET,	//  (
+    RIGHT_BRACKET,	//  )
 
     /* Others */
-    DOLLAR,			// 17 $
-    REDUCE,			// 18 for rule reduce
-    NON_TERM,		// 19 non-terminal
+    DOLLAR,			//  $
+    REDUCE,			//  for rule reduce
+    NON_TERM,		//  non-terminal
     STOP            //
 
 }tPrecTabItem;
@@ -76,7 +77,8 @@ typedef enum {
     E_HTN_E,        // 9 E -> E > E
     E_LEQ_E,		// 10 E -> E <= E   
     E_LTN_E,		// 11 E -> E < E     
-    E_NEQ_E		    // 12 E -> E != E
+    E_NEQ_E,	    // 12 E -> E != E
+    E_IDIV_E        // 13 E -> E idiv E
 } tPrecRules;
 
 
