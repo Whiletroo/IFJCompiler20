@@ -17,6 +17,7 @@ typedef struct precStackItem {
 
     tPrecTabItem precItem;   
     tDataType dataType;
+//    char *id;
     struct precStackItem *next;
 
 } tPSItem;
@@ -60,6 +61,10 @@ tPSItem *topPS();
 */
 tPSItem *topTermPS();
 
+/**
+ * Inserts reduce symbol before top Terminal
+*/
+void insertReducePS();
 
 /**
  * Check if is precedence stack empty (DOLLAR ON THE TOP)
