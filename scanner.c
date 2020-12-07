@@ -5,7 +5,10 @@
 * @brief The scanner
 */
 
+#include <stdlib.h>
+#include <ctype.h>
 #include "scanner.h"
+#include "error.h"
 
 DYN_STRING *d_string; // Dynamic string that will be written into
 FILE *source;

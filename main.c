@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "parser.h"
 #include "scanner.h"
+#include "parser.h"
 
 int main (int argc, char **argv) {
 
@@ -10,9 +10,9 @@ int main (int argc, char **argv) {
         char *file = argv[1];
         source = fopen(file, "r");
         setSourceFile(source);
-        parse();
-        return 0;
+        return parse();
     } else {
         return 1;
     }
+
 }

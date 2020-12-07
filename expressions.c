@@ -5,8 +5,11 @@
 * @brief Implementation of Precedence analise
 */
 
-#include "precstack.h"
 #include "expressions.h"
+#include "scanner.h"
+#include "error.h"
+#include "precstack.h"
+
 
 tPS *precStack;
 
@@ -169,9 +172,6 @@ tPrecRules getRule(){
 
 int sematic(tPrecRules rule, tDataType *expType) {
 
-    bool convOp1toFloat = false;
-    bool convOp2toFloat = false;
-
     /* Checking operands definitions */
     
     // E -> i
@@ -226,11 +226,10 @@ int sematic(tPrecRules rule, tDataType *expType) {
                 break;
             // float64 +- int
             } else if ( precStack->top->next->next->dataType == FLOAT_TYPE && precStack->top->dataType == INT_TYPE ) {
-                convOp2toFloat = true;
+
                 break;
             // int +- float64
             } else if ( precStack->top->next->next->dataType == INT_TYPE && precStack->top->dataType == FLOAT_TYPE ) {
-                convOp1toFloat = true;
                 break;
             }
             break;
@@ -238,18 +237,12 @@ int sematic(tPrecRules rule, tDataType *expType) {
         case E_DIV_E:
             *expType = FLOAT_TYPE;
             if ( precStack->top->next->next->dataType == INT_TYPE || precStack->top->dataType == INT_TYPE ) {
-
-                if (precStack->top->next->next->dataType == INT_TYPE) {
-                    convOp1toFloat = true;
-                } else if (precStack->top->dataType == INT_TYPE) {
-                    convOp2toFloat = true;
-                }
+                return SEM_ERR_TYPE_COMPAT;
             }
 
             if (precStack->top->dataType == STRING_TYPE || precStack->top->next->next->dataType == STRING_TYPE) {
                 return SEM_ERR_TYPE_COMPAT;
             }
-
             break;
 
         case E_IDIV_E:
@@ -259,7 +252,6 @@ int sematic(tPrecRules rule, tDataType *expType) {
         case E_EQ_E: case E_HEQ_E: case E_HTN_E:
         case E_LEQ_E: case E_LTN_E: case E_NEQ_E:
             *expType = BOOLEAN_TYPE;
-
             if (precStack->top->dataType != precStack->top->next->next->dataType) {
                 return SEM_ERR_EXP_COMPAT;
             }
