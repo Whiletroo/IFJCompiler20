@@ -1,7 +1,7 @@
 /**
  * @file gena.h
  * @author xpimen00
- * @date 4.11.2020
+ * @date 7.12.2020
  * @brief Header file for gena.c
 */
 
@@ -15,6 +15,8 @@
 #include "dynamicStr.h"
 #include "expressions.h"
 #include "symtable.h"
+
+extern DYN_STRING dyncode;
 
 bool codeGenStart();
 void codeGenClear();
