@@ -5,7 +5,9 @@
  * @brief The generator
 */
 
+#include<stdio.h>
 #include "gena.h"
+
 
 ///DEINITIONS FOR FUNCTIONS
 #define ADD_INST(_inst) if (!dynamicStrAddStr(&dyncode, (_inst))) return false;\

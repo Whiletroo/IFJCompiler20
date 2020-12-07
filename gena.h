@@ -8,12 +8,10 @@
 #ifndef _GENA_H_
 #define _GENA_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <stdbool.h>
 
-#include "parser.h"
+#include "dynamicStr.h"
+#include "expressions.h"
 
 extern DYN_STRING dyncode;
 
