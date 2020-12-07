@@ -7,10 +7,11 @@
 
 #include "parser.h"
 
+
 TSymTable *globalTable;
 TSymTable *localTable;
 tToken token;
-
+TData *tmparg;
 
 #define GET_TOKEN()                               \
     if ((result = getToken(&token)) != OK)        \
@@ -18,7 +19,7 @@ tToken token;
 
 #define CHECK_TOKEN(expected)                                       \
     if (token.token_type != (expected)){                            \
-                                                                    \
+                                                                  \
         return SYNTAX_ERR;                                           \
     }                                                                \
     fprintf (stderr, "%s\n", getTokenName(token.token_type));
@@ -61,7 +62,6 @@ static int func_ret_types();
 static int st_list();
 static int state();
 static int var_def();
-
 static int else_state();
 static int assign();
 static int func_call();
@@ -95,16 +95,16 @@ static int prog()
         if ((symTableSearch(globalTable, token.attribute.value_string->str)) == false)
         {
             symTableInsert(globalTable, token.attribute.value_string->str);
-            TData *tmpptr = symTableGetItem(globalTable, token.attribute.value_string->str);
-            tmpptr->idType = function;
-            tmpptr->defined = true;
+            currentId = symTableGetItem(globalTable, token.attribute.value_string->str);
+            currentId->idType = function;
+            currentId->defined = true;
         }
 
         GET_AND_CHECK_TOKEN(TOKEN_LEFT_BRACKET);
         GET_TOKEN_AND_CHECK_RULE(func_args);
         CHECK_TOKEN(TOKEN_RIGHT_BRACKET);
         GET_TOKEN_AND_CHECK_RULE(func_ret_types);
-        CHECK_TOKEN(TOKEN_LCURLY_BRACKET);
+        GET_AND_CHECK_TOKEN(TOKEN_LCURLY_BRACKET);
         GET_TOKEN_AND_CHECK_RULE(st_list);
         CHECK_TOKEN(TOKEN_RCURLY_BRACKET);
 
@@ -130,13 +130,13 @@ static int type()
     if (token.token_type == TOKEN_KEYWORD) {
         switch (token.attribute.keyword) {
             case KEYWORD_INT:
-                symTableGetItem(globalTable, token.attribute.value_string->str)->dataType[0] = INT_TYPE;
+                tmparg->dataType[0] = INT_TYPE;
                 break;
             case KEYWORD_FLOAT64:
-                symTableGetItem(globalTable, token.attribute.value_string->str)->dataType[0] = FLOAT_TYPE;
+                tmparg->dataType[0] = FLOAT_TYPE;
                 break;
             case KEYWORD_STRING:
-                symTableGetItem(globalTable, token.attribute.value_string->str)->dataType[0] = STRING_TYPE;
+                tmparg->dataType[0] = STRING_TYPE;
                 break;
             default:
                 return SYNTAX_ERR;
@@ -176,7 +176,8 @@ static int func_args()
         if ((symTableSearch(localTable, token.attribute.value_string->str)) == false)
         {
                 symTableInsert(localTable, token.attribute.value_string->str);
-                symTableGetItem(localTable, token.attribute.value_string->str)->idType = variable;
+                tmparg = symTableGetItem(localTable, token.attribute.value_string->str);
+                tmparg ->idType = variable;
         }
         GET_TOKEN_AND_CHECK_RULE(type);
         GET_TOKEN_AND_CHECK_RULE(func_next_arg);
@@ -210,7 +211,7 @@ static int func_ret_types()
     // <func_ret_types> → (<types>)
     if (token.token_type == TOKEN_LEFT_BRACKET){
         GET_TOKEN_AND_CHECK_RULE(types);
-        GET_AND_CHECK_TOKEN(TOKEN_RIGHT_BRACKET);
+        CHECK_TOKEN(TOKEN_RIGHT_BRACKET);
     }
     return OK;
 }
@@ -356,8 +357,9 @@ static int func_call_next_arg()
 int parse() {
     int result;
     globalTable = symTableInit();
+    localTable = symTableInit();
     d_string = dynamicStrInit();
-
+    codeGenStart();
     if ((result = getToken(&token)) == OK)
     {
         if (token.token_type == TOKEN_EOF)
