@@ -9,14 +9,13 @@
 #define _PARSER_H
 
 #include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
 #include "symtable.h"
-#include "dynamicStr.h"
-#include "error.h"
-#include "gena.h"
-#include "scanner.h"
-#include "expressions.h"
-#include "precstack.h"
+
 
 extern TSymTable *globalTable;
 extern TSymTable *localTable;
