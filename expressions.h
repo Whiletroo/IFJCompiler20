@@ -9,8 +9,6 @@
 #define _EXPRESSIONS_H
 
 #include "symtable.h"
-#include "parser.h"
-//#include "gena.h"
 
 /* Precedence TAble Indexes */
 typedef enum {  
@@ -65,6 +63,7 @@ typedef enum {
 
 
 typedef enum {
+
     NOT_E_RULE,		// 0 rule doesn't exist
     E_OPERAND,		// 1 E -> i
     LBRCT_E_RBRCT,  // 2 E -> (E)
@@ -79,6 +78,7 @@ typedef enum {
     E_LTN_E,		// 11 E -> E < E     
     E_NEQ_E,	    // 12 E -> E != E
     E_IDIV_E        // 13 E -> E idiv E
+    
 } tPrecRules;
 
 

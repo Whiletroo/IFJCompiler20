@@ -5,7 +5,10 @@
 * @brief The implementation of stack for precedence analise
 */
 
+#include <stdlib.h>
 #include "precstack.h"
+#include "error.h"
+
 
 #define CHECKPTR_RETNULL(ptr)\
     if (ptr == NULL)\

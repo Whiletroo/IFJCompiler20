@@ -5,7 +5,12 @@
  * @brief Implementation of symbol teable.
 */
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "symtable.h"
+#include "error.h"
+
 
 #define CHECK_PTR(ptr)\
 	if (ptr == NULL) {\
@@ -47,7 +52,7 @@ TSymTable *symTableInit() {
 bool symTableSearch(TSymTable *symtab, char *key) {
 
 	if (symtab == NULL) {
-		exit(EXIT_FAILURE);
+		return false;
 	}
 
 	bool found = false;

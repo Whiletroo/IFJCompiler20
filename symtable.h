@@ -9,11 +9,7 @@
 #define _SYMTABLE_H
 
 #include <stdbool.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <string.h>
-#include "error.h"
+
 
 #define MAX_ST_SIZE 1000 //size of symbol table
 #define MAX_RETURN_TYPES 10

@@ -8,12 +8,8 @@
 #ifndef _SCANNER_H
 #define _SCANNER_H
 
+
 #include <stdio.h>
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include "error.h"
 #include "dynamicStr.h"
 
 

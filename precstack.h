@@ -8,7 +8,11 @@
 #ifndef _PRECSTACK_H
 #define _PRECSTACK_H
 
+#include <stdbool.h>
+#include <stdio.h>
 #include "expressions.h"
+
+
 
 /**
  * @struct Precedence stack item
@@ -17,7 +21,6 @@ typedef struct precStackItem {
 
     tPrecTabItem precItem;   
     tDataType dataType;
-//    char *id;
     struct precStackItem *next;
 
 } tPSItem;
