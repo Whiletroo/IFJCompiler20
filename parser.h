@@ -13,7 +13,7 @@
 #include "symtable.h"
 #include "dynamicStr.h"
 #include "error.h"
-//#include "gena.h"
+#include "gena.h"
 #include "scanner.h"
 #include "expressions.h"
 #include "precstack.h"
@@ -21,6 +21,7 @@
 extern TSymTable *globalTable;
 extern TSymTable *localTable;
 extern TData *currentId;
+extern TData *tmparg;
 //int label_index;
 //int label_deep;
 

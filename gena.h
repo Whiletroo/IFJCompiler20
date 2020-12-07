@@ -16,6 +16,8 @@
 #include "scanner.h"
 #include "symtable.h"
 
+extern DYN_STRING dyncode;
+
 bool codeGenStart();
 void codeGenClear();
 bool codeGenOpen();

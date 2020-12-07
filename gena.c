@@ -6,7 +6,7 @@
 */
 
 #include "gena.h"
-#include "symtable.h"
+
 
 ///DEINITIONS FOR FUNCTIONS
 #define ADD_INST(_inst) if (!dynamicStrAddStr(&dyncode, (_inst))) return false;\
