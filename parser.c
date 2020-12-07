@@ -6,16 +6,22 @@
 */
 
 #include "parser.h"
+#include "scanner.h"
+#include "error.h"
+#include "expressions.h"
+#include "gena.h"
 
 
 TSymTable *globalTable;
 TSymTable *localTable;
 tToken token;
 TData *tmparg;
+TData *currentId;
 
 #define GET_TOKEN()                               \
     if ((result = getToken(&token)) != OK)        \
-        return result
+        return result                              \
+
 
 #define CHECK_TOKEN(expected)                                       \
     if (token.token_type != (expected)){                            \
@@ -54,11 +60,12 @@ TData *tmparg;
 static int start();
 static int prog();
 static int type();
-static int types();
-static int next_types();
 static int func_args();
 static int func_next_arg();
 static int func_ret_types();
+static int ret_type();
+static int ret_types();
+static int next_ret_types();
 static int st_list();
 static int state();
 static int var_def();
@@ -105,6 +112,7 @@ static int prog()
         CHECK_TOKEN(TOKEN_RIGHT_BRACKET);
         GET_TOKEN_AND_CHECK_RULE(func_ret_types);
         GET_AND_CHECK_TOKEN(TOKEN_LCURLY_BRACKET);
+        GET_AND_CHECK_TOKEN(TOKEN_EOL);  //<<<TODO
         GET_TOKEN_AND_CHECK_RULE(st_list);
         CHECK_TOKEN(TOKEN_RCURLY_BRACKET);
 
@@ -145,28 +153,6 @@ static int type()
     return OK;
 }
 
-static int types()
-{
-    int result;
-    // <types> → <type> <next_types>
-    CHECK_RULE(type);
-    GET_TOKEN_AND_CHECK_RULE(next_types);
-    // <types> → ε
-    return OK;
-}
-
-static int next_types()
-{
-    int result;
-    // <next_types> → , <type> <next_types>
-    if (token.token_type == TOKEN_COMMA) {
-        GET_TOKEN_AND_CHECK_RULE(type);
-        GET_TOKEN_AND_CHECK_RULE(next_types);
-    }
-    // <next_types> → ε
-    return OK;
-}
-
 static int func_args()
 {
     int result;
@@ -196,7 +182,8 @@ static int func_next_arg()
         if ((symTableSearch(localTable, token.attribute.value_string->str)) == false)
         {
             symTableInsert(localTable, token.attribute.value_string->str);
-            symTableGetItem(localTable, token.attribute.value_string->str)->idType = variable;
+            tmparg = symTableGetItem(localTable, token.attribute.value_string->str);
+            tmparg ->idType = variable;
         }
         GET_TOKEN_AND_CHECK_RULE(type);
         GET_TOKEN_AND_CHECK_RULE(func_next_arg);
@@ -208,13 +195,57 @@ static int func_next_arg()
 static int func_ret_types()
 {
     int result;
-    // <func_ret_types> → (<types>)
+    // <func_ret_types> → (<ret_types>)
     if (token.token_type == TOKEN_LEFT_BRACKET){
-        GET_TOKEN_AND_CHECK_RULE(types);
+        GET_TOKEN_AND_CHECK_RULE(ret_types);
         CHECK_TOKEN(TOKEN_RIGHT_BRACKET);
+    }
+    // <func_ret_types> → ε
+    return OK;
+}
+static int ret_type()
+{
+    // int, double or string
+    if (token.token_type == TOKEN_KEYWORD) {
+        switch (token.attribute.keyword) {
+            case KEYWORD_INT:
+                currentId->dataType[0] = INT_TYPE;
+                break;
+            case KEYWORD_FLOAT64:
+                currentId->dataType[0] = FLOAT_TYPE;
+                break;
+            case KEYWORD_STRING:
+                currentId->dataType[0] = STRING_TYPE;
+                break;
+            default:
+                return SYNTAX_ERR;
+        }
     }
     return OK;
 }
+
+static int ret_types()
+{
+    int result;
+    // <types> → <ret_type> <next_ret_types>
+    CHECK_RULE(ret_type);
+    GET_TOKEN_AND_CHECK_RULE(next_ret_types);
+    // <types> → ε
+    return OK;
+}
+
+static int next_ret_types()
+{
+    int result;
+    // <next_types> → , <ret_type> <next_ret_types>
+    if (token.token_type == TOKEN_COMMA) {
+        GET_TOKEN_AND_CHECK_RULE(ret_type);
+        GET_TOKEN_AND_CHECK_RULE(next_ret_types);
+    }
+    // <next_types> → ε
+    return OK;
+}
+
 
 static int st_list()
 {
@@ -224,10 +255,10 @@ static int st_list()
         return OK;
     }else{
     // <st_list> → <state> <st_list>
-        GET_TOKEN_AND_CHECK_RULE(state);
+        CHECK_RULE(state);
         GET_TOKEN_AND_CHECK_RULE(st_list);
     }
-    return OK;
+    return result;
 }
 
 static int state()
@@ -255,11 +286,13 @@ static int state()
     else if (token.token_type == TOKEN_KEYWORD && token.attribute.keyword == KEYWORD_RETURN){
         GET_TOKEN_AND_CHECK_RULE(expessions);
     }
+
     // <state> → {<st_list>}
     else if (token.token_type == TOKEN_LCURLY_BRACKET){
         GET_TOKEN_AND_CHECK_RULE(st_list);
         GET_AND_CHECK_TOKEN(TOKEN_RCURLY_BRACKET);
     }
+
     // <state> → <типо id> a потом <var_def> or <func_call> or <var_dec>
     else if (token.token_type == TOKEN_IDENTIFIER){
         GET_TOKEN();
@@ -279,23 +312,18 @@ static int state()
     else {
         GET_TOKEN_AND_CHECK_RULE(expessions);
     }
-    return OK;
+    return result;
 }
+
 static int var_def()
 { int result;
     // <var_def> → := Exp
     if (token.token_type == TOKEN_DEFINITION){
         GET_TOKEN_AND_CHECK_RULE(expessions);
+        GET_AND_CHECK_TOKEN(TOKEN_EOL);
     }
     return OK;
 }
-
-/* дважды декларирована
-static int var_dec()
-{
-    // <var_dec> → <type> ничего не надо
-}
-*/
 
 static int func_call()
 {
