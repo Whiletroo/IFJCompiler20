@@ -5,16 +5,15 @@
  * @brief Header file for gena.c
 */
 
-#ifndef _GENERATE_H_
-#define _GENERATE_H_
+#ifndef _GENA_H_
+#define _GENA_H_
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "dynamicStr.h"
-#include "expressions.h"
-#include "symtable.h"
+
+#include "parser.h"
 
 extern DYN_STRING dyncode;
 
@@ -24,6 +23,8 @@ bool codeGenOpen();
 bool genCreaStartFream(char *nameFrame);
 bool genCrePushFr();
 bool genCrePopFr();
+bool proid(char *name1,char *name2,char *name3);
+bool genCreMove(char* name1,char *name2,tDataType type);
 bool genCreReturn();
 bool genCreateLabel(char *Label);
 bool genDestLabelEndJamp(char* Label);

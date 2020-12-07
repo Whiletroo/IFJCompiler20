@@ -1,12 +1,11 @@
 /**
  * @file gena.c
  * @author xpimen00
- * @date 4.12.2020
+ * @date 7.12.2020
  * @brief The generator
 */
 
 #include "gena.h"
-#include "symtable.h"
 
 ///DEINITIONS FOR FUNCTIONS
 #define ADD_INST(_inst) if (!dynamicStrAddStr(&dyncode, (_inst))) return false;\
@@ -121,6 +120,25 @@ bool genDestLabelEndJamp(char* Label)
 }
 
 /**
+ * Generate MOVE command
+ *
+ *
+ * @return True if it was successful, false otherwise.
+ */
+bool genCreMove(char* name1,char *name2,tDataType type)
+{
+    ADD_CODE("MOVE ");
+    ADD_CODE("LF@");
+    ADD_CODE(name1);
+    ADD_CODE(" ");
+    genCheckTypeValue(type);
+    ADD_CODE("@");
+    ADD_CODE(name2);
+    return true;
+}
+
+
+/**
  * Generates CLEARS command
  *
  *
@@ -180,13 +198,26 @@ bool genCheckTypeValue(tDataType type)
 			ADD_CODE(" string");
 
 			break;
-
 		case NIL_TYPE:
 			 ADD_CODE(" nil");
 		default:
+		    ADD_CODE("LF");
 			return false;
 	}
 	return true;
+}
+
+bool proid(char *name1,char *name2,char *name3)
+{
+    ADD_CODE("LF@");
+    ADD_CODE(name1);
+    ADD_CODE(" ");
+    ADD_CODE("LF@");
+    ADD_CODE(name2);
+    ADD_CODE(" ");
+    ADD_CODE("LF@");
+    ADD_INST(name3);
+    return true;
 }
 
 
@@ -202,124 +233,47 @@ bool genCheckArithm(tPrecRules rule, char *name1,char *name2,char *name3)
             {
             case E_PLUS_E:
                 ADD_CODE("ADD ");
-                ADD_CODE("LF@");
-                ADD_CODE(name1);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_CODE(name2);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_INST(name3);
+                proid(name1,name2,name3);
                 break;
             case E_MINUS_E:
                 ADD_CODE("SUB ");
-                ADD_CODE("LF@");
-                ADD_CODE(name1);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_CODE(name2);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_INST(name3);
+                proid(name1,name2,name3);
                 break;
             case E_MUL_E:
                 ADD_CODE("MUL ");
-                ADD_CODE("LF@");
-                ADD_CODE(name1);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_CODE(name2);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_INST(name3);
+                proid(name1,name2,name3);
                 break;
             case E_DIV_E:
                 ADD_CODE("DIV ");
-                ADD_CODE("LF@");
-                ADD_CODE(name1);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_CODE(name2);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_INST(name3);
+                proid(name1,name2,name3);
                  break;
             case E_IDIV_E:
                 ADD_CODE("IDIV ");
-                ADD_CODE("LF@");
-                ADD_CODE(name1);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_CODE(name2);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_INST(name3);
+                proid(name1,name2,name3);
                 break;
             case E_HTN_E:
                 ADD_CODE("GT ");
-                ADD_CODE("LF@");
-                ADD_CODE(name1);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_CODE(name2);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_INST(name3);
+                proid(name1,name2,name3);
                 break;
             case E_LTN_E:
                 ADD_CODE("LT ");
-                ADD_CODE("LF@");
-                ADD_CODE(name1);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_CODE(name2);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_INST(name3);
+                proid(name1,name2,name3);
                 break;
             case E_EQ_E:
                 ADD_CODE("EQ ");
-                ADD_CODE("LF@");
-                ADD_CODE(name1);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_CODE(name2);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_INST(name3);
+                proid(name1,name2,name3);;
                 break;
              case E_NEQ_E:
                 ADD_CODE("NEQ ");
-                ADD_CODE("LF@");
-                ADD_CODE(name1);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_CODE(name2);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_INST(name3);
+                proid(name1,name2,name3);
                 break;
             case E_LEQ_E:
                 ADD_CODE("LEQ ");
-                ADD_CODE("LF@");
-                ADD_CODE(name1);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_CODE(name2);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_INST(name3);
+                proid(name1,name2,name3);
                 break;
             case E_HEQ_E:
                 ADD_CODE("HEQ ");
-                ADD_CODE("LF@");
-                ADD_CODE(name1);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_CODE(name2);
-                ADD_CODE(" ");
-                ADD_CODE("LF@");
-                ADD_INST(name3);
+                proid(name1,name2,name3);
                 break;
             default:
             return  printf("[ERROR] (genArithm) frame input");
