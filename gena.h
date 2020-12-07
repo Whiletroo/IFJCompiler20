@@ -13,10 +13,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include "dynamicStr.h"
-#include "scanner.h"
+#include "expressions.h"
 #include "symtable.h"
-
-extern DYN_STRING dyncode;
 
 bool codeGenStart();
 void codeGenClear();
@@ -29,7 +27,7 @@ bool genCreateLabel(char *Label);
 bool genDestLabelEndJamp(char* Label);
 bool genCheckFrameDeep(int FramDeep);
 bool genCreClear();
-bool genCheckArithm(tToken token, bool stackVersion,tDataType typeValue);
+bool genCheckArithm(tPrecRules rule, char *name1,char *name2,char *name3);
 bool genCheckTypeValue(tDataType type);
 bool genCreDefVar(int FrameDeep,char *nameMod);
 bool geneCall(char *Label );
@@ -44,7 +42,7 @@ bool int2Float(char *retval1,bool stak);
 bool int2Char(char *retval1,bool stak);
 bool float2Int(char *retval1,bool stak);
 bool string2Int(char *retval1,bool stak);
-bool genConCat(char *nameMod,char *retval1,int FrameDeep,int FrameDeep1);
+bool genConCat(char *name1,char *name2);
 bool genStrLen(char *nameMod,int FrameDeep);
 bool genGetChar(char *nameMod,char *retval1,int FrameDeep,int FrameDeep1);
 bool genSetChar(char *nameMod,char *indFildMod,char *nameChar,int FrameDeep,int FrameDeep1,tDataType type);

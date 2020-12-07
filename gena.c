@@ -6,7 +6,7 @@
 */
 
 #include "gena.h"
-
+#include "symtable.h"
 
 ///DEINITIONS FOR FUNCTIONS
 #define ADD_INST(_inst) if (!dynamicStrAddStr(&dyncode, (_inst))) return false;\
@@ -28,7 +28,7 @@ void codeGenClear()
 	dynamicStrFree(&dyncode);
 }
 
-/** ������� �������� �������
+/**
  * Generate compulsory sting for correct work
  *
  *
@@ -50,7 +50,7 @@ bool codeGenOpen()
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCreaStartFream(char *nameFrame)
+bool genCreaStartFrame(char *nameFrame)
 {
 	ADD_CODE("LABEL "); ADD_INST(nameFrame);
 	ADD_INST("CREATEFRAME");
@@ -189,100 +189,147 @@ bool genCheckTypeValue(tDataType type)
 	return true;
 }
 
-/*
-bool genCreStradaiSuka(int DeepFrame,char *result, char *var1,char *var2,tDataType typeValue)
-{
-    genCheckFrameDeep(DeepFrame);
-    ADD_CODE(result);
-    ADD_CODE(" ");
-    ADD_CODE(var1);
-    ADD_CODE(" ");
-    ADD_INST(var2);
-}
-*/
+
  /**
  * Generates command from expression list
  *
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCheckArithm(tToken token, bool stackVersion,tDataType typeValue)
+bool genCheckArithm(tPrecRules rule, char *name1,char *name2,char *name3)
 {
-    if (stackVersion)
-        {
-            switch (token.token_type)
+            switch (rule)
             {
-            case TOKEN_PLUS:
-                ADD_INST("ADDS ");
-                break;
-            case TOKEN_MINUS:
-                ADD_INST("SUBS ");
-                break;
-            case TOKEN_MUL:
-                ADD_INST("MULS ");
-                break;
-            case TOKEN_DIV:
-                ADD_INST("DIVS ");
-                break;
-            case TOKEN_HIGHER:
-                ADD_INST("GTS ");
-                break;
-            case TOKEN_LESS:
-                ADD_INST("LTS ");
-                break;
-            case TOKEN_EQUALS:
-                ADD_INST("EQS ");
-                break;
-                default:
-            return  printf("[ERROR] (genArithm) frame input");
-            break;
-                }
-        }
-        else
-        {
-            switch (token.token_type)
-            {
-            case TOKEN_PLUS:
+            case E_PLUS_E:
                 ADD_CODE("ADD ");
+                ADD_CODE("LF@");
+                ADD_CODE(name1);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_CODE(name2);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_INST(name3);
                 break;
-            case TOKEN_MINUS:
+            case E_MINUS_E:
                 ADD_CODE("SUB ");
-
+                ADD_CODE("LF@");
+                ADD_CODE(name1);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_CODE(name2);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_INST(name3);
                 break;
-            case TOKEN_MUL:
+            case E_MUL_E:
                 ADD_CODE("MUL ");
-
+                ADD_CODE("LF@");
+                ADD_CODE(name1);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_CODE(name2);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_INST(name3);
                 break;
-            case TOKEN_DIV:
-                if (typeValue==FLOAT_TYPE){
-                    ADD_CODE("DIV ");
-                }else{
-                    ADD_CODE("IDIV ");
-                }
+            case E_DIV_E:
+                ADD_CODE("DIV ");
+                ADD_CODE("LF@");
+                ADD_CODE(name1);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_CODE(name2);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_INST(name3);
+                 break;
+            case E_IDIV_E:
+                ADD_CODE("IDIV ");
+                ADD_CODE("LF@");
+                ADD_CODE(name1);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_CODE(name2);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_INST(name3);
                 break;
-            case TOKEN_HIGHER:
+            case E_HTN_E:
                 ADD_CODE("GT ");
+                ADD_CODE("LF@");
+                ADD_CODE(name1);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_CODE(name2);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_INST(name3);
                 break;
-            case TOKEN_LESS:
+            case E_LTN_E:
                 ADD_CODE("LT ");
+                ADD_CODE("LF@");
+                ADD_CODE(name1);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_CODE(name2);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_INST(name3);
                 break;
-            case TOKEN_EQUALS:
+            case E_EQ_E:
                 ADD_CODE("EQ ");
+                ADD_CODE("LF@");
+                ADD_CODE(name1);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_CODE(name2);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_INST(name3);
                 break;
-             case TOKEN_NOT_EQUAL:
+             case E_NEQ_E:
                 ADD_CODE("NEQ ");
+                ADD_CODE("LF@");
+                ADD_CODE(name1);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_CODE(name2);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_INST(name3);
+                break;
+            case E_LEQ_E:
+                ADD_CODE("LEQ ");
+                ADD_CODE("LF@");
+                ADD_CODE(name1);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_CODE(name2);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_INST(name3);
+                break;
+            case E_HEQ_E:
+                ADD_CODE("HEQ ");
+                ADD_CODE("LF@");
+                ADD_CODE(name1);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_CODE(name2);
+                ADD_CODE(" ");
+                ADD_CODE("LF@");
+                ADD_INST(name3);
                 break;
             default:
             return  printf("[ERROR] (genArithm) frame input");
             break;
-
-        }
     }
+
     return true;
 }
 
-
- /** //�-��� ����������� ����������
+ /**
  * Generate deklaration of variable
  *
  *
@@ -545,13 +592,13 @@ bool string2Int(char *retval,bool stak)
  *
  * @return True if it was successful, false otherwise.
  */
-bool genConCat(char *nameMod,char *retval1,int FrameDeep,int FrameDeep1)
+bool genConCat(char *name1,char *name2)
 {
     ADD_CODE("CONCAT ");
-    genCheckFrameDeep(FrameDeep);
-    ADD_CODE(nameMod);
-    genCheckFrameDeep(FrameDeep1);
-    ADD_INST(retval1);
+    ADD_CODE("LF@");
+    ADD_CODE(name1);
+    ADD_CODE("LF@");
+    ADD_INST(name2);
     return true;
 }
 
