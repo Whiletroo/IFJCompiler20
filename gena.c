@@ -18,16 +18,6 @@
 
 DYN_STRING dyncode;
 
-bool codeGenStart()
-{
-	if (!dynamicStrInit(&dyncode)) return false;
-	return true;
-}
-
-void codeGenClear()
-{
-	dynamicStrFree(&dyncode);
-}
 
 /**
  * Generate compulsory sting for correct work
@@ -37,13 +27,25 @@ void codeGenClear()
  */
 bool codeGenOpen()
 {
+    codeGenStart();
 	ADD_INST(".IFJcode20");
     ADD_INST("JUMP main");
     ADD_INST(" ");
 	return true;
 }
 
+/**
+ * Print sting with generated code and free dynamic string
+ *
+ *
+ * @return True if it was successful, false otherwise.
+ */
+bool genCodePrint(){
 
+    printf("%s",dyncode);
+    codeGenClear(&dyncode);
+    return true;
+}
 
 /**
  * Generate main struction of function
@@ -209,6 +211,12 @@ bool genCheckTypeValue(tDataType type)
 	return true;
 }
 
+ /**
+ * Generates command from expression list
+ *
+ *
+ * @return True if it was successful, false otherwise.
+ */
 bool proid(char *name1,char *name2,char *name3)
 {
     ADD_CODE("LF@");
@@ -624,3 +632,16 @@ bool genType(char *varToSave,int FrameDeep,char *typeMod,char *nameOfVar,tDataTy
     ADD_INST(nameOfVar);
     return true;
 }
+
+bool codeGenStart()
+{
+	if (!dynamicStrInit(&dyncode)) return false;
+	return true;
+}
+
+bool codeGenClear()
+{
+	if (!dynamicStrFree(&dyncode)) return false;
+	return true;
+}
+
