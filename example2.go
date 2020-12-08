@@ -1,5 +1,5 @@
 package main
 
-func main (){
-	a := 1 + 10
+func main (a int, b ) (int , string) {
+	a := 10
 }

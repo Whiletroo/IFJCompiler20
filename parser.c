@@ -113,7 +113,7 @@ static int prog()
         GET_TOKEN_AND_CHECK_RULE(func_args);
         CHECK_TOKEN(TOKEN_RIGHT_BRACKET);
         GET_TOKEN_AND_CHECK_RULE(func_ret_types);
-        CHECK_TOKEN(TOKEN_LCURLY_BRACKET);
+        GET_AND_CHECK_TOKEN(TOKEN_LCURLY_BRACKET);
         GET_AND_CHECK_TOKEN(TOKEN_EOL);  //<<<TODO
         GET_TOKEN_AND_CHECK_RULE(st_list);
         CHECK_TOKEN(TOKEN_RCURLY_BRACKET);
@@ -232,8 +232,10 @@ static int ret_types()
 {
     int result;
     // <types> → <ret_type> <next_ret_types>
-    CHECK_RULE(ret_type);
-    GET_TOKEN_AND_CHECK_RULE(next_ret_types);
+    if (token.token_type != TOKEN_RIGHT_BRACKET) {
+        CHECK_RULE(ret_type);
+        GET_TOKEN_AND_CHECK_RULE(next_ret_types);
+    }
     // <types> → ε
     return OK;
 }
