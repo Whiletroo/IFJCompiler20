@@ -9,6 +9,9 @@
 #include "scanner.h"
 #include "error.h"
 #include "precstack.h"
+#include "gena.h"
+#include "parser.h"
+#include "symtable.h"
 
 
 tPS *precStack;
@@ -99,7 +102,7 @@ tPrecTabItem tkn2precItem() {
             return LEFT_BRACKET;
         case TOKEN_RIGHT_BRACKET:
             return RIGHT_BRACKET;
-        case TOKEN_LCURLY_BRACKET: case TOKEN_EOL:
+        case TOKEN_LCURLY_BRACKET: case TOKEN_EOL: case TOKEN_SEMICOLON:
             return DOLLAR;
         default:
             return NON_TERM;
@@ -122,6 +125,12 @@ tDataType tokenType2DataType() {
         case TOKEN_NIL:
             return NIL_TYPE;
             break;
+        case TOKEN_IDENTIFIER:
+            if (symTableSearch(localTable, token.attribute.value_string->str) ) {
+                return symTableGetItem(localTable, token.attribute.value_string->str)->dataType[0];
+            } else {
+                return UNDEFINED_TYPE;
+            }
         default:
             return UNDEFINED_TYPE;
             break;
@@ -290,6 +299,8 @@ int reduce() {
     }
     pushPS(NON_TERM, expType);
 
+    tmparg->dataType[0] = expType;
+
     return OK;
 }
 
@@ -310,12 +321,20 @@ int expessions (){
         return ERR_INTERNAL;
     }
 
+    // 3 registers for processing expression
+    genCreDefVar(2, "R1");
+    genCreDefVar(2, "R2");
+    genCreDefVar(2, "R3");
+
     tPrecTabItem topTerm;   // top terminal in precedence stack
     tPrecTabItem inTerm;    // terminal on input
 
     while(true) {
         
         // init both terminals
+        if (token.token_type == TOKEN_IDENTIFIER) {
+            
+        }
         topTerm = topTermPS()->precItem;
         inTerm = tkn2precItem();
 
@@ -341,6 +360,7 @@ int expessions (){
                 result = reduce();
                 if ( result ) {
                     fprintf(stderr, "Error: %d\n", result);
+                    freePS();
                     return ERR_INTERNAL;
                 }
                 break;
@@ -348,6 +368,8 @@ int expessions (){
             // empty cell in precedence table
             default:
                 if (topTerm == DOLLAR && inTerm == DOLLAR) {
+                    freePS();
+                    printTable(localTable);
                     return OK;
                 } else {
                     fprintf(stderr, "Syntax error: expression error : %s\n",getTokenName(token.token_type));
