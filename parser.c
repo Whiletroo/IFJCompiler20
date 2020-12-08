@@ -277,10 +277,11 @@ static int state()
     // <state> → if E <state> <else_state>
     if (token.token_type == TOKEN_KEYWORD && token.attribute.keyword == KEYWORD_IF){
         GET_TOKEN_AND_CHECK_RULE(expessions);
+        GET_AND_CHECK_TOKEN(TOKEN_EOL);
         GET_TOKEN_AND_CHECK_RULE(state);
+        GET_AND_CHECK_TOKEN(TOKEN_RCURLY_BRACKET);
         GET_TOKEN_AND_CHECK_RULE(else_state);
-        GET_TOKEN();
-        return state();
+        return OK;
     }
     // <state> → for id <var_def> ; E ; id <assign> <state>
     else if (token.token_type == TOKEN_KEYWORD && token.attribute.keyword == KEYWORD_FOR){
@@ -305,29 +306,28 @@ static int state()
     }
 
     // <state> → <типо id> a потом <var_def> or <func_call> or <var_dec> or <assign>
-    else if (token.token_type == TOKEN_IDENTIFIER){
+    else if (token.token_type == TOKEN_IDENTIFIER) {
         GET_TOKEN();
         switch (token.token_type) {
             // var_def
             case TOKEN_DEFINITION:
                 CHECK_RULE(var_def);
                 return OK;
-            // func_call
+                // func_call
             case TOKEN_LEFT_BRACKET:
                 CHECK_RULE(func_call);
                 return OK;
-            // assign
+                // assign
             case TOKEN_ASSIGN:
                 CHECK_RULE(assign);
-            // var_dec OLD VERSION
+                // var_dec OLD VERSION
             default:
                 //CHECK_RULE(type);
                 return SYNTAX_ERR;
         }
     }
-    // <state> → Exp
     else {
-        GET_TOKEN_AND_CHECK_RULE(expessions);
+        return SYNTAX_ERR;
     }
     return result;
 }
@@ -412,8 +412,6 @@ int parse() {
             return result;
         } else {
             CHECK_RULE(start);
-            printTable(globalTable);
-            printTable(localTable);
             symTableDestroy(globalTable);
             symTableDestroy(localTable);
             dynamicStrFree(d_string);
