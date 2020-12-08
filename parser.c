@@ -287,23 +287,32 @@ static int state()
     else if (token.token_type == TOKEN_KEYWORD && token.attribute.keyword == KEYWORD_FOR){
         GET_AND_CHECK_TOKEN(TOKEN_IDENTIFIER);
         GET_TOKEN_AND_CHECK_RULE(var_def);
-        GET_AND_CHECK_TOKEN(TOKEN_SEMICOLON);
+        CHECK_TOKEN(TOKEN_SEMICOLON);
         GET_TOKEN_AND_CHECK_RULE(expessions);
-        GET_AND_CHECK_TOKEN(TOKEN_SEMICOLON);
+        CHECK_TOKEN(TOKEN_SEMICOLON);
         GET_AND_CHECK_TOKEN(TOKEN_IDENTIFIER);
         GET_TOKEN_AND_CHECK_RULE(assign);
+        CHECK_TOKEN(TOKEN_LCURLY_BRACKET);
+        GET_AND_CHECK_TOKEN(TOKEN_EOL);
         GET_TOKEN_AND_CHECK_RULE(state);
+        GET_AND_CHECK_TOKEN(TOKEN_RCURLY_BRACKET);
+        GET_AND_CHECK_TOKEN(TOKEN_EOL);
+        return OK;
     }
     // <state> → return E
     else if (token.token_type == TOKEN_KEYWORD && token.attribute.keyword == KEYWORD_RETURN){
         GET_TOKEN_AND_CHECK_RULE(expessions);
+        return OK;
     }
 
+    /*
     // <state> → {<st_list>}
     else if (token.token_type == TOKEN_LCURLY_BRACKET){
         GET_TOKEN_AND_CHECK_RULE(st_list);
         GET_AND_CHECK_TOKEN(TOKEN_RCURLY_BRACKET);
     }
+    */
+
 
     // <state> → <типо id> a потом <var_def> or <func_call> or <var_dec> or <assign>
     else if (token.token_type == TOKEN_IDENTIFIER) {
@@ -312,6 +321,7 @@ static int state()
             // var_def
             case TOKEN_DEFINITION:
                 CHECK_RULE(var_def);
+                CHECK_TOKEN(TOKEN_EOL); // expressions takes token EOL, which mean end of expression //<< TODO
                 return OK;
                 // func_call
             case TOKEN_LEFT_BRACKET:
@@ -320,6 +330,7 @@ static int state()
                 // assign
             case TOKEN_ASSIGN:
                 CHECK_RULE(assign);
+                return OK;
                 // var_dec OLD VERSION
             default:
                 //CHECK_RULE(type);
@@ -337,7 +348,6 @@ static int var_def()
     // <var_def> → := Exp
     if (token.token_type == TOKEN_DEFINITION){
         GET_TOKEN_AND_CHECK_RULE(expessions);
-        CHECK_TOKEN(TOKEN_EOL); // expressions takes token EOL, which mean end of expression
     }
     return OK;
 }
@@ -358,7 +368,12 @@ static int else_state()
     int result;
     // <else_state> → else <state>
     if (token.token_type == TOKEN_KEYWORD && token.attribute.keyword == KEYWORD_ELSE){
+        GET_AND_CHECK_TOKEN(TOKEN_LCURLY_BRACKET);
+        GET_AND_CHECK_TOKEN(TOKEN_EOL);
         GET_TOKEN_AND_CHECK_RULE(state);
+        CHECK_TOKEN(TOKEN_EOL);
+        GET_AND_CHECK_TOKEN(TOKEN_RCURLY_BRACKET);
+        GET_AND_CHECK_TOKEN(TOKEN_EOL);
     }
     // <else_state> → ε
     return OK;
