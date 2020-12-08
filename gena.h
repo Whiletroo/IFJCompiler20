@@ -16,7 +16,7 @@
 extern DYN_STRING dyncode;
 
 bool codeGenStart();
-bool codeGenClear();
+void codeGenClear();
 bool codeGenOpen();
 bool genCreaStartFream(char *nameFrame);
 bool genCrePushFr();
@@ -28,7 +28,7 @@ bool genCreateLabel(char *Label);
 bool genDestLabelEndJamp(char* Label);
 bool genCheckFrameDeep(int FramDeep);
 bool genCreClear();
-bool genCodePrint();
+void genCodePrint();
 bool genCheckArithm(tPrecRules rule, char *name1,char *name2,char *name3);
 bool genCheckTypeValue(tDataType type);
 bool genCreDefVar(int FrameDeep,char *nameMod);

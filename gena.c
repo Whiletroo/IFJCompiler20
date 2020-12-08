@@ -40,11 +40,10 @@ bool codeGenOpen()
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCodePrint(){
+void genCodePrint(){
 
     printf("%s",dyncode);
     codeGenClear(&dyncode);
-    return true;
 }
 
 /**
@@ -639,9 +638,8 @@ bool codeGenStart()
 	return true;
 }
 
-bool codeGenClear()
+void codeGenClear()
 {
-	if (!dynamicStrFree(&dyncode)) return false;
-	return true;
+	dynamicStrFree(&dyncode);
 }
 
