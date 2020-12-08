@@ -88,7 +88,7 @@ static int start(){
     } else if (token.token_type == TOKEN_EOL) {
         GET_TOKEN_AND_CHECK_RULE(start);
     }
-    return OK;
+    return SYNTAX_ERR;
 }
 
 static int prog()
@@ -282,13 +282,14 @@ static int state()
         GET_TOKEN();
         return state();
     }
-    // <state> → for id <var_def> ; E ; <assign> <state>
+    // <state> → for id <var_def> ; E ; id <assign> <state>
     else if (token.token_type == TOKEN_KEYWORD && token.attribute.keyword == KEYWORD_FOR){
         GET_AND_CHECK_TOKEN(TOKEN_IDENTIFIER);
         GET_TOKEN_AND_CHECK_RULE(var_def);
         GET_AND_CHECK_TOKEN(TOKEN_SEMICOLON);
         GET_TOKEN_AND_CHECK_RULE(expessions);
         GET_AND_CHECK_TOKEN(TOKEN_SEMICOLON);
+        GET_AND_CHECK_TOKEN(TOKEN_IDENTIFIER);
         GET_TOKEN_AND_CHECK_RULE(assign);
         GET_TOKEN_AND_CHECK_RULE(state);
     }
@@ -303,17 +304,22 @@ static int state()
         GET_AND_CHECK_TOKEN(TOKEN_RCURLY_BRACKET);
     }
 
-    // <state> → <типо id> a потом <var_def> or <func_call> or <var_dec>
+    // <state> → <типо id> a потом <var_def> or <func_call> or <var_dec> or <assign>
     else if (token.token_type == TOKEN_IDENTIFIER){
         GET_TOKEN();
         switch (token.token_type) {
             // var_def
             case TOKEN_DEFINITION:
                 CHECK_RULE(var_def);
+                return OK;
             // func_call
             case TOKEN_LEFT_BRACKET:
                 CHECK_RULE(func_call);
-            // var_dec
+                return OK;
+            // assign
+            case TOKEN_ASSIGN:
+                CHECK_RULE(assign);
+            // var_dec OLD VERSION
             default:
                 //CHECK_RULE(type);
                 return SYNTAX_ERR;
@@ -361,9 +367,8 @@ static int else_state()
 static int assign()
 {
     int result;
-    // <assign> → id = Exp
-    if (token.token_type == TOKEN_IDENTIFIER){
-        GET_AND_CHECK_TOKEN(TOKEN_ASSIGN);
+    // <assign> → = Exp
+    if (token.token_type == TOKEN_ASSIGN){
         GET_TOKEN_AND_CHECK_RULE(expessions);
     }
     // <assign> → ε
@@ -398,7 +403,6 @@ int parse() {
     globalTable = symTableInit();
     localTable = symTableInit();
     d_string = dynamicStrInit();
-    codeGenStart();
     if ((result = getToken(&token)) == OK)
     {
         if (token.token_type == TOKEN_EOF)
@@ -408,6 +412,11 @@ int parse() {
             return result;
         } else {
             CHECK_RULE(start);
+            printTable(globalTable);
+            printTable(localTable);
+            symTableDestroy(globalTable);
+            symTableDestroy(localTable);
+            dynamicStrFree(d_string);
         }
         return OK;
     } else 
