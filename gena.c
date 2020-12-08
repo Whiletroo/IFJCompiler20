@@ -42,7 +42,7 @@ bool codeGenOpen()
  */
 void genCodePrint(){
 
-    printf("%s",dyncode);
+    printf("%s",dyncode.str);
     codeGenClear(&dyncode);
 }
 
