@@ -85,6 +85,8 @@ static int start(){
         GET_AND_CHECK_TOKEN(TOKEN_EOL);
         GET_TOKEN();
         return prog();
+    } else if (token.token_type == TOKEN_EOL) {
+        GET_TOKEN_AND_CHECK_RULE(start);
     }
     return OK;
 }
@@ -111,7 +113,7 @@ static int prog()
         GET_TOKEN_AND_CHECK_RULE(func_args);
         CHECK_TOKEN(TOKEN_RIGHT_BRACKET);
         GET_TOKEN_AND_CHECK_RULE(func_ret_types);
-        GET_AND_CHECK_TOKEN(TOKEN_LCURLY_BRACKET);
+        CHECK_TOKEN(TOKEN_LCURLY_BRACKET);
         GET_AND_CHECK_TOKEN(TOKEN_EOL);  //<<<TODO
         GET_TOKEN_AND_CHECK_RULE(st_list);
         CHECK_TOKEN(TOKEN_RCURLY_BRACKET);
@@ -167,6 +169,8 @@ static int func_args()
         }
         GET_TOKEN_AND_CHECK_RULE(type);
         GET_TOKEN_AND_CHECK_RULE(func_next_arg);
+    } else if ( token.token_type != TOKEN_RIGHT_BRACKET) {
+        return SYNTAX_ERR;
     }
     // <func_args> → ε
     return OK;
@@ -320,7 +324,7 @@ static int var_def()
     // <var_def> → := Exp
     if (token.token_type == TOKEN_DEFINITION){
         GET_TOKEN_AND_CHECK_RULE(expessions);
-        GET_AND_CHECK_TOKEN(TOKEN_EOL);
+        CHECK_TOKEN(TOKEN_EOL); // expressions takes token EOL, which mean end of expression
     }
     return OK;
 }
