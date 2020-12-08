@@ -112,8 +112,11 @@ static int prog()
         GET_AND_CHECK_TOKEN(TOKEN_LEFT_BRACKET);
         GET_TOKEN_AND_CHECK_RULE(func_args);
         CHECK_TOKEN(TOKEN_RIGHT_BRACKET);
-        GET_TOKEN_AND_CHECK_RULE(func_ret_types);
-        GET_AND_CHECK_TOKEN(TOKEN_LCURLY_BRACKET);
+        GET_TOKEN();
+        if (token.token_type == TOKEN_LEFT_BRACKET) {
+           CHECK_RULE(func_ret_types);
+        }
+        CHECK_TOKEN(TOKEN_LCURLY_BRACKET);
         GET_AND_CHECK_TOKEN(TOKEN_EOL);  //<<<TODO
         GET_TOKEN_AND_CHECK_RULE(st_list);
         CHECK_TOKEN(TOKEN_RCURLY_BRACKET);
@@ -205,6 +208,7 @@ static int func_ret_types()
         CHECK_TOKEN(TOKEN_RIGHT_BRACKET);
     }
     // <func_ret_types> → ε
+    GET_TOKEN();
     return OK;
 }
 static int ret_type()
@@ -311,7 +315,8 @@ static int state()
                 CHECK_RULE(func_call);
             // var_dec
             default:
-                CHECK_RULE(type);
+                //CHECK_RULE(type);
+                return SYNTAX_ERR;
         }
     }
     // <state> → Exp
