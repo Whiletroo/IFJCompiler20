@@ -43,7 +43,7 @@ bool codeGenOpen()
  */
 void genCodePrint(){
 
-    if (strlen(dyncode.str)!=0){printf("%s",dyncode.str);}
+    if (dyncode.length>1){printf("%s",dyncode.str);}
     dynamicStrFree(&dyncode);
 }
 
@@ -107,7 +107,8 @@ bool genCreReturn()
  */
 bool genCreateLabel(char *Label)
 {
-    ADD_CODE("LABEL ");ADD_INST(Label);
+    ADD_CODE("LABEL ");
+    ADD_INST(Label);
     return true;
 }
 
@@ -119,7 +120,8 @@ bool genCreateLabel(char *Label)
  */
 bool genDestLabelEndJamp(char* Label)
 {
-    ADD_CODE("JUMP ");ADD_INST(Label);
+    ADD_CODE("JUMP ");
+    ADD_INST(Label);
     return true;
 }
 
@@ -432,13 +434,13 @@ bool genFunWrite(char *nameMod,int FrameDeep)
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCreJumpEQ(char *Label, char *var1,int FrameDeep, char *typeOfVar, char *var2, bool stak)
+bool genCreJumpEQ(char *Label, char *var1, char *typeOfVar, char *var2, bool stak)
 {
     if (stak)
     {
         ADD_CODE("JUMPIFEQS ");
             ADD_CODE(Label);
-            genCheckFrameDeep(FrameDeep);
+            ADD_CODE(" LF@");
             ADD_CODE(var1);
             ADD_CODE(typeOfVar);
             ADD_INST(var2);
@@ -448,9 +450,11 @@ bool genCreJumpEQ(char *Label, char *var1,int FrameDeep, char *typeOfVar, char *
     {
         ADD_CODE("JUMPIFEQ ");
         ADD_CODE(Label);
-        genCheckFrameDeep(FrameDeep);
+        ADD_CODE(" LF@");
         ADD_CODE(var1);
+        ADD_CODE(" ");
         ADD_CODE(typeOfVar);
+        ADD_CODE("@");
         ADD_INST(var2);
         return true;
     }
@@ -462,7 +466,7 @@ bool genCreJumpEQ(char *Label, char *var1,int FrameDeep, char *typeOfVar, char *
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCreJumpNEQ(char *Label, char *var1,int FrameDeep, char *typeOfVar, char *var2, bool stak)
+bool genCreJumpNEQ(char *Label, char *var1 char *typeOfVar, char *var2, bool stak)
 {
     if (stak){
             ADD_CODE("JUMPIFEQS ");
@@ -477,9 +481,11 @@ bool genCreJumpNEQ(char *Label, char *var1,int FrameDeep, char *typeOfVar, char 
     {
         ADD_CODE("JUMPIFEQ ");
         ADD_CODE(Label);
-        genCheckFrameDeep(FrameDeep);
+        ADD_CODE(" LF@");
         ADD_CODE(var1);
+        ADD_CODE(" ");
         ADD_CODE(typeOfVar);
+        ADD_CODE("@");
         ADD_INST(var2);
         return true;
     }
