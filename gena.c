@@ -55,7 +55,8 @@ void genCodePrint(){
  */
 bool genCreaStartFrame(char *nameFrame)
 {
-	ADD_CODE("LABEL "); ADD_INST(nameFrame);
+	ADD_CODE("LABEL ");
+	ADD_INST(nameFrame);
 	ADD_INST("CREATEFRAME");
 
 	return true;
@@ -170,10 +171,8 @@ bool genCheckFrameDeep(int FrameDeep)
 		case 3:
 			ADD_CODE(" TF@");
 			break;
-		default:
-			return false;
 	}
-    return true;
+    return false;
 }
 
 /**
@@ -188,25 +187,24 @@ bool genCheckTypeValue(tDataType type)
 	{
 		case INT_TYPE:
 			ADD_CODE(" int");
-
 			break;
-
 		case FLOAT_TYPE:
 			ADD_CODE(" float64");
-
 			break;
-
 		case STRING_TYPE:
 			ADD_CODE(" string");
-
 			break;
 		case NIL_TYPE:
 			 ADD_CODE(" nil");
-		default:
-		    ADD_CODE("LF");
-			return true;
+			 break;
+		case BOOLEAN_TYPE:
+			 ADD_CODE(" bool");
+			 break;
+        default:
+            ADD_CODE(" LF");
+			break;
 	}
-	return true;
+	return false;
 }
 
  /**
@@ -284,11 +282,11 @@ bool genCheckArithm(tPrecRules rule, char *name1,char *name2,char *name3)
                 proid(name1,name2,name3);
                 break;
             default:
-            return  printf("[ERROR] (genCheckArithm) frame input");
-            break;
+                return false;
+                break;
     }
 
-    return true;
+    return false;
 }
 
 bool genCheckArithmStack(tPrecRules rule, char *name1,char *name2,char *name3){
@@ -342,15 +340,12 @@ bool genCheckArithmStack(tPrecRules rule, char *name1,char *name2,char *name3){
                 break;
             case E_HEQ_E:
                 ADD_CODE("HEQS ");
-
                 break;
             default:
-            return  printf("[ERROR] (genCheckArithmStack) frame input");
-            break;
+                return false;
+                break;
     }
-
-    return true;
-
+    return false;
 }
 
 
@@ -403,10 +398,10 @@ bool geneCall(char *Label )
  *
  * @return True if it was successful, false otherwise.
  */
-bool genFunRead(char *nameValue,int FrameDeep,tDataType typeValue)
+bool genFunRead(char *nameValue,tDataType typeValue)
 {
     ADD_CODE("READ ");
-    genCheckFrameDeep(FrameDeep);
+    ADD_CODE("LF@");
     ADD_CODE(nameValue);
     ADD_CODE(" ");
     genCheckTypeValue(typeValue);
@@ -420,11 +415,11 @@ bool genFunRead(char *nameValue,int FrameDeep,tDataType typeValue)
  *
  * @return True if it was successful, false otherwise.
  */
-bool genFunWrite(char *nameMod,int FrameDeep)
+bool genFunWrite(char *name)
 {
     ADD_CODE("WRITE ");
-    genCheckFrameDeep(FrameDeep);
-    ADD_INST(nameMod);
+    ADD_CODE("LF@");
+    ADD_INST(name);
     return true;
 }
 
@@ -469,8 +464,8 @@ bool genCreJumpEQ(char *Label, char *var1, char *typeOfVar, char *var2, bool sta
 bool genCreJumpNEQ(char *Label, char *var1, char *typeOfVar, char *var2, bool stak)
 {
     if (stak){
-            ADD_CODE("JUMPIFEQS ");
             ADD_CODE(Label);
+            ADD_CODE(" LF@");
             ADD_CODE(var1);
             ADD_CODE(typeOfVar);
             ADD_INST(var2);
