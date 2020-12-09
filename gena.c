@@ -43,7 +43,7 @@ bool codeGenOpen()
  */
 void genCodePrint(){
 
-    printf("%s",dyncode.str);
+    if (strlen(dyncode.str)!=0){printf("%s",dyncode.str);}
     dynamicStrFree(&dyncode);
 }
 
