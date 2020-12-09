@@ -129,8 +129,20 @@ TData *symTableGetItem(TSymTable *symtab, char *key);
  * @param data pointer to TData structure of function.
  * @param id name of parametr.
  * @param dataType data type of parametr.
+ * @return exid code
 */
 int symTableAppendParams(TData *data, char *id, tDataType dataType);
+
+
+/**
+ * Apends return types to dataType array. Use only for 
+ * funtions identifiers!
+ * 
+ * @param data pointer to TData structure of function.
+ * @param dataType data type of parametr.
+ * @return exid code
+*/
+int symTableAppendRetTyps(TData *data, tDataType dataType)
 
 
 /**
