@@ -69,6 +69,29 @@ bool symTableSearch(TSymTable *symtab, char *key) {
 }
 
 
+int symTableInitData(TData *data, char *key) {
+
+	data->identifier = malloc(sizeof(char));
+	CHECK_PTR(data->identifier);
+	memcpy(data->identifier, key, strlen(key));
+
+	for (int i = 0; i < MAX_RETURN_TYPES; i++) {
+		data->dataType[i] = UNDEFINED_TYPE;
+	}
+
+	for (int i = 0; i < MAX_PARAMETERS; i++) {
+		data->funcParams[i] = UNDEFINED_TYPE;
+	}
+
+	data->idType = UNDEF;
+	data->defined = false;
+	data->string_val = NULL;
+	data->localTable = NULL;
+
+	return OK;
+
+}
+
 
 int symTableInsert(TSymTable *symtab, char *key) {
 	
@@ -78,7 +101,7 @@ int symTableInsert(TSymTable *symtab, char *key) {
 
 	int index = hashf(key);
 
-	if ( symtab->items[index] == NULL) { // if entry is epty
+	if ( symtab->items[index] == NULL) { // if entry is empty
 
 		// allocate memory
 		symtab->items[index] = malloc(sizeof(TSymbolItem));
@@ -89,16 +112,8 @@ int symTableInsert(TSymTable *symtab, char *key) {
 		CHECK_PTR(symtab->items[index]->key);
 		strcpy(symtab->items[index]->key, key);
 
-		// seting data to defaut
-		symtab->items[index]->data.identifier = malloc(sizeof(char));
-		CHECK_PTR(symtab->items[index]->data.identifier);
-		memcpy(symtab->items[index]->data.identifier, key, strlen(key));
-		for (int i = 0; i < MAX_RETURN_TYPES; i++) {
-			symtab->items[index]->data.dataType[i] = UNDEFINED_TYPE;
-		}
-		symtab->items[index]->data.idType = UNDEF;
-		symtab->items[index]->data.defined = false;
-		symtab->items[index]->data.string_val = NULL;
+		// set data to default
+		symTableInitData(&symtab->items[index]->data, key);
 
 		symtab->items[index]->nextItem = NULL;
 
@@ -115,17 +130,8 @@ int symTableInsert(TSymTable *symtab, char *key) {
 		CHECK_PTR(newitem->key);
 		memcpy(newitem->key, key, strlen(key));
 
-		// setting default values
-		newitem->data.identifier = malloc(sizeof(char));
-		CHECK_PTR(newitem->data.identifier);
-		memcpy(newitem->data.identifier, key, strlen(key));
-
-		for (int i = 0; i < MAX_RETURN_TYPES; i++) {
-			newitem->data.dataType[0] = UNDEFINED_TYPE;
-		}
-		newitem->data.idType = UNDEF;
-		newitem->data.defined = false;
-		newitem->data.string_val = NULL;
+		// set data to default
+		symTableInitData(&newitem->data, key);
 
 		// insert new item to start of sinonym list
 		newitem->nextItem = symtab->items[index];
@@ -185,6 +191,11 @@ int symTabDeleteItem(TSymTable *symtab, char *key) {
 					if (!strcmp(actitem->nextItem->key,key)){
 						tmpptr = actitem->nextItem;
 						actitem->nextItem= actitem->nextItem->nextItem;
+
+						if (tmpptr->data.localTable != NULL) {
+							symTableDestroy((TSymTable *)tmpptr->data.localTable);
+						}
+
 						free(tmpptr->data.identifier);
 						free(tmpptr->key);
 						free(tmpptr);
@@ -217,6 +228,11 @@ void symTableDestroy(TSymTable *symtab) {
 				nextitem = tmpitem->nextItem;
 				free(tmpitem->key);
 				free(tmpitem->data.identifier);
+
+				if (tmpitem->data.localTable != NULL) {
+					symTableDestroy((TSymTable *)tmpitem->data.localTable);
+				}	
+
 				free(tmpitem);
 				tmpitem = nextitem;
 			}
@@ -280,30 +296,33 @@ void printTable(TSymTable *symtab){
 	P("**** SYMBOL TABLE ****\n");
 
 	for (int i = 0; i < MAX_ST_SIZE; i++) {
+		
+		if (symtab->items[i] != NULL) {
 
-		printf("ON index %d\n\n", i);
+			printf("ON index %d\n\n", i);
 
-		for( tmpitem = symtab->items[i]; tmpitem != NULL; tmpitem = tmpitem->nextItem) {
+			for( tmpitem = symtab->items[i]; tmpitem != NULL; tmpitem = tmpitem->nextItem) {
 
-			if (tmpitem != NULL) {
+				if (tmpitem != NULL) {
 
-				printData(&tmpitem->data);
+					printData(&tmpitem->data);
 
-				if (tmpitem->nextItem == NULL){
-					P("\tPointer to next :\tNULL\n");
-				} else {
-					P("\tPointer to next :\tNOT NULL\n");
+					if (tmpitem->nextItem == NULL){
+						P("\tPointer to next :\tNULL\n");
+					} else {
+						P("\tPointer to next :\tNOT NULL\n");
+					}
+
+					P("");
+
 				}
-
-				P("");
-
 			}
 		}
 	}
 }
 
 
-/*
+/* TESTING
 int main() {
 
 
