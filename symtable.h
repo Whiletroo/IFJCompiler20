@@ -11,8 +11,9 @@
 #include <stdbool.h>
 
 
-#define MAX_ST_SIZE 1000 //size of symbol table
+#define MAX_ST_SIZE 10 //size of symbol table
 #define MAX_RETURN_TYPES 10
+#define MAX_PARAMETERS 10
 
 typedef enum {UNDEF, variable, function} TIdType;
 
@@ -21,10 +22,16 @@ typedef enum {UNDEFINED_TYPE, INT_TYPE, FLOAT_TYPE, STRING_TYPE, BOOLEAN_TYPE,NI
 
 typedef struct {
 
-	char *identifier;		// name of the sumbol
-    tDataType dataType[MAX_RETURN_TYPES];     // type of data if it is variable
-	TIdType idType;			// type of id: variable, function, label
+	char *identifier;							// name of the sumbol
+	TIdType idType;								// type of id: variable, function, label
 	bool defined;
+
+    tDataType dataType[MAX_RETURN_TYPES];     	// type of data if it is variable, array of returns type if it is function
+	tDataType funcParams[MAX_PARAMETERS];		// array of types for function parameters
+	
+	struct symTable *localTable;
+
+	// maybe uneeded
 	union {
 		int int_val;
 		double double_val;
@@ -41,7 +48,7 @@ typedef struct symtabitem {
 } TSymbolItem;
 
 
-typedef struct symTable{
+typedef struct symTable {
 	TSymbolItem *items[MAX_ST_SIZE];
 } TSymTable;
 
@@ -62,6 +69,16 @@ int hashf(const char *key);
  * @return pointer to intialized symtable or NULL if error.
 */
 TSymTable *symTableInit();
+
+
+/**
+ * Initialize a structue TData
+ * 
+ * @param key pointer to char, name of identifier
+ * @param painter to TData
+ * @return exit code
+*/
+int symTableInitData(TData *data, char *key);
 
 
 /**
@@ -103,6 +120,7 @@ int symTabDeleteItem(TSymTable *symtab, char *key);
  * @return TData* pointer to data. NULL if symbol doesn't exist.
 */
 TData *symTableGetItem(TSymTable *symtab, char *key);
+
 
 /**
  * Fully destroy a symbol table. Free allocated memory

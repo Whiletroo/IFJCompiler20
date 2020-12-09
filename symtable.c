@@ -193,7 +193,7 @@ int symTabDeleteItem(TSymTable *symtab, char *key) {
 						actitem->nextItem= actitem->nextItem->nextItem;
 
 						if (tmpptr->data.localTable != NULL) {
-							symTableDestroy((TSymTable *)tmpptr->data.localTable);
+							symTableDestroy(tmpptr->data.localTable);
 						}
 
 						free(tmpptr->data.identifier);
@@ -230,7 +230,7 @@ void symTableDestroy(TSymTable *symtab) {
 				free(tmpitem->data.identifier);
 
 				if (tmpitem->data.localTable != NULL) {
-					symTableDestroy((TSymTable *)tmpitem->data.localTable);
+					symTableDestroy(tmpitem->data.localTable);
 				}	
 
 				free(tmpitem);
@@ -322,9 +322,8 @@ void printTable(TSymTable *symtab){
 }
 
 
-/* TESTING
+/* //TESTING
 int main() {
-
 
 	// pointers declaration
 	TSymTable *symtab;
@@ -440,9 +439,14 @@ int main() {
 	symTabDeleteItem(symtab, "key2");
 	symTabDeleteItem(symtab, "key2");
 
+	data = symTableGetItem(symtab, "foo1");
 
 
+	data->localTable = symTableInit();
 	printTable(symtab);
+
+
+
 
 	// free allocated memory
 	symTableDestroy(symtab);
