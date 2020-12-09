@@ -409,6 +409,7 @@ bool genCreDefVarFunk(char *name,char *value,tDataType type)
  */
 bool genCreFr()
 {
+
     ADD_INST("CREATEFRAME");
     return true;
 }
@@ -465,32 +466,19 @@ bool genFunWrite(char *name)
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCreJumpEQ(char *Label, char *var1, char *typeOfVar, char *var2, bool stak)
+bool genCreJumpEQ(char *Label)
 {
-    if (stak)
-    {
-        ADD_CODE("JUMPIFEQS ");
-            ADD_CODE(Label);
-            ADD_CODE(" LF@");
-            ADD_CODE(var1);
-            ADD_CODE(typeOfVar);
-            ADD_INST(var2);
-            return true;
-    }
-    else
-    {
+        ADD_CODE("DEFVAR ");
+        ADD_CODE("TF@n");
         ADD_CODE("JUMPIFEQ ");
         ADD_CODE(Label);
-        ADD_CODE(" LF@");
-        ADD_CODE(var1);
-        ADD_CODE(" ");
-        ADD_CODE(typeOfVar);
-        ADD_CODE("@");
-        ADD_INST(var2);
+        ADD_CODE("TF@n");
+        ADD_CODE("bool@true");
         return true;
-    }
-    return false;
 }
+
+
+
 /**
  * Generate JUNPIFNEQ command
  *

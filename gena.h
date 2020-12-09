@@ -37,7 +37,7 @@ bool genCreDefVar(char *nameMod);
 bool geneCall(char *Label );
 bool genFunRead(char *nameValue,tDataType typeValue);
 bool genFunWrite(char *name);
-bool genCreJumpEQ(char *Label, char *var1, char *typeOfVar, char *var2, bool stak);
+bool genCreJumpEQ(char *Label);
 bool genCreJumpNEQ(char *Label, char *var1, char *typeOfVar, char *var2, bool stak);
 bool genExit(char *val);
 bool genBreak();
