@@ -466,12 +466,11 @@ bool genCreJumpEQ(char *Label, char *var1, char *typeOfVar, char *var2, bool sta
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCreJumpNEQ(char *Label, char *var1 char *typeOfVar, char *var2, bool stak)
+bool genCreJumpNEQ(char *Label, char *var1, char *typeOfVar, char *var2, bool stak)
 {
     if (stak){
             ADD_CODE("JUMPIFEQS ");
             ADD_CODE(Label);
-            genCheckFrameDeep(FrameDeep);
             ADD_CODE(var1);
             ADD_CODE(typeOfVar);
             ADD_INST(var2);
