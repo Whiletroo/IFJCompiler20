@@ -316,6 +316,14 @@ static int state()
 
     // <state> → <типо id> a потом <var_def> or <func_call> or <var_dec> or <assign>
     else if (token.token_type == TOKEN_IDENTIFIER) {
+
+        if (symTableInsert(localTable, token.attribute.value_string->str)) {
+            return ERR_INTERNAL;
+        }
+        tmparg = symTableGetItem(localTable, token.attribute.value_string->str);
+        tmparg->defined = false;
+        tmparg->idType = variable;
+
         GET_TOKEN();
         switch (token.token_type) {
             // var_def
@@ -538,18 +546,28 @@ int parse() {
     {
         if (token.token_type == TOKEN_EOF)
         {
+
             fprintf(stderr, "#FILE: Input file is empty\n");
-            dynamicStrFree(d_string);
-            return result;
-        } else {
-            CHECK_RULE(start);
             symTableDestroy(globalTable);
             symTableDestroy(localTable);
             dynamicStrFree(d_string);
+            free(d_string);
+            return result;
+
+        } else {
+
+            result = start();
+
+            symTableDestroy(globalTable);
+            symTableDestroy(localTable);
+            dynamicStrFree(d_string);
+            genCodePrint();
+            free(d_string);
+
+            return result;
+            
         }
-        return OK;
-    } else 
-    {
+    } else {
         return ERR_INTERNAL;
     }
 }

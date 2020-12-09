@@ -27,6 +27,8 @@ char sSPC[] = "\\032";
 static int freeResources(int exit_code, DYN_STRING *str)
 {
     dynamicStrFree(str);
+    free(str);
+    str = NULL;
     return exit_code;
 }
 

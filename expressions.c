@@ -322,9 +322,9 @@ int expessions (){
     }
 
     // 3 registers for processing expression
-    genCreDefVar(2, "R1");
-    genCreDefVar(2, "R2");
-    genCreDefVar(2, "R3");
+    //genCreDefVar(2, "R1");
+    //genCreDefVar(2, "R2");
+    //genCreDefVar(2, "R3");
 
     tPrecTabItem topTerm;   // top terminal in precedence stack
     tPrecTabItem inTerm;    // terminal on input
@@ -361,7 +361,7 @@ int expessions (){
                 if ( result ) {
                     fprintf(stderr, "Error: %d\n", result);
                     freePS();
-                    return ERR_INTERNAL;
+                    return result;
                 }
                 break;
 
@@ -369,7 +369,6 @@ int expessions (){
             default:
                 if (topTerm == DOLLAR && inTerm == DOLLAR) {
                     freePS();
-                    printTable(localTable);
                     return OK;
                 } else {
                     fprintf(stderr, "Syntax error: expression error : %s\n",getTokenName(token.token_type));
@@ -380,6 +379,8 @@ int expessions (){
                 break;
         }
     }
+
+    tmparg->defined = true;
 
     return OK;
 }
