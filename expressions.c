@@ -46,7 +46,7 @@ tPrecTabIndex getPrecTabIndex(tPrecTabItem precItem){
             return I_LEFT_BRACKET;
             break;
         case RIGHT_BRACKET:
-            return RIGHT_BRACKET;
+            return I_RIGHT_BRACKET;
             break;
         default: // DOLLAR
             return I_DOLLAR;
@@ -147,25 +147,53 @@ tPrecRules getRule(){
             case FLOAT64_NUMBER:
             case STRING:
                 return E_OPERAND;
-                break;
-        
             default:
                 return NOT_E_RULE;
-                break;
         }
 
     } else if (precStack->top->next->next->next->precItem == REDUCE) {
        // E -> (E) 
-       if (precStack->top->precItem == RIGHT_BRACKET && precStack->top->next->precItem == NON_TERM && precStack->top->next->next->precItem == LEFT_BRACKET) {
+        if (precStack->top->precItem == RIGHT_BRACKET && precStack->top->next->precItem == NON_TERM && precStack->top->next->next->precItem == LEFT_BRACKET) {
            return LBRCT_E_RBRCT;
 
         } else if (precStack->top->precItem == NON_TERM && precStack->top->next->next->precItem == NON_TERM) {
             // rules : E -> E + E  ...  E -> E != E
-            if(precStack->top->next->precItem > 4 && precStack->top->next->precItem < 15) {
-                // E -> E idiv E
-                if (precStack->top->next->precItem == DIV && precStack->top->dataType == INT_TYPE && precStack->top->next->next->dataType == INT_TYPE) {
-                    return E_IDIV_E;
+            if(precStack->top->next->precItem > 5 && precStack->top->next->precItem < 16) {
+            
+                switch (precStack->top->next->precItem)
+                {
+                case ADD:
+                    return E_PLUS_E;
+                case SUB:
+                    return E_MINUS_E;
+                case MUL:
+                    return E_MUL_E;
+                case DIV:
+                    // E -> E idiv E
+                    if (precStack->top->dataType == INT_TYPE && precStack->top->next->next->dataType == INT_TYPE) {
+                        return E_IDIV_E;
+                    }
+                    return E_DIV_E;
+                case EQ:
+                    return E_EQ_E;
+                case HEQ:
+                    return E_HEQ_E;
+                case HTN:
+                    return E_HTN_E;
+                case LEQ:
+                    return E_LEQ_E;
+                case LTN:
+                    return E_LTN_E;
+                case NEQ:
+                    return E_LTN_E;
+                default:
+                    return NOT_E_RULE;
+                    break;
                 }
+                    // E -> E idiv E
+                    if (precStack->top->next->precItem == DIV && precStack->top->dataType == INT_TYPE && precStack->top->next->next->dataType == INT_TYPE) {
+                        return E_IDIV_E;
+                    }
                 return precStack->top->next->precItem - 2;
             } else {
                 return NOT_E_RULE;
