@@ -17,7 +17,7 @@ extern DYN_STRING dyncode;
 
 bool codeGenStart();
 bool codeGenOpen();
-bool genCreaStartFream(char *nameFrame);
+bool genCreaStartFream(char *label);
 bool genCrePushFr();
 bool genCrePopFr();
 bool genCreDefVar(char *nameMod);

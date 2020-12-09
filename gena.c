@@ -53,10 +53,10 @@ void genCodePrint(){
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCreaStartFrame(char *nameFrame)
+bool genCreaStartFrame(char *label)
 {
 	ADD_CODE("LABEL ");
-	ADD_INST(nameFrame);
+	ADD_INST(label);
 	ADD_INST("CREATEFRAME");
 
 	return true;
