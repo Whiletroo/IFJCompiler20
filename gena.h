@@ -1,7 +1,7 @@
 /**
  * @file gena.h
  * @author xpimen00
- * @date 7.12.2020
+ * @date 9.12.2020
  * @brief Header file for gena.c
 */
 
@@ -20,6 +20,7 @@ bool codeGenOpen();
 bool genCreaStartFream(char *nameFrame);
 bool genCrePushFr();
 bool genCrePopFr();
+bool genCreDefVar(char *nameMod);
 bool proid(char *name1,char *name2,char *name3);
 bool genCreMove(char* name1,char *name2,tDataType type);
 bool genCreReturn();
@@ -27,9 +28,10 @@ bool genCreateLabel(char *Label);
 bool genDestLabelEndJamp(char* Label);
 bool genCheckFrameDeep(int FramDeep);
 void genCodePrint();
+bool genCreDefVarFunk(char *name,char *value,tDataType type);
 bool genCheckArithm(tPrecRules rule, char *name1,char *name2,char *name3);
 bool genCheckTypeValue(tDataType type);
-bool genCreDefVar(int FrameDeep,char *nameMod);
+bool genCreDefVar(char *nameMod);
 bool geneCall(char *Label );
 bool genFunRead(char *nameValue,int FrameDeep,tDataType typeValue);
 bool genFunWrite(char *nameMod,int FrameDeep);

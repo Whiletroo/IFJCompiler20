@@ -1,7 +1,7 @@
 /**
  * @file gena.c
  * @author xpimen00
- * @date 7.12.2020
+ * @date 9.12.2020
  * @brief The generator
 */
 
@@ -131,8 +131,7 @@ bool genDestLabelEndJamp(char* Label)
  */
 bool genCreMove(char* name1,char *name2,tDataType type)
 {
-    ADD_CODE("MOVE ");
-    ADD_CODE("LF@");
+    ADD_CODE("MOVE LF@");
     ADD_CODE(name1);
     ADD_CODE(" ");
     genCheckTypeValue(type);
@@ -359,11 +358,28 @@ bool genCheckArithmStack(tPrecRules rule, char *name1,char *name2,char *name3){
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCreDefVar(int FrameDeep,char *nameMod)
+bool genCreDefVar(char *nameMod)
 {
-    ADD_CODE("DEFVAR ");
-    genCheckFrameDeep(FrameDeep);
+    ADD_CODE("DEFVAR LF@");
 	ADD_INST(nameMod);
+    return true;
+}
+
+ /**
+ * Generate deklaration of variable
+ *
+ *
+ * @return True if it was successful, false otherwise.
+ */
+bool genCreDefVarFunk(char *name,char *value,tDataType type)
+{
+    ADD_CODE("DEFVAR TF@");
+	ADD_INST(name);
+	ADD_CODE("MOVE TF@");
+	ADD_INST(name);
+	genCheckTypeValue(type);
+	ADD_CODE("@");
+	ADD_INST(value);
     return true;
 }
 
