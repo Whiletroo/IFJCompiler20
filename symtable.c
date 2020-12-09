@@ -71,9 +71,9 @@ bool symTableSearch(TSymTable *symtab, char *key) {
 
 int symTableInitData(TData *data, char *key) {
 
-	data->identifier = malloc(sizeof(char) * strlen(key));
+	data->identifier = malloc(sizeof(char) * (strlen(key) + 1 ));
 	CHECK_PTR(data->identifier);
-	memcpy(data->identifier, key, strlen(key));
+	strcpy(data->identifier, key);
 
 	for (int i = 0; i < MAX_RETURN_TYPES; i++) {
 		data->dataType[i] = UNDEFINED_TYPE;
@@ -108,7 +108,7 @@ int symTableInsert(TSymTable *symtab, char *key) {
 		CHECK_PTR(symtab->items[index]);
 
 		// init key value
-		symtab->items[index]->key = malloc(sizeof(char) * strlen(key));
+		symtab->items[index]->key = malloc(sizeof(char) * (strlen(key) + 1 ));
 		CHECK_PTR(symtab->items[index]->key);
 		strcpy(symtab->items[index]->key, key);
 
@@ -126,9 +126,9 @@ int symTableInsert(TSymTable *symtab, char *key) {
 		CHECK_PTR(newitem);
 
 		// init key value
-		newitem->key = malloc(sizeof(char) * strlen(key));
+		newitem->key = malloc(sizeof(char) * (strlen(key) + 1 ));
 		CHECK_PTR(newitem->key);
-		memcpy(newitem->key, key, strlen(key));
+		strcpy(newitem->key, key);
 
 		// set data to default
 		symTableInitData(&newitem->data, key);
