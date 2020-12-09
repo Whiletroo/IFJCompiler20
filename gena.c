@@ -44,7 +44,6 @@ bool codeGenOpen()
 void genCodePrint(){
 
     if (dyncode.length>1){printf("%s",dyncode.str);}
-
 }
 
 /**
@@ -361,6 +360,25 @@ bool genCreDefVar(char *nameMod)
 	ADD_INST(nameMod);
     return true;
 }
+
+ /**
+ * Generate deklaration of variable
+ *
+ *
+ * @return True if it was successful, false otherwise.
+ */
+bool genCreDefRetVar(tDataType type)
+{
+    ADD_CODE("DEFVAR LF@retval");
+	ADD_CODE("MOVE ");
+	ADD_CODE(LF@retval);
+	genCheckTypeValue(type);
+	ADD_CODE("@");
+	genCheckTypeValue(type);
+	ADD_CODE("\n");
+    return true;
+}
+
 
  /**
  * Generate deklaration of variable
