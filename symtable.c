@@ -181,8 +181,10 @@ int symTableAppendParams(TData *data, char *id, tDataType dataType) {
 	}
 
 	// insert a new identifiers to symbol table of function (local symbol table)
-	data->localTable = symTableInit();
-	CHECK_PTR(data->localTable);
+	if ( data->localTable == NULL ) {
+		data->localTable = symTableInit();
+		CHECK_PTR(data->localTable);
+	}
 
 	symTableInsert(data->localTable, id);
 	TData *tmpptr = symTableGetItem(data->localTable, id);
