@@ -19,7 +19,7 @@ int main (int argc, char **argv) {
         } else {
             fprintf(stderr,"exit code: %d\n", result);
         }
-        fclose(source);
+        
         return result;
 
     } else {

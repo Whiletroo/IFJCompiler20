@@ -1,7 +1,7 @@
 /**
  * @file gena.h
  * @author xpimen00
- * @date 9.12.2020
+ * @date 7.12.2020
  * @brief Header file for gena.c
 */
 
@@ -16,30 +16,29 @@
 extern DYN_STRING dyncode;
 
 bool codeGenStart();
+void codeGenClear();
 bool codeGenOpen();
-bool genCreaStartFream(char *label);
+bool genCreaStartFream(char *nameFrame);
 bool genCrePushFr();
 bool genCrePopFr();
-bool genCreDefVar(char *nameMod);
 bool proid(char *name1,char *name2,char *name3);
 bool genCreMove(char* name1,char *name2,tDataType type);
 bool genCreReturn();
 bool genCreateLabel(char *Label);
 bool genDestLabelEndJamp(char* Label);
 bool genCheckFrameDeep(int FramDeep);
+bool genCreClear();
 void genCodePrint();
-bool genCreDefVarFunk(char *name,char *value,tDataType type);
 bool genCheckArithm(tPrecRules rule, char *name1,char *name2,char *name3);
 bool genCheckTypeValue(tDataType type);
-bool genCreDefVar(char *nameMod);
+bool genCreDefVar(int FrameDeep,char *nameMod);
 bool geneCall(char *Label );
-bool genFunRead(char *nameValue,tDataType typeValue);
-bool genFunWrite(char *name);
-bool genCreJumpEQ(char *Label, char *var1, char *typeOfVar, char *var2, bool stak);
-bool genCreJumpNEQ(char *Label, char *var1, char *typeOfVar, char *var2, bool stak);
+bool genFunRead(char *nameValue,int FrameDeep,tDataType typeValue);
+bool genFunWrite(char *nameMod,int FrameDeep);
+bool genCreJumpEQ(char *Label, char *var1,int FrameDeep, char *typeOfVar, char *var2, bool stak);
+bool genCreJumpNEQ(char *Label, char *var1,int FrameDeep, char *typeOfVar, char *var2, bool stak);
 bool genExit(char *val);
 bool genBreak();
-bool genCheckArithmStack(tPrecRules rule, char *name1,char *name2,char *name3);
 bool genDpronr(char *valOfvar,tDataType type);
 bool int2Float(char *retval1,bool stak);
 bool int2Char(char *retval1,bool stak);
