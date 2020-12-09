@@ -139,7 +139,7 @@ bool genCreMove(char* name1,char *name2,tDataType type)
     ADD_CODE(" ");
     genCheckTypeValue(type);
     ADD_CODE("@");
-    ADD_CODE(name2);
+    ADD_INST(name2);
     return true;
 }
 
@@ -469,11 +469,13 @@ bool genFunWrite(char *name)
 bool genCreJumpEQ(char *Label)
 {
         ADD_CODE("DEFVAR ");
-        ADD_CODE("TF@n");
+        ADD_INST("TF@n");
         ADD_CODE("JUMPIFEQ ");
         ADD_CODE(Label);
-        ADD_CODE("TF@n");
-        ADD_CODE("bool@true");
+
+        ADD_CODE(" TF@n");
+        ADD_INST(" bool@true");
+
         return true;
 }
 
