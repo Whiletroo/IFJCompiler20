@@ -384,10 +384,45 @@ static int assign()
     int result;
     // <assign> → = Exp
     if (token.token_type == TOKEN_ASSIGN){
-        GET_TOKEN_AND_CHECK_RULE(expessions);
+        GET_TOKEN();
+        if (token.token_type == TOKEN_KEYWORD) {
+            switch (token.attribute.keyword) {
+                case KEYWORD_INT2FLOAT:
+                    symTableSearch(globalTable, "int2float");
+                    break;
+                case KEYWORD_FLOAT2INT:
+                    symTableSearch(globalTable, "float2int")
+                    break;
+                case KEYWORD_INPUTS:
+                    symTableSearch(globalTable, "inputs")
+                    break;
+                case KEYWORD_INPUTI:
+                    symTableSearch(globalTable, "inputi")
+                    break;
+                case KEYWORD_INPUTF:
+                    symTableSearch(globalTable, "inputf")
+                    break;
+                case KEYWORD_CHR:
+                    symTableSearch(globalTable, "chr")
+                    break;
+                case KEYWORD_ORD:
+                    symTableSearch(globalTable, "ord")
+                    break;
+                case KEYWORD_LEN:
+                    symTableSearch(globalTable, "len")
+                    break;
+                case KEYWORD_SUBSTR:
+                    symTableSearch(globalTable, "substr")
+                    break;
+                default:
+                    return SYNTAX_ERR;
+            }
+
+        }
+        CHECK_RULE(expessions);
     }
     // <assign> → ε
-    return OK;
+    return SYNTAX_ERR;
 }
 
 
@@ -411,6 +446,87 @@ static int func_call_next_arg()
     }
     // <func_call_next_arg> → ε
     return OK;
+
+}
+void init_builtin(){
+    TData *id;
+
+    //func inputs() (string, int)
+    symTableInsert(globalTable, "inputs");
+    id = symTableGetItem(globalTable, "inputs");
+    id->idType = function;
+    id->defined = true;
+    id->dataType[0] = STRING_TYPE;
+    id->dataType[1] = INT_TYPE;
+
+    //func inputi() (int, int)
+    symTableInsert(globalTable, "inputi");
+    id = symTableGetItem(globalTable, "inputi");
+    id->idType = function;
+    id->defined = true;
+    id->dataType[0] = INT_TYPE;
+    id->dataType[1] = INT_TYPE;
+
+    //func inputf() (float64, int)
+    symTableInsert(globalTable, "inputf");
+    id = symTableGetItem(globalTable, "inputf");
+    id->idType = function;
+    id->defined = true;
+    id->dataType[0] = FLOAT_TYPE;
+    id->dataType[1] = INT_TYPE;
+
+    //func int2float(i int) (float64)
+    symTableInsert(globalTable, "int2float");
+    id = symTableGetItem(globalTable, "int2float");
+    id->idType = function;
+    id->defined = true;
+    id->dataType[0] = FLOAT_TYPE;
+
+    //func float2int(f float64) (int)
+    symTableInsert(globalTable, "float2int");
+    id = symTableGetItem(globalTable, "float2int");
+    id->idType = function;
+    id->defined = true;
+    id->dataType[0] = INT_TYPE;
+
+    //func len(s string) (int)
+    symTableInsert(globalTable, "len");
+    id = symTableGetItem(globalTable, "len");
+    id->idType = function;
+    id->defined = true;
+    id->dataType[0] = INT_TYPE;
+
+    //func substr(s string, i int, n int) (string, int)
+    symTableInsert(globalTable, "substr");
+    id = symTableGetItem(globalTable, "substr");
+    id->idType = function;
+    id->defined = true;
+    id->dataType[0] = STRING_TYPE;
+    id->dataType[1] = INT_TYPE;
+
+    //func ord(s string, i int) (int, int)
+    symTableInsert(globalTable, "ord");
+    id = symTableGetItem(globalTable, "ord");
+    id->idType = function;
+    id->defined = true;
+    id->dataType[0] = INT_TYPE;
+    id->dataType[1] = INT_TYPE;
+
+    //func chr(i int) (string, int)
+    symTableInsert(globalTable, "chr");
+    id = symTableGetItem(globalTable, "chr");
+    id->idType = function;
+    id->defined = true;
+    id->dataType[0] = STRING_TYPE;
+    id->dataType[1] = INT_TYPE;
+
+    //func print
+    symTableInsert(globalTable, "print");
+    id = symTableGetItem(globalTable, "print");
+    id->idType = function;
+    id->defined = true;
+    id->dataType[0] = NIL_TYPE;
+
 }
 
 int parse() {
