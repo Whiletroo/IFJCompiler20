@@ -21,6 +21,7 @@ bool genCreaStartFrame(char *label);
 bool genCreDefRetVar(tDataType type);
 bool genCrePushFr();
 bool genCrePopFr();
+bool genCreFr();
 bool genCreDefVar(char *nameMod);
 bool proid(char *name1,char *name2,char *name3);
 bool genCreMove(char* name1,char *name2,tDataType type);
