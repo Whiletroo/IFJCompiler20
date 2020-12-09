@@ -87,8 +87,6 @@ int symTableInitData(TData *data, char *key) {
 	data->defined = false;
 	data->string_val = NULL;
 	data->localTable = NULL;
-	data->inCount = 0;
-	data->outCount = 0;
 
 	return OK;
 
@@ -202,6 +200,25 @@ int symTableAppendParams(TData *data, char *id, tDataType dataType) {
 	return OK;
 
 }
+
+
+int symTableAppendRetTyps(TData *data, tDataType dataType) {
+
+	// check if is place in array of type ( return types )
+	if (data->dataType[MAX_RETURN_TYPES - 1] != UNDEFINED_TYPE) {
+		return SEM_ERR_FUNC_CALL_RTN;
+	}
+
+	// insert a return type
+	for (int i = 0; i < MAX_RETURN_TYPES; i++) {
+		if (data->funcParams[i] == UNDEFINED_TYPE) {
+			data->funcParams[i] = dataType;
+		}
+	}
+
+	return OK;
+}
+
 
 
 int symTabDeleteItem(TSymTable *symtab, char *key) {
