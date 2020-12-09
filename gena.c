@@ -94,7 +94,8 @@ bool genCrePopFr()
  */
 bool genCreReturn()
 {
-    ADD_INST("RETURN");
+    ADD_CODE("RETURN");
+    ADD_INST("\n");
 	return true;
 }
 
@@ -185,19 +186,19 @@ bool genCheckTypeValue(tDataType type)
 	switch (type)
 	{
 		case INT_TYPE:
-			ADD_CODE(" int");
+			ADD_CODE("int");
 			break;
 		case FLOAT_TYPE:
-			ADD_CODE(" float64");
+			ADD_CODE("float64");
 			break;
 		case STRING_TYPE:
-			ADD_CODE(" string");
+			ADD_CODE("string");
 			break;
 		case NIL_TYPE:
-			 ADD_CODE(" nil");
+			 ADD_CODE("nil");
 			 break;
 		case BOOLEAN_TYPE:
-			 ADD_CODE(" bool");
+			 ADD_CODE("bool");
 			 break;
         default:
             ADD_CODE(" LF");
@@ -370,8 +371,8 @@ bool genCreDefVar(char *nameMod)
 bool genCreDefRetVar(tDataType type)
 {
     ADD_CODE("DEFVAR LF@retval");
-	ADD_CODE("MOVE ");
-	ADD_CODE(LF@retval);
+	ADD_INST("MOVE ");
+	ADD_CODE("LF@retval ");
 	genCheckTypeValue(type);
 	ADD_CODE("@");
 	genCheckTypeValue(type);
