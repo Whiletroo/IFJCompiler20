@@ -399,6 +399,23 @@ bool genCreDefVarFunk(char *name,char *value,tDataType type)
     return true;
 }
 
+
+
+/**
+ * Generate deklaration of variable
+ *
+ *
+ * @return True if it was successful, false otherwise.
+ */
+bool genCreFr()
+{
+    ADD_INST("CREATEFRAME");
+    return true;
+}
+
+
+
+
 /**
  * Generate CALL command
  *
