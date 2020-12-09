@@ -185,6 +185,51 @@ int processIdentifier(DYN_STRING *str, tToken *token)
         token->attribute.keyword = KEYWORD_PRINT;
         token->token_type = TOKEN_KEYWORD;
     }
+    else if (!dynamicStrCompareConstString(str, "inputs"))
+    {
+        token->attribute.keyword = KEYWORD_INPUTS;
+        token->token_type = TOKEN_KEYWORD;
+    }
+    else if (!dynamicStrCompareConstString(str, "inputi"))
+    {
+        token->attribute.keyword = KEYWORD_INPUTI;
+        token->token_type = TOKEN_KEYWORD;
+    }
+    else if (!dynamicStrCompareConstString(str, "inputf"))
+    {
+        token->attribute.keyword = KEYWORD_INPUTF;
+        token->token_type = TOKEN_KEYWORD;
+    }
+    else if (!dynamicStrCompareConstString(str, "int2float"))
+    {
+        token->attribute.keyword = KEYWORD_INT2FLOAT;
+        token->token_type = TOKEN_KEYWORD;
+    }
+    else if (!dynamicStrCompareConstString(str, "float2int"))
+    {
+        token->attribute.keyword = KEYWORD_FLOAT2INT;
+        token->token_type = TOKEN_KEYWORD;
+    }
+    else if (!dynamicStrCompareConstString(str, "len"))
+    {
+        token->attribute.keyword = KEYWORD_LEN;
+        token->token_type = TOKEN_KEYWORD;
+    }
+    else if (!dynamicStrCompareConstString(str, "substr"))
+    {
+        token->attribute.keyword = KEYWORD_SUBSTR;
+        token->token_type = TOKEN_KEYWORD;
+    }
+    else if (!dynamicStrCompareConstString(str, "ord"))
+    {
+        token->attribute.keyword = KEYWORD_ORD;
+        token->token_type = TOKEN_KEYWORD;
+    }
+    else if (!dynamicStrCompareConstString(str, "chr"))
+    {
+        token->attribute.keyword = KEYWORD_CHR;
+        token->token_type = TOKEN_KEYWORD;
+    }
 
         /* If the dynamic line does not contain keywords, then the word located in it is an identifier */
     else
