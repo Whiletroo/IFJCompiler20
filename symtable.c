@@ -166,7 +166,34 @@ TData *symTableGetItem(TSymTable *symtab, char *key) {
 }
 
 
-int symTableAppendParams(TData *data, char *id, tDataType dataType) {
+
+int symTableAppendParamName(TData *data, char *id) {
+
+	// insert a new identifiers to symbol table of function (local symbol table)
+	if ( data->localTable == NULL ) {
+		data->localTable = symTableInit();
+		CHECK_PTR(data->localTable);
+	}
+
+	symTableInsert(data->localTable, id);
+	TData *tmpptr = symTableGetItem(data->localTable, id);
+	CHECK_PTR(tmpptr);
+
+	tmpptr->defined = false;
+
+	tmpptr->identifier = malloc(sizeof(char) * strlen(id) + 1);
+	CHECK_PTR(tmpptr->identifier);
+	strcpy(tmpptr->identifier, id);
+
+	tmpptr->idType = variable;
+	tmpptr->localTable = NULL;
+	return OK;
+
+}
+
+
+
+int symTableAppendParamType(TData *data, char *id, tDataType dataType) {
 
 	// check if is place in array of parameters types
 	if (data->funcParams[MAX_PARAMETERS - 1] != UNDEFINED_TYPE) {
@@ -180,31 +207,19 @@ int symTableAppendParams(TData *data, char *id, tDataType dataType) {
 		}
 	}
 
-	// insert a new identifiers to symbol table of function (local symbol table)
-	if ( data->localTable == NULL ) {
-		data->localTable = symTableInit();
-		CHECK_PTR(data->localTable);
-	}
-
-	symTableInsert(data->localTable, id);
+	// get pointer to TData of func parametr in local table
 	TData *tmpptr = symTableGetItem(data->localTable, id);
 	CHECK_PTR(tmpptr);
 
+	// set type of data
 	tmpptr->dataType[0] = dataType;
-	tmpptr->defined = false;
 
-	tmpptr->identifier = malloc(sizeof(char) * strlen(id));
-	CHECK_PTR(tmpptr->identifier);
-	strcpy(tmpptr->identifier, id);
-
-	tmpptr->idType = variable;
-	tmpptr->localTable = NULL;
 	return OK;
-
 }
 
 
-int symTableAppendRetTyps(TData *data, tDataType dataType) {
+
+int symTableAppendRetType(TData *data, tDataType dataType) {
 
 	// check if is place in array of type ( return types )
 	if (data->dataType[MAX_RETURN_TYPES - 1] != UNDEFINED_TYPE) {
@@ -306,30 +321,30 @@ void printData(TData *data) {
 	printf("\tIdentifier  	:\t%s\n",data->identifier);
 
 	// DATA TYPES
-	printf("\tType of DATA  :\t");
+	printf("\tType of DATA    :\t");
 	for (int i = 0; data->dataType[i] != UNDEFINED_TYPE; i++) {
 		switch(data->dataType[i]) {
 			case INT_TYPE:
-				printf("INT");
+				printf("INT ");
 				break;
 			case FLOAT_TYPE:
-				printf("FLOAT");
+				printf("FLOAT ");
 				break;
 			case STRING_TYPE:
-				printf("STRING");
+				printf("STRING ");
 				break;
 			case BOOLEAN_TYPE:
-				printf("BOOLEAN");
+				printf("BOOLEAN" );
 				break;
 			default:
-				printf("NIL\n");
+				printf("NIL ");
 				break;
 		}
 	}
 	P("");
 
 	// RETURN TYPES
-		printf("\tReturn Types  :\t");
+		printf("\tReturn Types    :\t");
 	for (int i = 0; data->dataType[i] != UNDEFINED_TYPE; i++) {
 		switch(data->funcParams[i]) {
 			case INT_TYPE:
