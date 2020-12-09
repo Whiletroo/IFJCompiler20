@@ -11,9 +11,8 @@
 #include <stdbool.h>
 
 
-#define MAX_ST_SIZE 10 //size of symbol table
+#define MAX_ST_SIZE 1000 //size of symbol table
 #define MAX_RETURN_TYPES 10
-#define MAX_PARAMETERS 10
 
 typedef enum {UNDEF, variable, function} TIdType;
 
@@ -22,16 +21,10 @@ typedef enum {UNDEFINED_TYPE, INT_TYPE, FLOAT_TYPE, STRING_TYPE, BOOLEAN_TYPE,NI
 
 typedef struct {
 
-	char *identifier;							// name of the sumbol
-	TIdType idType;								// type of id: variable, function, label
+	char *identifier;		// name of the sumbol
+    tDataType dataType[MAX_RETURN_TYPES];     // type of data if it is variable
+	TIdType idType;			// type of id: variable, function, label
 	bool defined;
-
-    tDataType dataType[MAX_RETURN_TYPES];     	// type of data if it is variable, array of returns type if it is function
-	tDataType funcParams[MAX_PARAMETERS];		// array of types for function parameters
-	
-	struct symTable *localTable;
-
-	// maybe uneeded
 	union {
 		int int_val;
 		double double_val;
@@ -48,7 +41,7 @@ typedef struct symtabitem {
 } TSymbolItem;
 
 
-typedef struct symTable {
+typedef struct symTable{
 	TSymbolItem *items[MAX_ST_SIZE];
 } TSymTable;
 
@@ -59,7 +52,7 @@ typedef struct symTable {
  * @param key string to be hashed
  * @return hash code
 */
-unsigned int hashf(const char *key);
+int hashf(const char *key);
 
 
 /**
@@ -69,16 +62,6 @@ unsigned int hashf(const char *key);
  * @return pointer to intialized symtable or NULL if error.
 */
 TSymTable *symTableInit();
-
-
-/**
- * Initialize a structue TData
- * 
- * @param key pointer to char, name of identifier
- * @param painter to TData
- * @return exit code
-*/
-int symTableInitData(TData *data, char *key);
 
 
 /**
@@ -120,41 +103,6 @@ int symTabDeleteItem(TSymTable *symtab, char *key);
  * @return TData* pointer to data. NULL if symbol doesn't exist.
 */
 TData *symTableGetItem(TSymTable *symtab, char *key);
-
-
-
-/**
- * Appends function parametr identifier NAME to local table of function.
- * 
- * @param data pointer to TData structure of function.
- * @param id name of parametr.
- * @return exid code.
-*/
-int symTableAppendParamName(TData *data, char *id);
-
-
-/**
- * Appends function parametr DATATYPE to array of parameters. 
- * And set a dataType field of parametr to dataType
- * 
- * @param data pointer to TData structure of function.
- * @param id name of parametr.
- * @param dataType data type of parametr.
- * @return exid code
-*/
-int symTableAppendParamType(TData *data, char *id, tDataType dataType);
-
-
-/**
- * Apends return types to dataType array. Use only for 
- * funtions identifiers!
- * 
- * @param data pointer to TData structure of function.
- * @param dataType data type of parametr.
- * @return exid code
-*/
-int symTableAppendRetType(TData *data, tDataType dataType);
-
 
 /**
  * Fully destroy a symbol table. Free allocated memory

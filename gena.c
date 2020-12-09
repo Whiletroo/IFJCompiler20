@@ -1,7 +1,7 @@
 /**
  * @file gena.c
  * @author xpimen00
- * @date 9.12.2020
+ * @date 7.12.2020
  * @brief The generator
 */
 
@@ -15,7 +15,6 @@
 
 
 #define ADD_CODE(_inst) if(!dynamicStrAddStr(&dyncode, (_inst))) return false; \
-
 
 DYN_STRING dyncode;
 
@@ -43,8 +42,8 @@ bool codeGenOpen()
  */
 void genCodePrint(){
 
-    if (dyncode.length>1){printf("%s",dyncode.str);}
-    dynamicStrFree(&dyncode);
+    printf("%s",dyncode.str);
+    codeGenClear(&dyncode);
 }
 
 /**
@@ -53,10 +52,9 @@ void genCodePrint(){
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCreaStartFrame(char *label)
+bool genCreaStartFrame(char *nameFrame)
 {
-	ADD_CODE("LABEL ");
-	ADD_INST(label);
+	ADD_CODE("LABEL "); ADD_INST(nameFrame);
 	ADD_INST("CREATEFRAME");
 
 	return true;
@@ -108,8 +106,7 @@ bool genCreReturn()
  */
 bool genCreateLabel(char *Label)
 {
-    ADD_CODE("LABEL ");
-    ADD_INST(Label);
+    ADD_CODE("LABEL ");ADD_INST(Label);
     return true;
 }
 
@@ -121,8 +118,7 @@ bool genCreateLabel(char *Label)
  */
 bool genDestLabelEndJamp(char* Label)
 {
-    ADD_CODE("JUMP ");
-    ADD_INST(Label);
+    ADD_CODE("JUMP ");ADD_INST(Label);
     return true;
 }
 
@@ -134,7 +130,8 @@ bool genDestLabelEndJamp(char* Label)
  */
 bool genCreMove(char* name1,char *name2,tDataType type)
 {
-    ADD_CODE("MOVE LF@");
+    ADD_CODE("MOVE ");
+    ADD_CODE("LF@");
     ADD_CODE(name1);
     ADD_CODE(" ");
     genCheckTypeValue(type);
@@ -165,14 +162,19 @@ bool genCheckFrameDeep(int FrameDeep)
 {
       switch (FrameDeep)
 	{
+		case 1:
+			ADD_CODE(" GF@");
+			break;
 		case 2:
 			ADD_CODE(" LF@");
 			break;
 		case 3:
 			ADD_CODE(" TF@");
 			break;
+		default:
+			return false;
 	}
-    return false;
+    return true;
 }
 
 /**
@@ -187,24 +189,25 @@ bool genCheckTypeValue(tDataType type)
 	{
 		case INT_TYPE:
 			ADD_CODE(" int");
+
 			break;
+
 		case FLOAT_TYPE:
 			ADD_CODE(" float64");
+
 			break;
+
 		case STRING_TYPE:
 			ADD_CODE(" string");
+
 			break;
 		case NIL_TYPE:
 			 ADD_CODE(" nil");
-			 break;
-		case BOOLEAN_TYPE:
-			 ADD_CODE(" bool");
-			 break;
-        default:
-            ADD_CODE(" LF");
-			break;
+		default:
+		    ADD_CODE("LF");
+			return false;
 	}
-	return false;
+	return true;
 }
 
  /**
@@ -267,7 +270,7 @@ bool genCheckArithm(tPrecRules rule, char *name1,char *name2,char *name3)
                 break;
             case E_EQ_E:
                 ADD_CODE("EQ ");
-                proid(name1,name2,name3);
+                proid(name1,name2,name3);;
                 break;
              case E_NEQ_E:
                 ADD_CODE("NEQ ");
@@ -282,83 +285,10 @@ bool genCheckArithm(tPrecRules rule, char *name1,char *name2,char *name3)
                 proid(name1,name2,name3);
                 break;
             default:
-                return false;
-                break;
+            return  printf("[ERROR] (genArithm) frame input");
+            break;
     }
 
-    return false;
-}
-
-bool genCheckArithmStack(tPrecRules rule, char *name1,char *name2,char *name3){
-
-           switch (rule)
-            {
-            case E_PLUS_E:
-                ADD_CODE("ADDS ");
-
-                break;
-            case E_MINUS_E:
-                ADD_CODE("SUBS ");
-
-                break;
-            case E_MUL_E:
-                ADD_CODE("MULS ");
-
-                break;
-            case E_DIV_E:
-                ADD_CODE("DIVS ");
-
-                 break;
-            case E_IDIV_E:
-                ADD_CODE("IDIV ");
-                ADD_INST("POPS GF@%tmp_op1");
-                ADD_INST("INT2FLOATS");
-                ADD_INST("PUSHS GF@%tmp_op1");
-                ADD_INST("INT2FLOATS");
-                ADD_INST("DIVS");
-                ADD_INST("FLOAT2INTS");
-                break;
-            case E_HTN_E:
-                ADD_CODE("GTS ");
-
-                break;
-            case E_LTN_E:
-                ADD_CODE("LTS ");
-
-                break;
-            case E_EQ_E:
-                ADD_CODE("EQS ");
-
-                break;
-             case E_NEQ_E:
-                ADD_CODE("NEQS ");
-
-                break;
-            case E_LEQ_E:
-                ADD_CODE("LEQS ");
-
-                break;
-            case E_HEQ_E:
-                ADD_CODE("HEQS ");
-                break;
-            default:
-                return false;
-                break;
-    }
-    return false;
-}
-
-
- /**
- * Generate deklaration of variable
- *
- *
- * @return True if it was successful, false otherwise.
- */
-bool genCreDefVar(char *nameMod)
-{
-    ADD_CODE("DEFVAR LF@");
-	ADD_INST(nameMod);
     return true;
 }
 
@@ -368,15 +298,11 @@ bool genCreDefVar(char *nameMod)
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCreDefVarFunk(char *name,char *value,tDataType type)
+bool genCreDefVar(int FrameDeep,char *nameMod)
 {
-    ADD_CODE("DEFVAR TF@");
-	ADD_INST(name);
-	ADD_CODE("MOVE TF@");
-	ADD_INST(name);
-	genCheckTypeValue(type);
-	ADD_CODE("@");
-	ADD_INST(value);
+    ADD_CODE("DEFVAR ");
+    genCheckFrameDeep(FrameDeep);
+	ADD_INST(nameMod);
     return true;
 }
 
@@ -398,10 +324,10 @@ bool geneCall(char *Label )
  *
  * @return True if it was successful, false otherwise.
  */
-bool genFunRead(char *nameValue,tDataType typeValue)
+bool genFunRead(char *nameValue,int FrameDeep,tDataType typeValue)
 {
     ADD_CODE("READ ");
-    ADD_CODE("LF@");
+    genCheckFrameDeep(FrameDeep);
     ADD_CODE(nameValue);
     ADD_CODE(" ");
     genCheckTypeValue(typeValue);
@@ -415,11 +341,11 @@ bool genFunRead(char *nameValue,tDataType typeValue)
  *
  * @return True if it was successful, false otherwise.
  */
-bool genFunWrite(char *name)
+bool genFunWrite(char *nameMod,int FrameDeep)
 {
     ADD_CODE("WRITE ");
-    ADD_CODE("LF@");
-    ADD_INST(name);
+    genCheckFrameDeep(FrameDeep);
+    ADD_INST(nameMod);
     return true;
 }
 
@@ -429,13 +355,13 @@ bool genFunWrite(char *name)
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCreJumpEQ(char *Label, char *var1, char *typeOfVar, char *var2, bool stak)
+bool genCreJumpEQ(char *Label, char *var1,int FrameDeep, char *typeOfVar, char *var2, bool stak)
 {
     if (stak)
     {
         ADD_CODE("JUMPIFEQS ");
             ADD_CODE(Label);
-            ADD_CODE(" LF@");
+            genCheckFrameDeep(FrameDeep);
             ADD_CODE(var1);
             ADD_CODE(typeOfVar);
             ADD_INST(var2);
@@ -445,11 +371,9 @@ bool genCreJumpEQ(char *Label, char *var1, char *typeOfVar, char *var2, bool sta
     {
         ADD_CODE("JUMPIFEQ ");
         ADD_CODE(Label);
-        ADD_CODE(" LF@");
+        genCheckFrameDeep(FrameDeep);
         ADD_CODE(var1);
-        ADD_CODE(" ");
         ADD_CODE(typeOfVar);
-        ADD_CODE("@");
         ADD_INST(var2);
         return true;
     }
@@ -461,11 +385,12 @@ bool genCreJumpEQ(char *Label, char *var1, char *typeOfVar, char *var2, bool sta
  *
  * @return True if it was successful, false otherwise.
  */
-bool genCreJumpNEQ(char *Label, char *var1, char *typeOfVar, char *var2, bool stak)
+bool genCreJumpNEQ(char *Label, char *var1,int FrameDeep, char *typeOfVar, char *var2, bool stak)
 {
     if (stak){
+            ADD_CODE("JUMPIFEQS ");
             ADD_CODE(Label);
-            ADD_CODE(" LF@");
+            genCheckFrameDeep(FrameDeep);
             ADD_CODE(var1);
             ADD_CODE(typeOfVar);
             ADD_INST(var2);
@@ -475,11 +400,9 @@ bool genCreJumpNEQ(char *Label, char *var1, char *typeOfVar, char *var2, bool st
     {
         ADD_CODE("JUMPIFEQ ");
         ADD_CODE(Label);
-        ADD_CODE(" LF@");
+        genCheckFrameDeep(FrameDeep);
         ADD_CODE(var1);
-        ADD_CODE(" ");
         ADD_CODE(typeOfVar);
-        ADD_CODE("@");
         ADD_INST(var2);
         return true;
     }
@@ -620,6 +543,7 @@ bool string2Int(char *retval,bool stak)
         ADD_CODE(retval);
         ADD_CODE(" string@");
         ADD_INST(retval);
+        return true;
        return true;
     }
     return false;
@@ -713,3 +637,9 @@ bool codeGenStart()
 	if (!dynamicStrInit(&dyncode)) return false;
 	return true;
 }
+
+void codeGenClear()
+{
+	dynamicStrFree(&dyncode);
+}
+
