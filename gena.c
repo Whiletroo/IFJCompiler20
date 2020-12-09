@@ -44,7 +44,7 @@ bool codeGenOpen()
 void genCodePrint(){
 
     if (dyncode.length>1){printf("%s",dyncode.str);}
-    dynamicStrFree(&dyncode);
+
 }
 
 /**
