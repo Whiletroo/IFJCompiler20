@@ -27,6 +27,9 @@ const char precedence_table[7][7] = {
 /*  $  */ {'<', '<', '<', '<', '<', '<', ' '}
 };
 
+bool emptyR1 = true;
+bool emptyR2 = true;
+bool emptyR3 = true;
 
 tPrecTabIndex getPrecTabIndex(tPrecTabItem precItem){
     switch (precItem) {
@@ -46,7 +49,7 @@ tPrecTabIndex getPrecTabIndex(tPrecTabItem precItem){
             return I_LEFT_BRACKET;
             break;
         case RIGHT_BRACKET:
-            return RIGHT_BRACKET;
+            return I_RIGHT_BRACKET;
             break;
         default: // DOLLAR
             return I_DOLLAR;
@@ -147,25 +150,53 @@ tPrecRules getRule(){
             case FLOAT64_NUMBER:
             case STRING:
                 return E_OPERAND;
-                break;
-        
             default:
                 return NOT_E_RULE;
-                break;
         }
 
     } else if (precStack->top->next->next->next->precItem == REDUCE) {
        // E -> (E) 
-       if (precStack->top->precItem == RIGHT_BRACKET && precStack->top->next->precItem == NON_TERM && precStack->top->next->next->precItem == LEFT_BRACKET) {
+        if (precStack->top->precItem == RIGHT_BRACKET && precStack->top->next->precItem == NON_TERM && precStack->top->next->next->precItem == LEFT_BRACKET) {
            return LBRCT_E_RBRCT;
 
         } else if (precStack->top->precItem == NON_TERM && precStack->top->next->next->precItem == NON_TERM) {
             // rules : E -> E + E  ...  E -> E != E
-            if(precStack->top->next->precItem > 4 && precStack->top->next->precItem < 15) {
-                // E -> E idiv E
-                if (precStack->top->next->precItem == DIV && precStack->top->dataType == INT_TYPE && precStack->top->next->next->dataType == INT_TYPE) {
-                    return E_IDIV_E;
+            if(precStack->top->next->precItem > 5 && precStack->top->next->precItem < 16) {
+            
+                switch (precStack->top->next->precItem)
+                {
+                case ADD:
+                    return E_PLUS_E;
+                case SUB:
+                    return E_MINUS_E;
+                case MUL:
+                    return E_MUL_E;
+                case DIV:
+                    // E -> E idiv E
+                    if (precStack->top->dataType == INT_TYPE && precStack->top->next->next->dataType == INT_TYPE) {
+                        return E_IDIV_E;
+                    }
+                    return E_DIV_E;
+                case EQ:
+                    return E_EQ_E;
+                case HEQ:
+                    return E_HEQ_E;
+                case HTN:
+                    return E_HTN_E;
+                case LEQ:
+                    return E_LEQ_E;
+                case LTN:
+                    return E_LTN_E;
+                case NEQ:
+                    return E_LTN_E;
+                default:
+                    return NOT_E_RULE;
+                    break;
                 }
+                    // E -> E idiv E
+                    if (precStack->top->next->precItem == DIV && precStack->top->dataType == INT_TYPE && precStack->top->next->next->dataType == INT_TYPE) {
+                        return E_IDIV_E;
+                    }
                 return precStack->top->next->precItem - 2;
             } else {
                 return NOT_E_RULE;
@@ -227,20 +258,16 @@ int sematic(tPrecRules rule, tDataType *expType) {
                     }
                 }
                 return SEM_ERR_TYPE_COMPAT;
+            } else if (precStack->top->dataType != precStack->top->next->next->dataType) {
+                return SEM_ERR_TYPE_COMPAT;
             }
 
             // int +- int
             if ( precStack->top->next->next->dataType == INT_TYPE && precStack->top->dataType == INT_TYPE ) {
                 *expType = INT_TYPE;
                 break;
-            // float64 +- int
-            } else if ( precStack->top->next->next->dataType == FLOAT_TYPE && precStack->top->dataType == INT_TYPE ) {
-
-                break;
-            // int +- float64
-            } else if ( precStack->top->next->next->dataType == INT_TYPE && precStack->top->dataType == FLOAT_TYPE ) {
-                break;
             }
+
             break;
         
         case E_DIV_E:
@@ -267,6 +294,7 @@ int sematic(tPrecRules rule, tDataType *expType) {
         default:
             break;
     }
+
     return OK;
 
 }
@@ -291,6 +319,10 @@ int reduce() {
     if (rule < 3) {
         i = 2;
     } else {
+        genCheckArithm(rule, "R1","R2","R3");
+        emptyR2 = true;
+        emptyR3 = true;
+        emptyR1 = false;
         i = 4;
     }
 
@@ -326,9 +358,9 @@ int expessions (){
     }
 
     // 3 registers for processing expression
-    //genCreDefVar(2, "R1");
-    //genCreDefVar(2, "R2");
-    //genCreDefVar(2, "R3");
+    genCreDefVar("R1");
+    genCreDefVar("R2");
+    genCreDefVar("R3");
 
     tPrecTabItem topTerm;   // top terminal in precedence stack
     tPrecTabItem inTerm;    // terminal on input
@@ -336,11 +368,22 @@ int expessions (){
     while(true) {
         
         // init both terminals
-        if (token.token_type == TOKEN_IDENTIFIER) {
-            
-        }
+
+
         topTerm = topTermPS()->precItem;
         inTerm = tkn2precItem();
+
+        char *name2 = malloc(100);
+        if (token.token_type == TOKEN_IDENTIFIER || token.token_type == TOKEN_STRING) {
+            char *name2 = malloc(100);
+            memcpy(name2, token.attribute.value_string->str, strlen(token.attribute.value_string->str) + 1);
+        } else if (token.token_type == TOKEN_INT) {
+            char *name2 = malloc(100);
+            sprintf(name2 , "%d",token.attribute.value_int);
+        } else if (token.token_type == TOKEN_FLOAT64) {
+            char *name2 = malloc(100);
+            sprintf(name2 , "%lf", token.attribute.value_double);
+        }
 
         switch (precedence( getPrecTabIndex(topTerm), getPrecTabIndex(inTerm) )) {
             case '=':
@@ -353,10 +396,24 @@ int expessions (){
             case '<':
                 // 1. insert reduce item after top terminal
                 // 2. push new terminal
+                // 4. gen move to register
                 // 3. get next terminal
+    
                 insertReducePS();
                 pushPS(tkn2precItem(), tokenType2DataType());
+
+                if (emptyR1 == true) {
+                    tDataType tmpdatatype = tokenType2DataType();
+                    genCreMove("R2", name2, tmpdatatype);
+                    emptyR2 = false;
+                } else if (emptyR2 == true) {
+                    genCreMove("R3", name2, tokenType2DataType());
+                    emptyR3 = false;
+                }
+                free(name2);
+
                 getToken(&token);
+
                 break;
 
             case '>':
@@ -383,6 +440,8 @@ int expessions (){
                 break;
         }
     }
+
+    genCreMove(tmparg->identifier, "R1", tmparg->dataType[0]);
 
     tmparg->defined = true;
 
