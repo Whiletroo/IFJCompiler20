@@ -391,28 +391,28 @@ static int assign()
                     symTableSearch(globalTable, "int2float");
                     break;
                 case KEYWORD_FLOAT2INT:
-                    symTableSearch(globalTable, "float2int")
+                    symTableSearch(globalTable, "float2int");
                     break;
                 case KEYWORD_INPUTS:
-                    symTableSearch(globalTable, "inputs")
+                    symTableSearch(globalTable, "inputs");
                     break;
                 case KEYWORD_INPUTI:
-                    symTableSearch(globalTable, "inputi")
+                    symTableSearch(globalTable, "inputi");
                     break;
                 case KEYWORD_INPUTF:
-                    symTableSearch(globalTable, "inputf")
+                    symTableSearch(globalTable, "inputf");
                     break;
                 case KEYWORD_CHR:
-                    symTableSearch(globalTable, "chr")
+                    symTableSearch(globalTable, "chr");
                     break;
                 case KEYWORD_ORD:
-                    symTableSearch(globalTable, "ord")
+                    symTableSearch(globalTable, "ord");
                     break;
                 case KEYWORD_LEN:
-                    symTableSearch(globalTable, "len")
+                    symTableSearch(globalTable, "len");
                     break;
                 case KEYWORD_SUBSTR:
-                    symTableSearch(globalTable, "substr")
+                    symTableSearch(globalTable, "substr");
                     break;
                 default:
                     return SYNTAX_ERR;
