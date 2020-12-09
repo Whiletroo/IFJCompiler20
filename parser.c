@@ -1,7 +1,7 @@
 /**
 * @file parser.c
 * @author xproko40
-* @date 25.11.2020
+* @date 09.12.2020
 * @brief The parser
 */
 
@@ -28,7 +28,7 @@ TData *currentId;
                                                                   \
         return SYNTAX_ERR;                                           \
     }                                                                \
-    fprintf (stderr, "%s\n", getTokenName(token.token_type));
+    //fprintf (stderr, "%s\n", getTokenName(token.token_type));
 
 #define CHECK_RULE(rule)                          \
     if (( result = rule() )) return result
@@ -84,6 +84,7 @@ static int start(){
         GET_AND_CHECK_TOKEN(TOKEN_IDENTIFIER);
         GET_AND_CHECK_TOKEN(TOKEN_EOL);
         GET_TOKEN();
+        codeGenOpen();
         return prog();
     } else if (token.token_type == TOKEN_EOL) {
         GET_TOKEN_AND_CHECK_RULE(start);
@@ -94,7 +95,6 @@ static int start(){
 static int prog()
 {
     int result;
-
 
     // <prog> → func id (<func_args>) <func_ret_types> {<st_list>}  <prog>
     if (token.token_type == TOKEN_KEYWORD && token.attribute.keyword == KEYWORD_FUNC) {
@@ -108,6 +108,9 @@ static int prog()
             currentId->idType = function;
             currentId->defined = false;
         }
+        // generate function frame
+        genCreaStartFrame(token.attribute.value_string->str);
+
 
         GET_AND_CHECK_TOKEN(TOKEN_LEFT_BRACKET);
         GET_TOKEN_AND_CHECK_RULE(func_args);
@@ -117,7 +120,7 @@ static int prog()
            CHECK_RULE(func_ret_types);
         }
         CHECK_TOKEN(TOKEN_LCURLY_BRACKET);
-        GET_AND_CHECK_TOKEN(TOKEN_EOL);  //<<<TODO
+        GET_AND_CHECK_TOKEN(TOKEN_EOL);
         GET_TOKEN_AND_CHECK_RULE(st_list);
         CHECK_TOKEN(TOKEN_RCURLY_BRACKET);
 
@@ -165,7 +168,7 @@ static int func_args()
     if (token.token_type == TOKEN_IDENTIFIER) {
 
         /*
-        // add variable to local symbol table
+
         if ((symTableSearch(localTable, token.attribute.value_string->str)) == false)
         {
                 symTableInsert(localTable, token.attribute.value_string->str);
@@ -176,8 +179,11 @@ static int func_args()
         symTableAppendParams(currentId, token.attribute.value_string->str);
         tmparg = symTableGetItem(currentId->localTable, token.attribute.value_string->str);
         */
+        // add variable to local symbol table
         symTableAppendParamName(currentId, token.attribute.value_string->str);
         tmparg = symTableGetItem(currentId->localTable, token.attribute.value_string->str);
+        // generate function param
+        genCreDefVar(token.attribute.value_string->str);
 
         GET_TOKEN_AND_CHECK_RULE(type);
         GET_TOKEN_AND_CHECK_RULE(func_next_arg);
@@ -195,7 +201,7 @@ static int func_next_arg()
     if (token.token_type == TOKEN_COMMA) {
         GET_AND_CHECK_TOKEN(TOKEN_IDENTIFIER);
         /*
-        // add variable to local symbol table
+
         if ((symTableSearch(localTable, token.attribute.value_string->str)) == false)
         {
             symTableInsert(localTable, token.attribute.value_string->str);
@@ -203,8 +209,12 @@ static int func_next_arg()
             tmparg ->idType = variable;
         }
          */
+        // add variable to local symbol table
         symTableAppendParamName(currentId, token.attribute.value_string->str);
         tmparg = symTableGetItem(currentId->localTable, token.attribute.value_string->str);
+
+        // generate function param
+        genCreDefVar(token.attribute.value_string->str);
 
         GET_TOKEN_AND_CHECK_RULE(type);
         GET_TOKEN_AND_CHECK_RULE(func_next_arg);
@@ -233,12 +243,15 @@ static int ret_type()
         switch (token.attribute.keyword) {
             case KEYWORD_INT:
                 symTableAppendRetType(currentId, INT_TYPE);
+                genCreDefRetVar(INT_TYPE);
                 break;
             case KEYWORD_FLOAT64:
                 symTableAppendRetType(currentId, FLOAT_TYPE);
+                genCreDefRetVar(FLOAT_TYPE);
                 break;
             case KEYWORD_STRING:
                 symTableAppendRetType(currentId, STRING_TYPE);
+                genCreDefRetVar(STRING_TYPE);
                 break;
             default:
                 return SYNTAX_ERR;
@@ -296,10 +309,15 @@ static int state()
         currentId = symTableGetItem(globalTable, "if");
 
         GET_TOKEN_AND_CHECK_RULE(expessions);
+        // code generation
+        genCreJumpEQ("if");
+
         GET_AND_CHECK_TOKEN(TOKEN_EOL);
         GET_TOKEN_AND_CHECK_RULE(state);
         GET_AND_CHECK_TOKEN(TOKEN_RCURLY_BRACKET);
         GET_TOKEN_AND_CHECK_RULE(else_state);
+        // generate "if" label
+        genCreateLabel("if");
         return OK;
     }
     // <state> → for id <var_def> ; E ; id <assign> <state>
@@ -331,6 +349,7 @@ static int state()
     // <state> → return E
     else if (token.token_type == TOKEN_KEYWORD && token.attribute.keyword == KEYWORD_RETURN){
         GET_TOKEN_AND_CHECK_RULE(expessions);
+        genCreReturn();
         return OK;
     }
 
@@ -450,148 +469,12 @@ static int assign()
     int result;
     // <assign> → = Exp
     if (token.token_type == TOKEN_ASSIGN) {
-        /*
-         GET_TOKEN();
-         if (token.token_type == TOKEN_KEYWORD) {
-             switch (token.attribute.keyword) {
-                 case KEYWORD_INT2FLOAT:
-                     symTableSearch(globalTable, "int2float");
-                     break;
-                 case KEYWORD_FLOAT2INT:
-                     symTableSearch(globalTable, "float2int");
-                     break;
-                 case KEYWORD_INPUTS:
-                     symTableSearch(globalTable, "inputs");
-                     break;
-                 case KEYWORD_INPUTI:
-                     symTableSearch(globalTable, "inputi");
-                     break;
-                 case KEYWORD_INPUTF:
-                     symTableSearch(globalTable, "inputf");
-                     break;
-                 case KEYWORD_CHR:
-                     symTableSearch(globalTable, "chr");
-                     break;
-                 case KEYWORD_ORD:
-                     symTableSearch(globalTable, "ord");
-                     break;
-                 case KEYWORD_LEN:
-                     symTableSearch(globalTable, "len");
-                     break;
-                 case KEYWORD_SUBSTR:
-                     symTableSearch(globalTable, "substr");
-                     break;
-                 default:
-                     return SYNTAX_ERR;
-             }
-
-         }
-         CHECK_RULE(expessions);
-             }
-     // <assign> → ε
-     return SYNTAX_ERR;
- */
-
         // <assign> → = Exp
             GET_TOKEN_AND_CHECK_RULE(expessions);
         }
         // <assign> → ε
         return OK;
 }
-
-
-/*
-void init_builtin(){
- TData *item;
-
- //func inputs() (string, int)
- symTableInsert(globalTable, "inputs");
- item = symTableGetItem(globalTable, "inputs");
- item->idType = function;
- item->defined = true;
- item->dataType[0] = STRING_TYPE;
- item->dataType[1] = INT_TYPE;
-
-
- //func inputi() (int, int)
- symTableInsert(globalTable, "inputi");
- item = symTableGetItem(globalTable, "inputi");
- item->idType = function;
- item->defined = true;
- item->dataType[0] = INT_TYPE;
- item->dataType[1] = INT_TYPE;
-
- //func inputf() (float64, int)
- symTableInsert(globalTable, "inputf");
- item = symTableGetItem(globalTable, "inputf");
- item->idType = function;
- item->defined = true;
- item->dataType[0] = FLOAT_TYPE;
- item->dataType[1] = INT_TYPE;
-
- //func int2float(i int) (float64)
- symTableInsert(globalTable, "int2float");
- item = symTableGetItem(globalTable, "int2float");
- item->idType = function;
- item->defined = true;
- item->dataType[0] = FLOAT_TYPE;
- symTableAppendParams(item, "i", INT_TYPE);
-
- //func float2int(f float64) (int)
- symTableInsert(globalTable, "float2int");
- item = symTableGetItem(globalTable, "float2int");
- item->idType = function;
- item->defined = true;
- item->dataType[0] = INT_TYPE;
- symTableAppendParams(item, "f", FLOAT_TYPE);
-
- //func len(s string) (int)
- symTableInsert(globalTable, "len");
- item = symTableGetItem(globalTable, "len");
- item->idType = function;
- item->defined = true;
- item->dataType[0] = INT_TYPE;
- symTableAppendParams(item, "s", STRING_TYPE);
-
- //func substr(s string, i int, n int) (string, int)
- symTableInsert(globalTable, "substr");
- item = symTableGetItem(globalTable, "substr");
- item->idType = function;
- item->defined = true;
- item->dataType[0] = STRING_TYPE;
- item->dataType[1] = INT_TYPE;
- symTableAppendParams(item, "s", STRING_TYPE);
- symTableAppendParams(item, "i", INT_TYPE);
- symTableAppendParams(item, "i", INT_TYPE);
-
- //func ord(s string, i int) (int, int)
- symTableInsert(globalTable, "ord");
- item = symTableGetItem(globalTable, "ord");
- item->idType = function;
- item->defined = true;
- item->dataType[0] = INT_TYPE;
- item->dataType[1] = INT_TYPE;
- symTableAppendParams(item, "s", STRING_TYPE);
- symTableAppendParams(item, "i", INT_TYPE);
-
- //func chr(i int) (string, int)
- symTableInsert(globalTable, "chr");
- item = symTableGetItem(globalTable, "chr");
- item->idType = function;
- item->defined = true;
- item->dataType[0] = STRING_TYPE;
- item->dataType[1] = INT_TYPE;
- symTableAppendParams(item, "i", INT_TYPE);
-
- //func print
- symTableInsert(globalTable, "print");
- item = symTableGetItem(globalTable, "print");
- item->idType = function;
- item->defined = true;
- item->dataType[0] = NIL_TYPE;
-
-}
-*/
 
 int parse() {
     int result;
@@ -614,13 +497,16 @@ int parse() {
 
             result = start();
 
-            printTable(globalTable);
-            printTable(localTable);
+            //printTable(globalTable);
+            //printTable(localTable);
 
             symTableDestroy(globalTable);
             symTableDestroy(localTable);
             dynamicStrFree(d_string);
-            genCodePrint();
+            if (result == OK){
+                genCodePrint();
+            }
+            dynamicStrFree(&dyncode);
             free(d_string);
 
             return result;

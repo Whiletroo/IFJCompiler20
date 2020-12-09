@@ -1,7 +1,7 @@
 /**
 * @file scanner.h
 * @author xproko40
-* @date 16.10.2020
+* @date 09.12.2020
 * @brief The header file for scanner.c
 */
 
@@ -17,39 +17,38 @@
 typedef enum
 {
     /* FINAL STATES */
-    STATE_START,                 //  DONE IN SCANNER // Starting state every new token processing starts here and initializes other states
-    STATE_INTEGER,               //  DONE IN SCANNER // Start of number processing, accepts numbers, e/E and . | Can return integer number
-    STATE_DOUBLE,                //  DONE IN SCANNER // The last symbol was number | Can return double number
-    STATE_DOUBLE_EXPONENT,       //  DONE IN SCANNER // Returns double number with exponent
-    STATE_IDENTIFIER_OR_KEYWORD, //  DONE IN SCANNER // Starts with letter or _, if next symbols are alphanumeric or _, add them to string, which is later compared with reserved words | Returns either keyword or string as ID
-    STATE_STRING,                //  DONE IN SCANNER // Sequence " was read, ends with " | Returns string
-    STATE_LESS,                  //  DONE IN SCANNER // Starts with < | Returns < or <=
-    STATE_HIGHER,                //  DONE IN SCANNER // Starts with > | Returns > or >=
-    STATE_EOL,                   //  DONE IN SCANNER // End of line
-    STATE_ASSIGN,                //  DONE IN SCANNER // Starts with = | Returns = or ==
-    STATE_DIV,                   //  DONE IN SCANNER // Starts with / / Returns /
+    STATE_START,                 // Starting state every new token processing starts here and initializes other states
+    STATE_INTEGER,               // Start of number processing, accepts numbers, e/E and . | Can return integer number
+    STATE_DOUBLE,                // The last symbol was number | Can return double number
+    STATE_DOUBLE_EXPONENT,       // Returns double number with exponent
+    STATE_IDENTIFIER_OR_KEYWORD, // Starts with letter or _, if next symbols are alphanumeric or _, add them to string, which is later compared with reserved words | Returns either keyword or string as ID
+    STATE_STRING,                // Sequence " was read, ends with " | Returns string
+    STATE_LESS,                  // Starts with < | Returns < or <=
+    STATE_HIGHER,                // Starts with > | Returns > or >=
+    STATE_EOL,                   // End of line
+    STATE_ASSIGN,                // Starts with = | Returns = or ==
+    STATE_DIV,                   // Starts with / / Returns /
 
 
     /* SATES */
-    STATE_SCREAMER,                //  DONE IN SCANNER // "!" can return token !=
-    STATE_COLON,                   //  DONE IN SCANNER // ":" can return token :=
-    STATE_STRING_COMMENTARY,       //  DONE IN SCANNER // Line commentary, ignores every symbol, ends with EOL
-    STATE_BLOCK_COMMENTARY,        //  DONE IN SCANNER // Starts with / except * and ignores every symbol except * - this might be the starting end of block comment
-    STATE_BLOCK_COMMENTARY_LEAVE,  //  DONE IN SCANNER // Starts with * except / next  -> go to start
-    STATE_NUMBER_POINT,            //  DONE IN SCANNER // If symbol was ., the number has type double
-    STATE_NUMBER_EXPONENT,         //  DONE IN SCANNER // The last symbol was e or E, the number has type double, continues with optional symbols +/- or number
-    STATE_NUMBER_EXPONENT_SIGN,    //  DONE IN SCANNER // Optional symbol was read, continue with numbers only
-    STATE_STRING_START,            //  DONE IN SCANNER // String starts with "
-    STATE_STRING_ESCAPE,           //  DONE IN SCANNER // If symbol \ was loaded, can replace char with escape sequence symbols
-    STATE_STRING_DIGIT_xX,         //  DONE IN SCANNER // first decimal beginning xA
-    STATE_STRING_DIGIT_xXX,        //  DONE IN SCANNER // decimal xAF
+    STATE_SCREAMER,                // "!" can return token !=
+    STATE_COLON,                   // ":" can return token :=
+    STATE_STRING_COMMENTARY,       // Line commentary, ignores every symbol, ends with EOL
+    STATE_BLOCK_COMMENTARY,        // Starts with / except * and ignores every symbol except * - this might be the starting end of block comment
+    STATE_BLOCK_COMMENTARY_LEAVE,  // Starts with * except / next  -> go to start
+    STATE_NUMBER_POINT,            // If symbol was ., the number has type double
+    STATE_NUMBER_EXPONENT,         // The last symbol was e or E, the number has type double, continues with optional symbols +/- or number
+    STATE_NUMBER_EXPONENT_SIGN,    // Optional symbol was read, continue with numbers only
+    STATE_STRING_START,            // String starts with "
+    STATE_STRING_ESCAPE,           // If symbol \ was loaded, can replace char with escape sequence symbols
+    STATE_STRING_DIGIT_xX,         // first decimal beginning xA
+    STATE_STRING_DIGIT_xXX,        // decimal xAF
 
 } STATES;
 
 /* Tokens */
 typedef enum
 {
-    /* Main task */
     KEYWORD_ELSE,   // else
     KEYWORD_FLOAT64,     // float64
     KEYWORD_FOR,   // for
@@ -79,42 +78,42 @@ typedef enum
 
 typedef enum
 {
-    TOKEN_EOF,        /// EOL //   DONE IN SCANNER
-    TOKEN_EOL,        /// EOF //   DONE IN SCANNER
-    TOKEN_EMPTY,      /// Empty // DONE IN SCANNER
-    TOKEN_KEYWORD,    /// Keyword //    DONE IN SCANNER
-    TOKEN_IDENTIFIER, /// Identifier // DONE IN SCANNER
+    TOKEN_EOF,        // EOL
+    TOKEN_EOL,        // EOF
+    TOKEN_EMPTY,      // Empty
+    TOKEN_KEYWORD,    // Keyword
+    TOKEN_IDENTIFIER, // Identifier
 
-    TOKEN_INT,    /// Integer number // DONE IN SCANNER
-    TOKEN_FLOAT64, /// Double number //  DONE IN SCANNER
-    TOKEN_STRING, /// String //         DONE IN SCANNER
+    TOKEN_INT,    // Integer number
+    TOKEN_FLOAT64, // Double number
+    TOKEN_STRING, // String
     TOKEN_BOOL,
     TOKEN_NIL,
 
 
     /* Operations */
-    TOKEN_ASSIGN, // = //  DONE IN SCANNER
-    TOKEN_PLUS,   // + //  DONE IN SCANNER
-    TOKEN_MINUS,  // - //  DONE IN SCANNER
-    TOKEN_MUL,    // * //  DONE IN SCANNER
-    TOKEN_DIV,    // / //  DONE IN SCANNER
+    TOKEN_ASSIGN, // = //
+    TOKEN_PLUS,   // + //
+    TOKEN_MINUS,  // - //
+    TOKEN_MUL,    // * //
+    TOKEN_DIV,    // / //
 
     /* Comparison */
-    TOKEN_EQUALS,          // == // DONE IN SCANNER
-    TOKEN_HIGHER_OR_EQUAL, // >= // DONE IN SCANNER
-    TOKEN_HIGHER,          // > //  DONE IN SCANNER
-    TOKEN_LESS_OR_EQUAL,   // <= // DONE IN SCANNER
-    TOKEN_LESS,            // < //  DONE IN SCANNER
-    TOKEN_NOT_EQUAL,       // != // DONE IN SCANNER
-    TOKEN_DEFINITION,      // := // PROBABLY DONE IN SCANNER
+    TOKEN_EQUALS,          // == //
+    TOKEN_HIGHER_OR_EQUAL, // >= //
+    TOKEN_HIGHER,          // > //
+    TOKEN_LESS_OR_EQUAL,   // <= //
+    TOKEN_LESS,            // < //
+    TOKEN_NOT_EQUAL,       // != //
+    TOKEN_DEFINITION,      // := //
 
     /* */
-    TOKEN_LEFT_BRACKET,  // ( //  DONE IN SCANNER
-    TOKEN_RIGHT_BRACKET, // ) //  DONE IN SCANNER
-    TOKEN_COMMA,         // , //  DONE IN SCANNER
-    TOKEN_LCURLY_BRACKET,// { //  DONE IN SCANNER
-    TOKEN_RCURLY_BRACKET,// } //  DONE IN SCANNER
-    TOKEN_SEMICOLON,     // ; //  DONE IN SCANNER
+    TOKEN_LEFT_BRACKET,  // ( //
+    TOKEN_RIGHT_BRACKET, // ) //
+    TOKEN_COMMA,         // , //
+    TOKEN_LCURLY_BRACKET,// { //
+    TOKEN_RCURLY_BRACKET,// } //
+    TOKEN_SEMICOLON,     // ; //
 
 } TOKENS;
 

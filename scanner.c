@@ -1,7 +1,7 @@
 /**
 * @file scanner.c
 * @author xproko40
-* @date 22.10.2020
+* @date 09.12.2020
 * @brief The scanner
 */
 

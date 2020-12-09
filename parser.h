@@ -1,7 +1,7 @@
 /**
 * @file parser.h
 * @author xproko40
-* @date 25.11.2020
+* @date 09.12.2020
 * @brief The parser
 */
 
