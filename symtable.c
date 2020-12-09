@@ -19,9 +19,9 @@
 
 #define P(str) printf("%s\n", str); //Macro for debuging
 
-int hashf(const char *key) {
+unsigned int hashf(const char *key) {
 
- 	int  value = 0;
+ 	unsigned int  value = 0;
 	unsigned int  i = 0;
  	unsigned int key_len = strlen(key);
 
@@ -41,7 +41,7 @@ TSymTable *symTableInit() {
 		return NULL;
 	}
 
-	for (int i = 0; i < MAX_ST_SIZE; i++) {
+	for (unsigned int i = 0; i < MAX_ST_SIZE; i++) {
 		symtab->items[i] = NULL;
 	}
 
@@ -56,7 +56,7 @@ bool symTableSearch(TSymTable *symtab, char *key) {
 	}
 
 	bool found = false;
-	int index = hashf(key);
+	unsigned int index = hashf(key);
 	TSymbolItem* tmpitem = symtab->items[index];
 
 	while(!found && tmpitem != NULL)  {
@@ -75,11 +75,11 @@ int symTableInitData(TData *data, char *key) {
 	CHECK_PTR(data->identifier);
 	strcpy(data->identifier, key);
 
-	for (int i = 0; i < MAX_RETURN_TYPES; i++) {
+	for (unsigned int i = 0; i < MAX_RETURN_TYPES; i++) {
 		data->dataType[i] = UNDEFINED_TYPE;
 	}
 
-	for (int i = 0; i < MAX_PARAMETERS; i++) {
+	for (unsigned int i = 0; i < MAX_PARAMETERS; i++) {
 		data->funcParams[i] = UNDEFINED_TYPE;
 	}
 
@@ -99,7 +99,7 @@ int symTableInsert(TSymTable *symtab, char *key) {
 		return ERR_INTERNAL;
 	}
 
-	int index = hashf(key);
+	unsigned int index = hashf(key);
 
 	if ( symtab->items[index] == NULL) { // if entry is empty
 
@@ -149,7 +149,7 @@ TData *symTableGetItem(TSymTable *symtab, char *key) {
 		return NULL;
 	} else {
 
-		int index = hashf(key);
+		unsigned int index = hashf(key);
 		TSymbolItem* tmpitem = symtab->items[index];
 
 		if (tmpitem != NULL) {			
@@ -175,8 +175,10 @@ int symTableAppendParamName(TData *data, char *id) {
 		CHECK_PTR(data->localTable);
 	}
 
-	symTableInsert(data->localTable, id);
-	TData *tmpptr = symTableGetItem(data->localTable, id);
+	TSymTable *symtabptr = data->localTable;
+
+	symTableInsert(symtabptr, id);
+	TData *tmpptr = symTableGetItem(symtabptr, id);
 	CHECK_PTR(tmpptr);
 
 	tmpptr->defined = false;
@@ -201,10 +203,13 @@ int symTableAppendParamType(TData *data, char *id, tDataType dataType) {
 	}
 
 	// insert a type of func parametr if array of func parametrs
-	for (int i = 0; i < MAX_PARAMETERS; i++) {
+	for (unsigned int i = 0; i < MAX_PARAMETERS; i++) {
+
 		if (data->funcParams[i] == UNDEFINED_TYPE) {
 			data->funcParams[i] = dataType;
+			break;
 		}
+
 	}
 
 	// get pointer to TData of func parametr in local table
@@ -227,7 +232,7 @@ int symTableAppendRetType(TData *data, tDataType dataType) {
 	}
 
 	// insert a return type
-	for (int i = 0; i < MAX_RETURN_TYPES; i++) {
+	for (unsigned int i = 0; i < MAX_RETURN_TYPES; i++) {
 		if (data->funcParams[i] == UNDEFINED_TYPE) {
 			data->funcParams[i] = dataType;
 		}
@@ -241,7 +246,7 @@ int symTableAppendRetType(TData *data, tDataType dataType) {
 int symTabDeleteItem(TSymTable *symtab, char *key) {
 
 	CHECK_PTR(symtab);
-	int index = hashf(key);
+	unsigned int index = hashf(key);
 	TSymbolItem *actitem = symtab->items[index];
 	TSymbolItem *tmpptr;
 	CHECK_PTR(actitem);
@@ -293,7 +298,7 @@ void symTableDestroy(TSymTable *symtab) {
 		TSymbolItem *tmpitem ,*nextitem;
 
 		// iteration over table
-		for( int index = 0; index < MAX_ST_SIZE; index++) {
+		for( unsigned int index = 0; index < MAX_ST_SIZE; index++) {
 
 			tmpitem = symtab->items[index];
 			while(tmpitem != NULL) {
@@ -322,7 +327,7 @@ void printData(TData *data) {
 
 	// DATA TYPES
 	printf("\tType of DATA    :\t");
-	for (int i = 0; data->dataType[i] != UNDEFINED_TYPE; i++) {
+	for (unsigned int i = 0; data->dataType[i] != UNDEFINED_TYPE; i++) {
 		switch(data->dataType[i]) {
 			case INT_TYPE:
 				printf("INT ");
@@ -345,7 +350,7 @@ void printData(TData *data) {
 
 	// RETURN TYPES
 		printf("\tReturn Types    :\t");
-	for (int i = 0; data->dataType[i] != UNDEFINED_TYPE; i++) {
+	for (unsigned int i = 0; data->dataType[i] != UNDEFINED_TYPE; i++) {
 		switch(data->funcParams[i]) {
 			case INT_TYPE:
 				printf("INT");
@@ -408,7 +413,7 @@ void printTable(TSymTable *symtab){
 
 	P("**** SYMBOL TABLE ****\n");
 
-	for (int i = 0; i < MAX_ST_SIZE; i++) {
+	for (unsigned int i = 0; i < MAX_ST_SIZE; i++) {
 		
 		if (symtab->items[i] != NULL) {
 
