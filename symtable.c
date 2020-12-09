@@ -87,6 +87,8 @@ int symTableInitData(TData *data, char *key) {
 	data->defined = false;
 	data->string_val = NULL;
 	data->localTable = NULL;
+	data->inCount = 0;
+	data->outCount = 0;
 
 	return OK;
 
