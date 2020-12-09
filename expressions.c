@@ -299,7 +299,11 @@ int reduce() {
     }
     pushPS(NON_TERM, expType);
 
-    tmparg->dataType[0] = expType;
+    if (tmparg != NULL) {
+        tmparg->dataType[0] = expType;
+    } else {
+        return SEM_ERR_UNDEFINED_VAR;
+    }
 
     return OK;
 }
