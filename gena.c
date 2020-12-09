@@ -175,38 +175,6 @@ bool genCheckFrameDeep(int FrameDeep)
     return false;
 }
 
-/**
- * Generates default value of variable.
- *
- *
- * @return True if it was successful, false otherwise.
- */
-bool genCheckTypeValue(tDataType type)
-{
-	switch (type)
-	{
-		case INT_TYPE:
-			ADD_CODE("int");
-			break;
-		case FLOAT_TYPE:
-			ADD_CODE("float64");
-			break;
-		case STRING_TYPE:
-			ADD_CODE("string");
-			break;
-		case NIL_TYPE:
-			 ADD_CODE("nil");
-			 break;
-		case BOOLEAN_TYPE:
-			 ADD_CODE("bool");
-			 break;
-        default:
-            ADD_CODE(" LF");
-			break;
-	}
-	return false;
-}
-
  /**
  * Generates command from expression list
  *
@@ -349,6 +317,38 @@ bool genCheckArithmStack(tPrecRules rule, char *name1,char *name2,char *name3){
 }
 
 
+/**
+ * Generates default value of variable.
+ *
+ *
+ * @return True if it was successful, false otherwise.
+ */
+bool genCheckTypeValue(tDataType type)
+{
+	switch (type)
+	{
+		case INT_TYPE:
+			ADD_CODE("int");
+			break;
+		case FLOAT_TYPE:
+			ADD_CODE("float64");
+			break;
+		case STRING_TYPE:
+			ADD_CODE("string");
+			break;
+		case NIL_TYPE:
+			 ADD_CODE("nil");
+			 break;
+		case BOOLEAN_TYPE:
+			 ADD_CODE("bool");
+			 break;
+        default:
+            ADD_CODE("LF");
+			break;
+	}
+	return false;
+}
+
  /**
  * Generate deklaration of variable
  *
@@ -370,8 +370,8 @@ bool genCreDefVar(char *nameMod)
  */
 bool genCreDefRetVar(tDataType type)
 {
-    ADD_CODE("DEFVAR LF@retval");
-	ADD_INST("MOVE ");
+    ADD_INST("DEFVAR LF@retval");
+	ADD_CODE("MOVE ");
 	ADD_CODE("LF@retval ");
 	genCheckTypeValue(type);
 	ADD_CODE("@");
