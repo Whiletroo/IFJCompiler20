@@ -300,25 +300,60 @@ void symTableDestroy(TSymTable *symtab) {
 
 void printData(TData *data) {
 
+	// IDENTIFIER
 	printf("\tIdentifier  	:\t%s\n",data->identifier);
-	printf("\tType of DATA    :\t");
-	switch(data->dataType[0]) {
-		case INT_TYPE:
-			printf("INT\n");
-			break;
-		case FLOAT_TYPE:
-			printf("FLOAT\n");
-			break;
-		case STRING_TYPE:
-			printf("STRING\n");
-			break;
-		default:
-			printf("NIL\n");
-			break;
-	}
-	printf("\tDefined         :\t%s\n",((data->defined) ? "true":"false"));
-	printf("\tIdentifier type :\t");
 
+	// DATA TYPES
+	printf("\tType of DATA  :\t");
+	for (int i = 0; data->dataType[i] != UNDEFINED_TYPE; i++) {
+		switch(data->dataType[i]) {
+			case INT_TYPE:
+				printf("INT");
+				break;
+			case FLOAT_TYPE:
+				printf("FLOAT");
+				break;
+			case STRING_TYPE:
+				printf("STRING");
+				break;
+			case BOOLEAN_TYPE:
+				printf("BOOLEAN");
+				break;
+			default:
+				printf("NIL\n");
+				break;
+		}
+	}
+	P("");
+
+	// RETURN TYPES
+		printf("\tReturn Types  :\t");
+	for (int i = 0; data->dataType[i] != UNDEFINED_TYPE; i++) {
+		switch(data->funcParams[i]) {
+			case INT_TYPE:
+				printf("INT");
+				break;
+			case FLOAT_TYPE:
+				printf("FLOAT");
+				break;
+			case STRING_TYPE:
+				printf("STRING");
+				break;
+			case BOOLEAN_TYPE:
+				printf("BOOLEAN");
+				break;
+			default:
+				printf("NIL\n");
+				break;
+		}
+	}
+	P("");
+
+	// DEFINED
+	printf("\tDefined         :\t%s\n",((data->defined) ? "true":"false"));
+
+	// IDENTIFIER TYPE
+	printf("\tIdentifier type :\t");
 	switch(data->idType) {
 		case variable:
 			printf("variable\n");
@@ -331,16 +366,22 @@ void printData(TData *data) {
 			break;
 	}
 
-	if (data->dataType[0] == STRING_TYPE) {
-		printf("\tString value    :\t%s\n",data->string_val);
-	} else if (data->dataType[0] == INT_TYPE) {
-		printf("\tInt value       :\t%d\n",data->int_val);
-	} else if (data->dataType[0] == FLOAT_TYPE) {
-		printf("\tDoubel value    :\t%lf\n",data->double_val);
-	} else {
-		printf("\tValue undifiened\n");
-	}
 
+
+/*
+	// print value
+	if (data->idType == variable) {
+		if (data->dataType[0] == STRING_TYPE) {
+			printf("\tString value    :\t%s\n",data->string_val);
+		} else if (data->dataType[0] == INT_TYPE) {
+			printf("\tInt value       :\t%d\n",data->int_val);
+		} else if (data->dataType[0] == FLOAT_TYPE) {
+			printf("\tDoubel value    :\t%lf\n",data->double_val);
+		} else {
+			printf("\tValue undifiened\n");
+		}
+	}
+*/
 }
 
 
