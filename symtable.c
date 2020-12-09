@@ -71,7 +71,7 @@ bool symTableSearch(TSymTable *symtab, char *key) {
 
 int symTableInitData(TData *data, char *key) {
 
-	data->identifier = malloc(sizeof(char));
+	data->identifier = malloc(sizeof(char) * strlen(key));
 	CHECK_PTR(data->identifier);
 	memcpy(data->identifier, key, strlen(key));
 
@@ -108,7 +108,7 @@ int symTableInsert(TSymTable *symtab, char *key) {
 		CHECK_PTR(symtab->items[index]);
 
 		// init key value
-		symtab->items[index]->key = malloc(sizeof(char));
+		symtab->items[index]->key = malloc(sizeof(char) * strlen(key));
 		CHECK_PTR(symtab->items[index]->key);
 		strcpy(symtab->items[index]->key, key);
 
@@ -126,7 +126,7 @@ int symTableInsert(TSymTable *symtab, char *key) {
 		CHECK_PTR(newitem);
 
 		// init key value
-		newitem->key = malloc(sizeof(char));
+		newitem->key = malloc(sizeof(char) * strlen(key));
 		CHECK_PTR(newitem->key);
 		memcpy(newitem->key, key, strlen(key));
 
@@ -163,6 +163,42 @@ TData *symTableGetItem(TSymTable *symtab, char *key) {
 		}
 		return NULL;
 	}
+}
+
+
+int symTableAppendParams(TData *data, char *id, tDataType dataType) {
+
+	// check if is place in array of parameters types
+	if (data->funcParams[MAX_PARAMETERS - 1] != UNDEFINED_TYPE) {
+		return ERR_INTERNAL;
+	}
+
+	// insert a type of func parametr if array of func parametrs
+	for (int i = 0; i < MAX_PARAMETERS; i++) {
+		if (data->funcParams[i] == UNDEFINED_TYPE) {
+			data->funcParams[i] = dataType;
+		}
+	}
+
+	// insert a new identifiers to symbol table of function (local symbol table)
+	data->localTable = symTableInit();
+	CHECK_PTR(data->localTable);
+
+	symTableInsert(data->localTable, id);
+	TData *tmpptr = symTableGetItem(data->localTable, id);
+	CHECK_PTR(tmpptr);
+
+	tmpptr->dataType[0] = dataType;
+	tmpptr->defined = false;
+
+	tmpptr->identifier = malloc(sizeof(char) * strlen(id));
+	CHECK_PTR(tmpptr->identifier);
+	strcpy(tmpptr->identifier, id);
+
+	tmpptr->idType = variable;
+	tmpptr->localTable = NULL;
+	return OK;
+
 }
 
 

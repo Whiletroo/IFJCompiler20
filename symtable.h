@@ -123,6 +123,17 @@ TData *symTableGetItem(TSymTable *symtab, char *key);
 
 
 /**
+ * Appends function parametr to array of parameters. 
+ * And inserts a function paramet to local symtable.
+ * 
+ * @param data pointer to TData structure of function.
+ * @param id name of parametr.
+ * @param dataType data type of parametr.
+*/
+int symTableAppendParams(TData *data, char *id, tDataType dataType);
+
+
+/**
  * Fully destroy a symbol table. Free allocated memory
  * 
  * @param symtab pointer to TSymTable.
