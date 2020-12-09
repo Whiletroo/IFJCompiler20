@@ -142,7 +142,7 @@ int symTableAppendParams(TData *data, char *id, tDataType dataType);
  * @param dataType data type of parametr.
  * @return exid code
 */
-int symTableAppendRetTyps(TData *data, tDataType dataType)
+int symTableAppendRetTyps(TData *data, tDataType dataType);
 
 
 /**
