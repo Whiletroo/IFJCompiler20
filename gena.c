@@ -94,7 +94,8 @@ bool genCrePopFr()
  */
 bool genCreReturn()
 {
-    ADD_INST("RETURN");
+    ADD_CODE("RETURN");
+    ADD_INST("\n");
 	return true;
 }
 
@@ -371,7 +372,7 @@ bool genCreDefRetVar(tDataType type)
 {
     ADD_CODE("DEFVAR LF@retval");
 	ADD_CODE("MOVE ");
-	ADD_CODE(LF@retval);
+	ADD_CODE("LF@retval");
 	genCheckTypeValue(type);
 	ADD_CODE("@");
 	genCheckTypeValue(type);
