@@ -45,6 +45,7 @@ void genCodePrint(){
 
     printf("%s",dyncode.str);
     dynamicStrFree(&dyncode);
+    free(&dyncode);
 }
 
 /**
