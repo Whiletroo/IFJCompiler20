@@ -16,6 +16,7 @@
 
 #define ADD_CODE(_inst) if(!dynamicStrAddStr(&dyncode, (_inst))) return false; \
 
+
 DYN_STRING dyncode;
 
 
@@ -43,7 +44,7 @@ bool codeGenOpen()
 void genCodePrint(){
 
     printf("%s",dyncode.str);
-    codeGenClear(&dyncode);
+    dynamicStrFree(&dyncode);
 }
 
 /**
@@ -162,9 +163,6 @@ bool genCheckFrameDeep(int FrameDeep)
 {
       switch (FrameDeep)
 	{
-		case 1:
-			ADD_CODE(" GF@");
-			break;
 		case 2:
 			ADD_CODE(" LF@");
 			break;
@@ -205,7 +203,7 @@ bool genCheckTypeValue(tDataType type)
 			 ADD_CODE(" nil");
 		default:
 		    ADD_CODE("LF");
-			return false;
+			return true;
 	}
 	return true;
 }
@@ -270,7 +268,7 @@ bool genCheckArithm(tPrecRules rule, char *name1,char *name2,char *name3)
                 break;
             case E_EQ_E:
                 ADD_CODE("EQ ");
-                proid(name1,name2,name3);;
+                proid(name1,name2,name3);
                 break;
              case E_NEQ_E:
                 ADD_CODE("NEQ ");
@@ -285,12 +283,75 @@ bool genCheckArithm(tPrecRules rule, char *name1,char *name2,char *name3)
                 proid(name1,name2,name3);
                 break;
             default:
-            return  printf("[ERROR] (genArithm) frame input");
+            return  printf("[ERROR] (genCheckArithm) frame input");
             break;
     }
 
     return true;
 }
+
+bool genCheckArithmStack(tPrecRules rule, char *name1,char *name2,char *name3){
+
+           switch (rule)
+            {
+            case E_PLUS_E:
+                ADD_CODE("ADDS ");
+
+                break;
+            case E_MINUS_E:
+                ADD_CODE("SUBS ");
+
+                break;
+            case E_MUL_E:
+                ADD_CODE("MULS ");
+
+                break;
+            case E_DIV_E:
+                ADD_CODE("DIVS ");
+
+                 break;
+            case E_IDIV_E:
+                ADD_CODE("IDIV ");
+                ADD_INST("POPS GF@%tmp_op1");
+                ADD_INST("INT2FLOATS");
+                ADD_INST("PUSHS GF@%tmp_op1");
+                ADD_INST("INT2FLOATS");
+                ADD_INST("DIVS");
+                ADD_INST("FLOAT2INTS");
+                break;
+            case E_HTN_E:
+                ADD_CODE("GTS ");
+
+                break;
+            case E_LTN_E:
+                ADD_CODE("LTS ");
+
+                break;
+            case E_EQ_E:
+                ADD_CODE("EQS ");
+
+                break;
+             case E_NEQ_E:
+                ADD_CODE("NEQS ");
+
+                break;
+            case E_LEQ_E:
+                ADD_CODE("LEQS ");
+
+                break;
+            case E_HEQ_E:
+                ADD_CODE("HEQS ");
+
+                break;
+            default:
+            return  printf("[ERROR] (genCheckArithmStack) frame input");
+            break;
+    }
+
+    return true;
+
+}
+
 
  /**
  * Generate deklaration of variable
@@ -543,7 +604,6 @@ bool string2Int(char *retval,bool stak)
         ADD_CODE(retval);
         ADD_CODE(" string@");
         ADD_INST(retval);
-        return true;
        return true;
     }
     return false;
@@ -637,9 +697,3 @@ bool codeGenStart()
 	if (!dynamicStrInit(&dyncode)) return false;
 	return true;
 }
-
-void codeGenClear()
-{
-	dynamicStrFree(&dyncode);
-}
-
