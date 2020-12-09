@@ -30,6 +30,8 @@ typedef struct {
 	tDataType funcParams[MAX_PARAMETERS];		// array of types for function parameters
 	
 	struct symTable *localTable;
+	int inCount;
+	int outCount;
 
 	// maybe uneeded
 	union {
