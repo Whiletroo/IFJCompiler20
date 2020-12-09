@@ -122,16 +122,27 @@ int symTabDeleteItem(TSymTable *symtab, char *key);
 TData *symTableGetItem(TSymTable *symtab, char *key);
 
 
+
 /**
- * Appends function parametr to array of parameters. 
- * And inserts a function paramet to local symtable.
+ * Appends function parametr identifier NAME to local table of function.
+ * 
+ * @param data pointer to TData structure of function.
+ * @param id name of parametr.
+ * @return exid code.
+*/
+int symTableAppendParamName(TData *data, char *id);
+
+
+/**
+ * Appends function parametr DATATYPE to array of parameters. 
+ * And set a dataType field of parametr to dataType
  * 
  * @param data pointer to TData structure of function.
  * @param id name of parametr.
  * @param dataType data type of parametr.
  * @return exid code
 */
-int symTableAppendParams(TData *data, char *id, tDataType dataType);
+int symTableAppendParamType(TData *data, char *id, tDataType dataType);
 
 
 /**
@@ -142,7 +153,7 @@ int symTableAppendParams(TData *data, char *id, tDataType dataType);
  * @param dataType data type of parametr.
  * @return exid code
 */
-int symTableAppendRetTyps(TData *data, tDataType dataType);
+int symTableAppendRetType(TData *data, tDataType dataType);
 
 
 /**
