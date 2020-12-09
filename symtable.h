@@ -59,7 +59,7 @@ typedef struct symTable {
  * @param key string to be hashed
  * @return hash code
 */
-int hashf(const char *key);
+unsigned int hashf(const char *key);
 
 
 /**
